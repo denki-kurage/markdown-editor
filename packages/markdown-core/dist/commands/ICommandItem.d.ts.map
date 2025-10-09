@@ -1,0 +1,1 @@
+{"version":3,"file":"ICommandItem.d.ts","sourceRoot":"","sources":["../../src/commands/ICommandItem.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,oBAAoB,CAAC;AAE9C,MAAM,WAAW,YAAY;IAEzB,IAAI,EAAE,MAAM,CAAC;IACb,KAAK,EAAE,MAAM,CAAC;IACd,OAAO,EAAE,QAAQ,GAAC,SAAS,CAAC;IAC5B,IAAI,EAAE,GAAG,CAAC;IACV,QAAQ,CAAC,EAAE,YAAY,EAAE,CAAC;CAC7B"}

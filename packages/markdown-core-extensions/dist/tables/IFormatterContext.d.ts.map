@@ -1,0 +1,1 @@
+{"version":3,"file":"IFormatterContext.d.ts","sourceRoot":"","sources":["../../src/tables/IFormatterContext.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,mBAAmB,CAAC;AACpD,OAAO,EAAE,uBAAuB,EAAE,MAAM,0BAA0B,CAAC;AAEnE,MAAM,WAAW,iBAAiB;IAEjC,QAAQ,CAAC,SAAS,EAAE,uBAAuB,CAAC;IAC5C,QAAQ,CAAC,cAAc,EAAE,eAAe,CAAC,MAAM,CAAC,CAAC;CACjD"}

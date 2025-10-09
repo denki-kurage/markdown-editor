@@ -1,0 +1,55 @@
+
+$left: 1.2em;
+
+.token-viewer
+{
+    height: 25em;
+    width: 100%;
+    overflow: scroll;
+
+    ul
+    {
+        margin: 0
+    }
+
+    ul li
+    {
+        list-style: none;
+        padding: 2px 0px 0px 0px;
+        margin: 0;
+    }
+
+    ul li div { padding-left: $left * 0; }
+    ul li ul li div { padding-left: $left * 1; }
+    ul li ul li ul li div { padding-left: $left * 2; }
+    ul li ul li ul li ul li div { padding-left: $left * 3; }
+    ul li ul li ul li ul li ul li div { padding-left: $left * 4; }
+    ul li ul li ul li ul li ul li ul li div { padding-left: $left * 5; }
+    ul li ul li ul li ul li ul li ul li ul li div { padding-left: $left * 6; }
+    ul li ul li ul li ul li ul li ul li ul li ul li div { padding-left: $left * 7; }
+
+
+    .token-explorer-current
+    {
+        > div
+        {
+            background-color: #e0ffe0;
+            border: 1px solid green;
+        }
+    }
+
+    .token-explorer-ancestor
+    {
+        > div
+        {
+            border: 1px solid green;
+        }
+    }
+
+    button
+    {
+        font-size: 1.2em;
+        width: 100%;
+    }
+
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@mde/markdown-core",
+  "version": "0.0.0",
+  "description": "MdTableEditor",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": {
+    "name": "clover"
+  },
+  "scripts": {
+    "build": "npx tsc --out ./src/index.ts"
+  },
+  "dependencies": {
+    "rehype-stringify": "^10.0.1",
+    "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.2",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1"
+  }
+}

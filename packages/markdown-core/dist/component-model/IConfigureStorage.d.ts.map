@@ -1,0 +1,1 @@
+{"version":3,"file":"IConfigureStorage.d.ts","sourceRoot":"","sources":["../../src/component-model/IConfigureStorage.ts"],"names":[],"mappings":"AACA,MAAM,WAAW,iBAAiB;IAE9B,IAAI,IAAI,OAAO,CAAC,OAAO,CAAC,CAAC;IACzB,QAAQ,CAAC,CAAC,EAAE,IAAI,EAAE,MAAM,EAAE,KAAK,EAAE,CAAC,GAAG,OAAO,CAAC;IAC7C,QAAQ,CAAC,CAAC,EAAE,IAAI,EAAE,MAAM,GAAG,CAAC,CAAC;CAChC"}

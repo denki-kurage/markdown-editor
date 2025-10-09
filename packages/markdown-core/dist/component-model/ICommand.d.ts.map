@@ -1,0 +1,1 @@
+{"version":3,"file":"ICommand.d.ts","sourceRoot":"","sources":["../../src/component-model/ICommand.ts"],"names":[],"mappings":"AAEA,MAAM,WAAW,QAAQ;IAExB,OAAO,CAAC,SAAS,CAAC,EAAE,GAAG,GAAG,IAAI,CAAC;IAC/B,UAAU,CAAC,SAAS,CAAC,EAAE,GAAG,GAAG,OAAO,CAAC;IACrC,iBAAiB,EAAE,KAAK,CAAC,MAAM,IAAI,CAAC,CAAC;CACrC"}

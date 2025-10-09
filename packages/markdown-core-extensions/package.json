@@ -1,0 +1,18 @@
+{
+  "name": "@mde/markdown-core-extensions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc --out ./src/index.ts"
+  },
+  "dependencies": {
+    "@mde/markdown-core": "file:../markdown-core"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.5.2"
+  }
+}

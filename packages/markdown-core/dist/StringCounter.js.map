@@ -1,0 +1,1 @@
+{"version":3,"file":"StringCounter.js","sourceRoot":"","sources":["../src/StringCounter.ts"],"names":[],"mappings":"AAEA,MAAM,OAAO,aAAa;IAGlB,MAAM,CAAC,OAAO,GAAmB,CAAC,GAAW,EAAE,EAAE,CAAC,GAAG,CAAC,MAAM,CAAC;IAE7D,MAAM,CAAC,WAAW,CAAC,GAAW;QAEpC,OAAO,IAAI,CAAC,OAAO,CAAC,GAAG,CAAC,CAAC;IAC1B,CAAC"}

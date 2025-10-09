@@ -1,0 +1,83 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-kurage-worker-md-table-editor {
+	border: 1px solid #3773f9;
+}
+
+.wp-block-kurage-worker-md-table-editor-label
+{
+	padding: .1em;
+	background-color: #3371ff;
+	color: white;
+	font-size: .8em;
+}
+
+.scroll-commands-panel
+{
+	padding: .5em;
+	
+	.scroll-command-item
+	{
+		width: 100%;
+		overflow: hidden;
+		margin: .2em;
+	}
+}
+
+
+.split-panel
+{
+	display: flex;
+}
+
+
+
+.width-panel
+{
+	width: 100%;
+	height: 100%;
+	position: relative;
+
+	> div
+	{
+		height: 100%;
+	}
+
+	section
+	{
+		height: 100%;
+	}
+}
+
+.markdown-content
+{
+	table
+	{
+		width: 100%;
+	}
+}
+
+.button-group
+{
+	width: 100%;
+	justify-items: stretch;
+	> button
+	{
+		margin: .1rem;
+	}
+}
+
+
+.components-toolbar button.components-button
+{
+	min-width: 24px !important;
+}
+
+
+
+
+

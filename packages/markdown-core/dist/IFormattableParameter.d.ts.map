@@ -1,0 +1,1 @@
+{"version":3,"file":"IFormattableParameter.d.ts","sourceRoot":"","sources":["../src/IFormattableParameter.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,UAAU,EAAE,MAAM,cAAc,CAAC;AAE1C,MAAM,WAAW,qBAAqB;IAElC;;OAEG;IACH,MAAM,IAAI,IAAI,CAAC;IAEf;;;;;OAKG;IACN,kBAAkB,CAAC,GAAG,QAAQ,EAAE,CAAC,UAAU,GAAG,SAAS,CAAC,EAAE,GAAG,IAAI,CAAC;CAClE"}
