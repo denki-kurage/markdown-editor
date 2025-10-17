@@ -29,6 +29,8 @@ export { IScrollSynchronizer } from "./IScrollSynchronizer";
 export { MarkdownCore } from './MarkdownCore';
 export { MarkdownEventCollection } from './MarkdownEventCollection';
 export { IEditorDecorator, IEditorDecorateSelection } from './IEditorDecorator';
+export { CommandCollection } from './CommandCollection';
+export { IToken } from './IToken';
 export * from './component-model';
 export * from './commands';
 //# sourceMappingURL=index.d.ts.map

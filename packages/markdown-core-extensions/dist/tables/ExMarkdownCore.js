@@ -2,8 +2,8 @@ import { MarkdownCore } from "@mde/markdown-core";
 import { MarkdownTable } from "./MarkdownTable";
 export class ExMarkdownCore extends MarkdownCore {
     table;
-    constructor(appContext, eventRegister, configStorage) {
-        super(appContext, eventRegister, configStorage);
+    constructor(appContext, configStorage) {
+        super(appContext, configStorage);
         this.table = this.createMarkdownTable();
     }
     createMarkdownTable() {

@@ -25,6 +25,7 @@
 		"@wordpress/components": "^29.5.0",
 		"@wordpress/data": "^10.21.0",
 		"@wordpress/editor": "^14.21.0",
+		"@wordpress/hooks": "^4.32.0",
 		"@wordpress/notices": "^5.21.0",
 		"marked": "^16.1.1",
 		"marked-token-position": "^1.0.0",

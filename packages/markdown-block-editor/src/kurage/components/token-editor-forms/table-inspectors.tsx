@@ -1,11 +1,10 @@
 import { InspectorControls } from "@wordpress/block-editor";
 import { Button, PanelBody, RangeControl, ToolbarButton, ToolbarGroup } from "@wordpress/components";
-import { DefaultCommandItems, lightIconsMap, MarkdownTableContent } from "@mde/markdown-core-extensions";
 import { __ } from "@wordpress/i18n";
 import { ICommand } from "@mde/markdown-core";
 
 const iconDisabled = '.components-button[aria-disabled=true]{ opacity: 0.3; }';
-
+/*
 type CommandKeyMap = typeof DefaultCommandItems;
 type EditParam = {map: CommandKeyMap, commandMap: Map<string, ICommand>, isEnable: (name: string) => boolean}
 type InspectorEditParam = { tables: Array<MarkdownTableContent>, current?: MarkdownTableContent } & EditParam;
@@ -75,3 +74,4 @@ export const TableView = ({table, command, index}: {table: MarkdownTableContent,
 }
 
 export default TableInspectors;
+*/

@@ -1,40 +1,96 @@
-import { createContext, useContext, useMemo, useState } from "react";
-import { IToken } from "../components/parser/IToken";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useMarkdownContext } from "./markdown-context";
 import { useAppContext } from "./Markdown-app-context";
-import { IReplaceText, Utils } from "@mde/markdown-core";
+import { IReplaceText, IToken, MarkdownParser, Utils } from "@mde/markdown-core";
 
 
 
 export type MarkdownTokenContextProps =
 {
     onEdits: (edits: [string, number, number][]) => void;
+
+    rootToken: IToken;
+    
+    /**
+     * 単一の選択されたトークン。
+     */
+    singleToken: IToken | undefined;
+
+
+    /**
+     * エディタレベルでの選択範囲。
+     */
     selections: [number, number][];
-    setSelections: (selections: [number, number][]) => void;
-}
-const ctx: MarkdownTokenContextProps =
-{
-    onEdits: () => {},
-    selections: [],
-    setSelections: () => {}
+
+    /**
+     * セレクションが一つの場合、start地点をインデックスとしてtokenを設定する。
+     */
+    setSelectionsAndToken: (selections: [number, number][], singleToken?: IToken) => void;
+
 }
 
-const Context = createContext<MarkdownTokenContextProps>(ctx);
+
+const Context = createContext<MarkdownTokenContextProps>({} as any);
 export const { Provider: MarkdownTokenContextProvider } = Context;
 export const useMarkdownTokenContext = () => useContext(Context);
+
+const findTokenByIndex = (token: IToken, index: number): IToken | undefined =>
+{
+    const { start, end } = token.getPosition();
+
+    // 子孫を優先して探索
+    for (const child of [...token.getChildren()].reverse())
+    {
+        const found = findTokenByIndex(child, index);
+
+        if (found)
+        {
+            return found;
+        }
+    }
+
+    // 子孫にヒットしなかった場合は自分自身を返す
+    if (start <= index && end >= index)
+    {
+        return token;
+    }
+
+    return undefined;
+}
 
 export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
 {
     const { markdown } = useMarkdownContext();
     const { markdownCore, appContext } = useAppContext();
-    const [currentToken, setCurrentToken] = useState<IToken|undefined>(undefined);
+    const [singleToken, setCurrentToken] = useState<IToken|undefined>(undefined);
     const [selections, setSelections] = useState<[number, number][]>([]);
     
+    const rootToken = useMemo(() => (new MarkdownParser()).parseTokenTree(markdown), [markdown]);
 
-    const ctx = useMemo<MarkdownTokenContextProps>(() => ({
-        onEdits: (edits: [string, number, number][]) => {
-            if(appContext)
-            {
+    useEffect(() => {
+        const cursor = appContext.getEditorModel().getCursor();
+        const index = cursor ? Utils.positionToIndex(markdown, cursor) : 0;
+        const tokenByIndex = findTokenByIndex(rootToken, index);
+        setCurrentToken(tokenByIndex);
+        setSelections([]);
+    }, [rootToken])
+
+
+    useEffect(() => {
+        const s = selections.map(sl => Utils.IndexToSelection(markdown, ...sl))
+        const cmd = markdownCore.createCommandCollection().getCommand('markdown:select');
+        cmd?.command?.execute({ selections: s });
+    }, [selections.map(s => `${s[0]}-${s[1]}`).join(',')]);
+
+
+
+
+    const ctx = useMemo<MarkdownTokenContextProps>(() => {
+        return {
+            rootToken,
+            singleToken,
+            selections,
+            onEdits: (edits: [string, number, number][]) => {
                 const s = edits.map<IReplaceText>(e => {
                     const [text, start, end] = e;
                     return { area: Utils.IndexToSelection(markdown, start, end), text };
@@ -44,18 +100,38 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
                 {
                     appContext.getEditorModel().replaces(s);
                 }
+            },
+            setSingleToken: setCurrentToken,
+            setSelectionsAndToken: (s, singleToken) =>
+            {
+                if(singleToken)
+                {
+                    setCurrentToken(singleToken);
+                }
+                else if(s.length === 1)
+                {
+                    const [start, end] = s[0];
+                    const tokenByIndex = findTokenByIndex(rootToken, start);
+                    setCurrentToken(tokenByIndex);
+                }
+
+                setSelections(s);
             }
-        },
-        setSelections: (p) =>
-        {
-            const selections = p.map(sl => Utils.IndexToSelection(markdown, ...sl))
-            const cmd = markdownCore?.getCommandsMap().get('markdown:select');
-            cmd?.execute({ selections });
-            setSelections(p);
-        },
-        selections
-    }), [markdown]);
+        }
+    }, [markdown, rootToken, selections, singleToken, markdownCore, appContext]);
     
+    useEffect(() => {
+        const ec = markdownCore.eventCollection.add({
+            selectChanged: () => {
+                const scs = appContext.getEditorModel().getSelections()
+                    .map(sel => [Utils.positionToIndex(markdown, sel.sPos), Utils.positionToIndex(markdown, sel.ePos ?? sel.sPos)] as [number, number]);
+                ctx.setSelectionsAndToken(scs);
+            }
+        })
+
+        return () => ec.dispose();
+    }, [markdown, appContext, markdownCore, ctx]);
+
     return (
         <MarkdownTokenContextProvider value={ctx}>
             { children }

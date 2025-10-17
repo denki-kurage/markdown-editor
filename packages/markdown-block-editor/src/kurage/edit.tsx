@@ -12,11 +12,12 @@ import TokenInspectors from './components/token-inspectors';
 import { MarkdownContextProviderWrapper, useMarkdownContext } from './context/markdown-context';
 import { useMarkdownEditorGenerator } from './components/editor-wrapper';
 import { useEditorInterlocking } from './useEditorInterlocking';
-import { MarkdownTokenContextProviderWrapper } from './context/markdown-token-context';
+import { MarkdownTokenContextProviderWrapper, useMarkdownTokenContext } from './context/markdown-token-context';
 import { MarkdownAppContextWrapper, useAppContext } from './context/Markdown-app-context';
-import { EventUpdateManager } from '@mde/markdown-core';
+import { EventUpdateManager, Utils } from '@mde/markdown-core';
 import { parseEditMarkdown } from './components/parser';
 import { CommandToolbar, FlatCommandToolbar } from './components/edit-toolbar';
+import { applyFilters, hasFilter } from '@wordpress/hooks';
 
 //import Prism from 'prismjs'
 
@@ -51,8 +52,6 @@ const EditorPanel = () =>
 {
 	const { editHeight, setAttributes } = useMarkdownContext();
 	const { markdownCore } = useAppContext();
-
-
 
 	return (
 		<>
@@ -91,7 +90,7 @@ const MainEditor = ({ editorName }: any) =>
 	const { name, EditorComponent } = useMarkdownEditorGenerator(editorName);
 	
 	useEffect(() => {
-		if(appContext && win)
+		if(win)
 		{
 			const d = useEditorInterlocking(appContext, win);
 			return () => d.dispose();
@@ -110,7 +109,7 @@ const MainEditor = ({ editorName }: any) =>
 				<EditorComponent initializedMarkdownCore={updateAppContext} />
 			</Panel>
 			<Panel style={styles[1]}>
-				{ appContext && <MarkdownViewer value={markdown} setWindow={setWin} /> }
+				<MarkdownViewer value={markdown} setWindow={setWin} />
 			</Panel>
 		</SplitPanel>
 	)
@@ -140,8 +139,11 @@ const ControlPanelInspector = () =>
 
 const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Window) => void }) =>
 {
+	const { markdownCore, appContext } = useAppContext();
+	const { setSelectionsAndToken } = useMarkdownTokenContext();
 	const frameRef = useRef(null);
 	const valueRef = useRef(value);
+	const eventRef = useRef(setSelectionsAndToken);
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [updateManager, setUpdateManager] = useState<EventUpdateManager|undefined>(undefined);
@@ -153,13 +155,16 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 		setIsLoading(true);
 	}, [value]);
 
-
 	useEffect(() => {
 		// @ts-ignore
 		const win = frameRef?.current.contentWindow;
 		setWindow(win);
+
 	}, [frameRef.current])
 
+	useEffect(() => {
+		eventRef.current = setSelectionsAndToken;
+	}, [setSelectionsAndToken]);
 
 	useEffect(() => {
 		const updater = new EventUpdateManager(800);
@@ -167,13 +172,7 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 		{
 
 			const value = valueRef.current;
-
-			//
-			// xxxxxxxxxxxxxxxxxx
-			//
-			//const parsedCode = parseMarkdown(value);
 			const parsedCode = parseEditMarkdown(value, true);
-
 			const html = `<div class="markdown-content-style">${parsedCode}</div>`;
 
 			const iframe = frameRef.current;
@@ -184,9 +183,19 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 			{
 				doc.body.innerHTML = html;
 
+				// クリックイベントで選択範囲をエディタに反映
+				doc.querySelectorAll('[data-offset]').forEach((dom: HTMLElement) => dom.addEventListener('click', e => {
+					const start = parseInt(dom.getAttribute('data-offset-start') || '0');
+					const end = parseInt(dom.getAttribute('data-offset-end') || '0');
+					const line = parseInt(dom.getAttribute('data-line-number') || '0');
+					e.stopPropagation();
+					eventRef.current([[start, end]]);
+				}));
+
 				// @ts-ignore
 				window.Prism.highlightAllUnder(doc);
 
+				// 
 				if(!doc.head.hasChildNodes())
 				{
 					const scripts = [
@@ -208,7 +217,7 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 					metas.map(meta => fragment.appendChild(createLink(meta.content)));
 
 					doc.head.innerHTML = scripts;
-					doc.head.appendChild(fragment);					
+					doc.head.appendChild(fragment);
 				}
 
 			}

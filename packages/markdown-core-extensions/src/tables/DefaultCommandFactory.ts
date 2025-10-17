@@ -219,43 +219,43 @@ export class DefaultCommandFactory
 		const factory = this;
 		const commands = new Map<string, ICommand>();
 
-		commands.set('format:beautiful', factory.createBeautifulFormat());
-		commands.set('format:natural', factory.createNaturalFormat());
-		commands.set('format:delete-comment', factory.createDeleteComment());
-		commands.set('format:fill-cells', factory.createFillCells());
+		commands.set('markdown:table:format:beautiful', factory.createBeautifulFormat());
+		//commands.set('markdown:table:format:natural', factory.createNaturalFormat());
+		//commands.set('markdown:table:format:delete-comment', factory.createDeleteComment());
+		commands.set('markdown:table:format:fill-cells', factory.createFillCells());
 
-		commands.set('align:right', factory.createChangeAlignRight());
-		commands.set('align:center', factory.createChangeAlignCenter());
-		commands.set('align:left', factory.createChangeAlignLeft());
+		commands.set('markdown:table:align:right', factory.createChangeAlignRight());
+		commands.set('markdown:table:align:center', factory.createChangeAlignCenter());
+		commands.set('markdown:table:align:left', factory.createChangeAlignLeft());
 
-		commands.set('insert:top', factory.createInsertTop());
-		commands.set('insert:bottom', factory.createInsertBottom());
-		commands.set('insert:left', factory.createInsertLeft());
-		commands.set('insert:right', factory.createInsertRight());
+		commands.set('markdown:table:insert:top', factory.createInsertTop());
+		commands.set('markdown:table:insert:bottom', factory.createInsertBottom());
+		commands.set('markdown:table:insert:left', factory.createInsertLeft());
+		commands.set('markdown:table:insert:right', factory.createInsertRight());
 
-		commands.set('remove:column', factory.createRemoveColumn());
-		commands.set('remove:row', factory.createRemoveRow());
+		commands.set('markdown:table:remove:column', factory.createRemoveColumn());
+		commands.set('markdown:table:remove:row', factory.createRemoveRow());
 
-		commands.set('move:top', factory.createMoveTop());
-		commands.set('move:bottom', factory.createMoveBottom());
-		commands.set('move:left', factory.createMoveLeft());
-		commands.set('move:right', factory.createMoveRight());
+		commands.set('markdown:table:move:top', factory.createMoveTop());
+		commands.set('markdown:table:move:bottom', factory.createMoveBottom());
+		commands.set('markdown:table:move:left', factory.createMoveLeft());
+		commands.set('markdown:table:move:right', factory.createMoveRight());
 
-		commands.set('focus:left', factory.createFocusLeft());
-		commands.set('focus:top', factory.createFocusTop());
-		commands.set('focus:bottom', factory.createFocusBottom());
-        commands.set('focus:right', factory.createFocusRight());
+		commands.set('markdown:table:focus:left', factory.createFocusLeft());
+		commands.set('markdown:table:focus:top', factory.createFocusTop());
+		commands.set('markdown:table:focus:bottom', factory.createFocusBottom());
+        commands.set('markdown:table:focus:right', factory.createFocusRight());
 
-        commands.set('multi-select:select', factory.createColumnSelect());
-        commands.set('multi-select:all', factory.createColumnSelectAll());
-        commands.set('multi-select:empty', factory.createColumnSelectEmpty());
+        commands.set('markdown:table:multi-select:select', factory.createColumnSelect());
+        commands.set('markdown:table:multi-select:all', factory.createColumnSelectAll());
+        commands.set('markdown:table:multi-select:empty', factory.createColumnSelectEmpty());
 
-		commands.set('sort:number-asc', factory.createSortAsc());
-		commands.set('sort:number-desc', factory.createSortDesc());
-		commands.set('sort:text-asc', factory.createTextSortAsc());
-		commands.set('sort:text-desc', factory.createTextSortDesc());
-		commands.set('sort:text-asc-ignore', factory.createTextSortAscIgnore());
-        commands.set('sort:text-desc-ignore', factory.createTextSortDescIgnore());
+		commands.set('markdown:table:sort:number-asc', factory.createSortAsc());
+		commands.set('markdown:table:sort:number-desc', factory.createSortDesc());
+		commands.set('markdown:table:sort:text-asc', factory.createTextSortAsc());
+		commands.set('markdown:table:sort:text-desc', factory.createTextSortDesc());
+		commands.set('markdown:table:sort:text-asc-ignore', factory.createTextSortAscIgnore());
+        commands.set('markdown:table:sort:text-desc-ignore', factory.createTextSortDescIgnore());
 
 		commands.set('scroll', factory.createIndexScrollCommand());
 

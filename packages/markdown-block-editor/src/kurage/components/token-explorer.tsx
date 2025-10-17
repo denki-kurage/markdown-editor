@@ -1,12 +1,12 @@
 import { Marked, TokensList } from "marked";
 import { createContext, createRef, MutableRefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { addTokenPositions } from "marked-token-position";
-import { Button, TextControl } from "@wordpress/components";
+import { Button, SelectControl, TextControl } from "@wordpress/components";
 
 import './token-viewer.scss';
-import { MarkdownEditorSynchronizer } from "./parser/MarkdownEditorSynchronizer";
-import { IToken } from "./parser/IToken";
 import { useMarkdownTokenContext } from "../context/markdown-token-context";
+import { IToken, MarkdownParser } from "@mde/markdown-core";
+import { MarkdownEditorSynchronizer } from "./MarkdownEditorSynchronizer";
 
 const c = `
 # Hello World
@@ -53,6 +53,21 @@ aaa **bbb** ccc *ddd* eee
 
 `;
 
+
+const TokenTypes = new Map<string, string>([
+    ['', '選択無し'],
+    ['heading', 'ヘディング'],
+    ['table', 'テーブル'],
+    ['tableRow', 'テーブル行'],
+    ['tableCell', 'テーブルセル'],
+    ['paragraph', '段落'],
+    ['text', 'テキスト']
+])
+
+const TokenTypeOptions = [...TokenTypes.entries()].map(t => {
+    const [value, label] = t;
+    return ({ label, value })
+})
 
 const getEditorTypes = () =>
 {
@@ -102,11 +117,6 @@ const getSelectedTokens = (token: IToken, index: number) =>
     return matches;
 }
 
-const filteredTokenTree = (root: IToken) =>
-{
-    
-} 
-
 
 type TokenExplorerProps =
 {
@@ -114,68 +124,144 @@ type TokenExplorerProps =
     index: number;
 }
 
+type TokenSet = { token: IToken, children: TokenSet[] }
+type tokenFilterFunc = (current: IToken, predicate: (token: IToken) => boolean) => TokenSet | null;
+
+export const tokenFilter: tokenFilterFunc = (current, predicate) =>
+{
+    const matched = predicate(current);
+    const children = current.getChildren().map(c => tokenFilter(c, predicate)).filter(f => !!f)
+
+    if(children.length || matched)
+    {
+        return { token: current, children }
+    }
+
+    return null;
+}
+
+
+
+const TokenFilter = ({ tokenTypes, tokenTypesChanged }: any) =>
+{
+    return (
+        <>
+            <SelectControl
+                multiple
+                label="Token Types"
+                options={TokenTypeOptions}
+                value={tokenTypes}
+                onChange={tokenTypesChanged}
+                />
+        </>
+    )
+}
+
+const useAncestors = (token?: IToken) =>
+{
+    return useMemo(() => {
+        const tokens: IToken[] = [];
+        let current: IToken | undefined = token;
+
+        if(!current)
+        {
+            return tokens;
+        }
+
+        do
+        {
+            tokens.push(current);
+        }
+        while (current = current.getParent());
+
+        return tokens;
+    }, [token]);
+
+}
+
 export const TokenExplorer = ({ markdown, index }: TokenExplorerProps) =>
 {
-    const { selections, setSelections } = useMarkdownTokenContext();
-    const rootToken = useMemo(() => (new MarkdownEditorSynchronizer()).parseTokenTree(markdown), [markdown]);
-    
-    useEffect(() => {
-        const currentTokens = getSelectedTokens(rootToken, index);
-        const editableToken = getTargetToken(currentTokens);
-    }, [markdown, index, rootToken])
+    const { rootToken } = useMarkdownTokenContext();
+    const { singleToken } = useMarkdownTokenContext();
+    const [tokenTypes, setTokenTypes] = useState<string[]>([]);
+    const ancestors = useAncestors(singleToken);
+
+
+    const filteredToken = tokenFilter(rootToken, token => {
+        const type = token.getType();
+        return (!tokenTypes.length || tokenTypes[0] === '') ? true : tokenTypes.includes(type);
+    });
+
+    const r = filteredToken ? [filteredToken] : []
 
     return (
+        <>
+            <TokenFilter tokenTypes={tokenTypes} tokenTypesChanged={setTokenTypes} />
 
-        <div className="token-viewer">
-            <TokenTree tokens={[rootToken]} />
-        </div>
+            <div className="token-viewer">
+                <TokenTree tokens={r} depsTokens={ancestors} />
+            </div>
 
+            { singleToken && <TokenDeps token={singleToken} depsTokens={ancestors} /> }
+
+        </>
     );
 }
 export default TokenExplorer;
 
-
-
-
-const TokenTree = ({ tokens }) =>
+const TokenSelectButton = ({ token }: { token: IToken }) =>
 {
+    
+    const { setSelectionsAndToken: setSelections } = useMarkdownTokenContext();
+    const selectText = () =>
+    {
+        const pos = token.getPosition();
+        setSelections([[pos.start, pos.end]], token);
+    }
+
+    return (
+        <Button
+            variant="link"
+            onClick={selectText}>
+                {token.getType()}({token.getPosition().start}, {token.getPosition().end})
+        </Button>
+    )
+
+}
+const TokenDeps = ({ token, depsTokens }: { token: IToken, depsTokens: IToken[] }) =>
+{
+    
     return (
         <ul>
         {
-            tokens.map((token, i) => <TokenView token={token} key={i} />)
+            [...depsTokens].reverse().map((t, i) => (
+                <li key={i}>
+                    <TokenSelectButton token={t} />
+                </li>
+            ))
         }
         </ul>
     )
 }
 
-const hasAncestors = (token: IToken, ancestor: IToken | undefined) =>
+const TokenTree = ({ tokens, depsTokens }: { tokens: TokenSet[], depsTokens: IToken[] }) =>
 {
-    let p: IToken|undefined = token;
-
-    while(p = p.getParent())
-    {
-        if(p === ancestor)
+    return (
+        <ul>
         {
-            return true;
+            tokens.map((token, i) => <TokenView tokenSet={token} key={i} depsTokens={depsTokens} />)
         }
-    }
-
-    return false;
+        </ul>
+    )
 }
 
-const TokenView = ({ token }: { token: IToken }) =>
+const TokenView = ({ tokenSet, depsTokens }: { tokenSet: TokenSet, depsTokens: IToken[] }) =>
 {
-    const children = token.getChildren();
-    const { onSelectedToken, currentToken } = useMarkdownTokenContext();
-    const [isCurrent, isAncestors] = useMemo(() => {
-        return [currentToken === token, currentToken && hasAncestors(currentToken, token)]
-    }, [currentToken, token]);
+    const { token, children } = tokenSet;
     const targetRef = useRef<HTMLDivElement>(null);
-
-    const selectText = () =>
-    {
-        onSelectedToken(token)
-    }
+    const { singleToken } = useMarkdownTokenContext();
+    const isCurrent = singleToken === token;
+    const isAncestors = depsTokens.includes(token);
 
     useEffect(() => {
         if(isCurrent)
@@ -183,27 +269,23 @@ const TokenView = ({ token }: { token: IToken }) =>
             if(targetRef.current)
             {
                 targetRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
+            }            
         }
-    }, [isCurrent])
+
+    }, [singleToken])
 
     return (
         <li className={isCurrent ? 'token-explorer-current' : (isAncestors ? 'token-explorer-ancestor' : undefined)}>
             <div ref={targetRef}>
-                <Button variant="link" onClick={selectText}>{token.getType()}({token.getPosition().start}, {token.getPosition().end})</Button>
+                <TokenSelectButton token={token} />
             </div>
-            { children?.length !== 0 && <TokenTree tokens={children} /> }
+            { children?.length !== 0 && <TokenTree tokens={children} depsTokens={depsTokens} /> }
         </li>
     )
 }
 
 
 
-
-const countString = (str: string) =>
-{
-    return str.length;
-}
 
 
 

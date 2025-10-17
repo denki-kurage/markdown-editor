@@ -14,17 +14,16 @@ export const TokenInspectors = () =>
         <InspectorControls>
 
             <PanelBody title={__('Token Editor', 'mdtableeditor')}>
-                {/* <TokenEditor /> */}
+                <TokenEditor />
             </PanelBody>
 
             <PanelBody title={__('Token Explorer', 'mdtableeditor')}>
-                <p>Filter Token: [ Tables         ] [クリア]</p>
-                {/*
+                {
                 <TokenExplorer
                     markdown={markdown}
-                    index={index}
+                    index={0}
                     />
-                    */}
+                    }
             </PanelBody>
 
         </InspectorControls>

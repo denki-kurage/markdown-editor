@@ -1,6 +1,5 @@
 import { AppHelper } from "./AppHelper";
 import { DefaultFormatterContext } from "./DefaultFormatterContext";
-import { DefaultCommandItems } from "./DefaultCommandItems";
 import { AutoFormatter } from "./AutoFormatter";
 import { CacheUpdater } from "./CacheUpdater";
 import { DefaultCommandFactory } from "./DefaultCommandFactory";
@@ -9,6 +8,7 @@ import { TableCacheManager } from "./TableCacheManager";
 import { TableObserver } from "./TableObserver";
 import { MarkdownConfigurations } from "./configurations/MarkdownConfigurations";
 import { EventListeners } from "@mde/markdown-core";
+import { createDefaultCommandItem } from "./createDefaultCommandItem";
 export class MarkdownTable {
     editorContext;
     eventCollection;
@@ -21,12 +21,6 @@ export class MarkdownTable {
     tableUpdated = new EventListeners();
     currentTableChanged = new EventListeners();
     formatRequest = new EventListeners();
-    getCommandsMap() {
-        return this.commands;
-    }
-    getCommandNames() {
-        return DefaultCommandItems;
-    }
     getEnabledCommandNames() {
         return this.enableCommandNames;
     }
@@ -48,6 +42,9 @@ export class MarkdownTable {
         //setAppContext(this.editorContext);
         // TODO: 実験
         this.configuration.decorator.on();
+    }
+    getCommandsMap() {
+        return createDefaultCommandItem(this.commands, 'light');
     }
     registerRecievers(eventCollection, cache) {
         const formatterContext = this.createFormatterContext(this.editorContext);
@@ -95,8 +92,7 @@ export class MarkdownTable {
     createCommands(editorContext, cache) {
         const formatterContext = this.createFormatterContext(editorContext);
         const factory = new DefaultCommandFactory(editorContext, cache, formatterContext);
-        const commands = factory.createCommandFactries();
-        return commands;
+        return factory.createCommandFactries();
     }
     createFormatterContext(editorContext) {
         const mode = this.getFormatMode();

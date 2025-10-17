@@ -1,6 +1,5 @@
 import { AppHelper } from "./AppHelper";
 import { DefaultFormatterContext } from "./DefaultFormatterContext";
-import { DefaultCommandItems } from "./DefaultCommandItems";
 import { AutoFormatter } from "./AutoFormatter";
 import { CacheUpdater } from "./CacheUpdater";
 import { DefaultCommandFactory } from "./DefaultCommandFactory";
@@ -11,6 +10,7 @@ import { TableObserver } from "./TableObserver";
 import { MarkdownConfigurations } from "./configurations/MarkdownConfigurations";
 import { EventListeners, IAppContext, ICommand, ICommandItem, ICommandsMapRoot, IConfigureStorage, MarkdownEventCollection } from "@mde/markdown-core";
 import { MarkdownTableContent } from "./MarkdownTableContent";
+import { createDefaultCommandItem } from "./createDefaultCommandItem";
 
 export class MarkdownTable implements ICommandsMapRoot
 {
@@ -25,16 +25,6 @@ export class MarkdownTable implements ICommandsMapRoot
 	public readonly tableUpdated: EventListeners<MarkdownTableContent[]> = new EventListeners();
 	public readonly currentTableChanged: EventListeners<MarkdownTableContent | undefined> = new EventListeners();
 	public readonly formatRequest: EventListeners<void> = new EventListeners();
-
-	public getCommandsMap2(): Map<string, ICommand>
-	{
-		return this.commands;
-	}
-
-	public getCommandNames()
-	{
-		return DefaultCommandItems;
-	}
 
 	public getEnabledCommandNames()
 	{
@@ -73,9 +63,10 @@ export class MarkdownTable implements ICommandsMapRoot
 
 	public getCommandsMap(): ICommandItem
 	{
-		throw new Error("Method not implemented.");
+		return createDefaultCommandItem(this.commands, 'light');
 	}
- 
+
+	
 
 	public registerRecievers(eventCollection: MarkdownEventCollection, cache: TableCacheManager): void
 	{
@@ -141,8 +132,7 @@ export class MarkdownTable implements ICommandsMapRoot
 	{
 		const formatterContext = this.createFormatterContext(editorContext);
 		const factory = new DefaultCommandFactory(editorContext, cache, formatterContext);
-		const commands = factory.createCommandFactries();
-		return commands;
+		return factory.createCommandFactries();
 	}
 
 	protected createFormatterContext(editorContext: IAppContext): IFormatterContext

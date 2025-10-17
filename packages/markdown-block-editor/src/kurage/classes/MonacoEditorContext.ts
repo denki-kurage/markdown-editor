@@ -250,7 +250,8 @@ export class MonacoEditorContext implements IAppContext
             },
             setSelections: (selections) =>
             {
-                const newSelections = selections.map(s => {
+                const sl = selections.length ? selections : [{ sPos: { docIndex: 0, charIndex: 0 } }];
+                const newSelections = sl.map(s => {
                     const { docIndex: selectionStartLineNumber, charIndex: selectionStartColumn } = s.sPos;
                     const { docIndex: positionLineNumber, charIndex: positionColumn } = s.ePos ?? {...s.sPos};
                     return {
@@ -260,6 +261,7 @@ export class MonacoEditorContext implements IAppContext
                         positionColumn: positionColumn + 1
                     };
                 })
+
                 this.editor.setSelections(newSelections);
                 this.editor.focus();
             },
@@ -286,6 +288,7 @@ export class MonacoEditorContext implements IAppContext
                 });
 
                 this.model.applyEdits(edits);
+                this.editor.focus();
             },
             getText: (pos) =>
             {

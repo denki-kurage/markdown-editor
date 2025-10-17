@@ -7,6 +7,7 @@
 	"main": "build/index.js",
 	"scripts": {
 		"build": "wp-scripts build --blocks-manifest",
+		"build3": "wp-scripts build",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
@@ -15,9 +16,12 @@
 		"start": "wp-scripts start --blocks-manifest"
 	},
 	"devDependencies": {
+		"@types/wordpress__hooks": "^2.11.0",
 		"@wordpress/scripts": "^30.24.0"
 	},
 	"dependencies": {
-		"@mde/markdown-core-extensions": "file:../markdown-core-extensions"
+		"@mde/markdown-core": "file:../markdown-core",
+		"@mde/markdown-core-extensions": "file:../markdown-core-extensions",
+		"@wordpress/hooks": "^4.32.0"
 	}
 }

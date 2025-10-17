@@ -1,4 +1,4 @@
-export { CommandCategories, DefaultCommandItems, darkIconsMap, lightIconsMap } from "./DefaultCommandItems";
+export { createDefaultCommandItem } from "./createDefaultCommandItem";
 export { ExMarkdownCore } from "./ExMarkdownCore";
 export { MarkdownLineContent } from "./MarkdownLineContent";
 export { MarkdownLineParser } from "./MarkdownLineParser";

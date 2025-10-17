@@ -1,28 +1,44 @@
 import { Button, TextareaControl } from "@wordpress/components";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Table } from "./token-editor-forms/table";
 import { useMarkdownContext } from "../context/markdown-context";
 import { useMarkdownTokenContext } from "../context/markdown-token-context";
-import { IToken } from "./parser/IToken";
+import { IToken } from "@mde/markdown-core";
 
 
 export const TokenEditor = () =>
 {
-    const { markdown, markdownApp } = useMarkdownContext();
-    const { currentToken: token, onEdit } = useMarkdownTokenContext();
+    const { markdown } = useMarkdownContext();
+    const { singleToken, onEdits } = useMarkdownTokenContext();
+
+    if(!singleToken)
+    {
+        return null;
+    }
 
     // @ts-ignore
-    const pos = token?.position;
-    const [start, end] = pos ? [pos.start.offset, pos.end.offset] : [0, 0];
-    const tx = markdown.substring(start, end);
 
 
-    const form = (markdownApp && token) ? getEditForm({ token, text: tx, start, end, onEdit }) : null;
+    const { form, start, end } = useMemo(() =>
+        {
+            const { start, end } = singleToken.getPosition();
+            const text = markdown.substring(start, end);
+            const form = getEditForm({
+                token: singleToken,
+                text,
+                start,
+                end,
+                onEdit: (...p) => onEdits([[...p]])
+            });
+            return { start, end, form }
+        },
+        [singleToken]
+    );
 
 
     return (
         <div className="token-editor">
-            <p>{ token?.getType() }</p>
+            <p>{ singleToken?.getType() }</p>
             { form }
             <p>start: {start} end: {end}</p>
         </div>

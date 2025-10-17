@@ -41,7 +41,7 @@ export const CommandControl = ({ item }: { item: ICommandItem }) =>
 export const CommandToolbar = () =>
 {
 	const { markdownCore } = useAppContext();
-	const root = useMemo(() => markdownCore?.getCommandsMap(), [markdownCore]);
+	const root = useMemo(() => markdownCore.getCommandsMap(), [markdownCore]);
 	const children = root?.children ?? [];
 
 	if(!root)
@@ -64,7 +64,7 @@ export const CommandToolbar = () =>
 export const FlatCommandToolbar = () =>
 {
 	const { markdownCore } = useAppContext();
-	const root = useMemo(() => markdownCore?.getCommandsMap(), [markdownCore]);
+	const root = useMemo(() => markdownCore.getCommandsMap(), [markdownCore]);
 	const children = root?.children ?? [];
 
 	if(!root)

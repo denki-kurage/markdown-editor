@@ -5,7 +5,7 @@ export class BoldCommand extends MarkdownCommandBase<any>
     public execute(parameter?: any | undefined)
     {
         const selections = this.appContext.getEditorModel().getSelections();
-        console.log(selections);
+
         if(selections.length)
         {
             const replaceParams = selections.map(selection => {

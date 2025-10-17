@@ -9,5 +9,6 @@ cd ../../../markdown-core-extensions/node_modules/@mde
 ln -s ../../../markdown-core
 
 cd ../../../markdown-block-editor-extensions/node_modules/@mde
+ln -s ../../../markdown-core
 ln -s ../../../markdown-core-extensions
 

@@ -3,9 +3,9 @@ import { IFormatterContext } from "./IFormatterContext";
 import { MarkdownTableRenderMode } from "./MarkdownTableConverter";
 import { TableCacheManager } from "./TableCacheManager";
 import { MarkdownConfigurations } from "./configurations/MarkdownConfigurations";
-import { EventListeners, IAppContext, ICommand, ICommandsMap, IConfigureStorage, MarkdownEventCollection } from "@mde/markdown-core";
+import { EventListeners, IAppContext, ICommand, ICommandItem, ICommandsMapRoot, IConfigureStorage, MarkdownEventCollection } from "@mde/markdown-core";
 import { MarkdownTableContent } from "./MarkdownTableContent";
-export declare class MarkdownTable implements ICommandsMap {
+export declare class MarkdownTable implements ICommandsMapRoot {
     readonly editorContext: IAppContext;
     readonly eventCollection: MarkdownEventCollection;
     readonly storage: IConfigureStorage;
@@ -17,19 +17,9 @@ export declare class MarkdownTable implements ICommandsMap {
     readonly tableUpdated: EventListeners<MarkdownTableContent[]>;
     readonly currentTableChanged: EventListeners<MarkdownTableContent | undefined>;
     readonly formatRequest: EventListeners<void>;
-    getCommandsMap(): Map<string, ICommand>;
-    getCommandNames(): {
-        format: string[];
-        focus: string[];
-        align: string[];
-        insert: string[];
-        remove: string[];
-        move: string[];
-        'multi-select': string[];
-        sort: string[];
-    };
     getEnabledCommandNames(): string[];
     constructor(editorContext: IAppContext, eventCollection: MarkdownEventCollection, storage: IConfigureStorage);
+    getCommandsMap(): ICommandItem;
     registerRecievers(eventCollection: MarkdownEventCollection, cache: TableCacheManager): void;
     protected createSwitcher(eventCollection: MarkdownEventCollection, storage: IConfigureStorage, editorContext: IAppContext): MarkdownConfigurations;
     /**

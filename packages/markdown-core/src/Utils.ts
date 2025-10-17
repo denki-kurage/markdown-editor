@@ -11,6 +11,21 @@ export class Utils
         return { docIndex, charIndex };
     }
 
+    public static positionToIndex(str: string, pos: IDocumentPosition): number
+    {
+        const arr = str.split("\n");
+        let index = 0;
+
+        for(let i = 0; i < pos.docIndex && i < arr.length; i++)
+        {
+            index += arr[i].length + 1;
+        }
+
+        index += Math.min(pos.charIndex, arr[pos.docIndex]?.length ?? 0);
+
+        return index;
+    }
+
     public static IndexToSelection(str: string, start: number, end: number): ISelection
     {
         const sPos = this.indexToPosition(str, start);
