@@ -25,7 +25,7 @@ export type MarkdownTokenContextProps =
     /**
      * セレクションが一つの場合、start地点をインデックスとしてtokenを設定する。
      */
-    setSelectionsAndToken: (selections: [number, number][], singleToken?: IToken) => void;
+    setSelectionsAndToken: (selections: [number, number][] | null, singleToken?: IToken) => void;
 
 }
 
@@ -38,7 +38,7 @@ const findTokenByIndex = (token: IToken, index: number): IToken | undefined =>
 {
     const { start, end } = token.getPosition();
 
-    // 子孫を優先して探索
+    // 子孫を優先して探索, 逆順で探索することで、同じ位置にある場合に後ろのものを優先する
     for (const child of [...token.getChildren()].reverse())
     {
         const found = findTokenByIndex(child, index);
@@ -68,19 +68,35 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
     const rootToken = useMemo(() => (new MarkdownParser()).parseTokenTree(markdown), [markdown]);
 
     useEffect(() => {
+        console.log("markdown changed", markdown);
+    }, [markdown]);
+
+    /*
+    useEffect(() => {
+        console.log("rootToken changed", rootToken);
         const cursor = appContext.getEditorModel().getCursor();
         const index = cursor ? Utils.positionToIndex(markdown, cursor) : 0;
         const tokenByIndex = findTokenByIndex(rootToken, index);
         setCurrentToken(tokenByIndex);
         setSelections([]);
     }, [rootToken])
-
+    */
 
     useEffect(() => {
-        const s = selections.map(sl => Utils.IndexToSelection(markdown, ...sl))
-        const cmd = markdownCore.createCommandCollection().getCommand('markdown:select');
-        cmd?.command?.execute({ selections: s });
-    }, [selections.map(s => `${s[0]}-${s[1]}`).join(',')]);
+        console.log("singleToken changed", singleToken);
+    }, [singleToken]);
+
+    useEffect(() => {
+        console.log("selections changed", selections);
+    }, [selections]);
+
+    useEffect(() => {
+        console.log("markdownCore changed", markdownCore);
+    }, [markdownCore]);
+
+    useEffect(() => {
+        console.log("appContext changed", appContext);
+    }, [appContext]);
 
 
 
@@ -102,31 +118,51 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
                 }
             },
             setSingleToken: setCurrentToken,
-            setSelectionsAndToken: (s, singleToken) =>
+            setSelectionsAndToken: (selections, singleToken) =>
             {
+                let newSelections: [number, number][] = [];
+
+                // イベントから拾ったセレクションは現在のエディタのセレクションに同期させる
+                if(selections === null)
+                {
+                    newSelections = appContext.getEditorModel().getSelections()
+                    .map(sel => [Utils.positionToIndex(markdown, sel.sPos), Utils.positionToIndex(markdown, sel.ePos ?? sel.sPos)] as [number, number]);
+                }
+
+                // トークン変更からの場合は、コマンド実行したあとそのトークンの位置をセレクションに同期させる。
+                else
+                {
+                    if(selections.length === 1)
+                    {
+                        const s = selections.map(sl => Utils.IndexToSelection(markdown, ...sl))
+                        const cmd = markdownCore.createCommandCollection().getCommand('markdown:select');
+                        cmd?.command?.execute({ selections: s });
+                        newSelections = selections;
+                    }
+                }
+
                 if(singleToken)
                 {
                     setCurrentToken(singleToken);
                 }
-                else if(s.length === 1)
+                else
                 {
-                    const [start, end] = s[0];
-                    const tokenByIndex = findTokenByIndex(rootToken, start);
-                    setCurrentToken(tokenByIndex);
+                    if(newSelections.length === 1)
+                    {
+                        const [start, end] = newSelections[0];
+                        const tokenByIndex = findTokenByIndex(rootToken, start);
+                        setCurrentToken(tokenByIndex);
+                    }
                 }
 
-                setSelections(s);
+                setSelections(newSelections);
             }
         }
     }, [markdown, rootToken, selections, singleToken, markdownCore, appContext]);
     
     useEffect(() => {
         const ec = markdownCore.eventCollection.add({
-            selectChanged: () => {
-                const scs = appContext.getEditorModel().getSelections()
-                    .map(sel => [Utils.positionToIndex(markdown, sel.sPos), Utils.positionToIndex(markdown, sel.ePos ?? sel.sPos)] as [number, number]);
-                ctx.setSelectionsAndToken(scs);
-            }
+            selectChanged: () => ctx.setSelectionsAndToken(null),
         })
 
         return () => ec.dispose();

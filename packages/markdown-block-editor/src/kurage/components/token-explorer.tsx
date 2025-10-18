@@ -232,10 +232,10 @@ const TokenDeps = ({ token, depsTokens }: { token: IToken, depsTokens: IToken[] 
 {
     
     return (
-        <ul>
+        <ul className="token-deps">
         {
             [...depsTokens].reverse().map((t, i) => (
-                <li key={i}>
+                <li key={i} className={`left-${i}`}>
                     <TokenSelectButton token={t} />
                 </li>
             ))

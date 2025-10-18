@@ -18,6 +18,7 @@ import { EventUpdateManager, Utils } from '@mde/markdown-core';
 import { parseEditMarkdown } from './components/parser';
 import { CommandToolbar, FlatCommandToolbar } from './components/edit-toolbar';
 import { applyFilters, hasFilter } from '@wordpress/hooks';
+import { use } from 'marked';
 
 //import Prism from 'prismjs'
 
@@ -139,11 +140,12 @@ const ControlPanelInspector = () =>
 
 const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Window) => void }) =>
 {
-	const { markdownCore, appContext } = useAppContext();
-	const { setSelectionsAndToken } = useMarkdownTokenContext();
+	const tokenContext = useMarkdownTokenContext();
 	const frameRef = useRef(null);
 	const valueRef = useRef(value);
-	const eventRef = useRef(setSelectionsAndToken);
+	const eventRef = useRef(tokenContext);
+	const docRef = useRef<Document|undefined>(undefined);
+	const singleToken = tokenContext.singleToken;
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [updateManager, setUpdateManager] = useState<EventUpdateManager|undefined>(undefined);
@@ -163,8 +165,35 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 	}, [frameRef.current])
 
 	useEffect(() => {
-		eventRef.current = setSelectionsAndToken;
-	}, [setSelectionsAndToken]);
+		eventRef.current = tokenContext;
+	}, [tokenContext]);
+
+	// 選択トークンの位置までスクロールとハイライト
+	// 注意：テーブルセルを選択してもヒットしない場合がある。セル内のテキストノードにヒットしてしまうため、テーブルセル自体にはヒットしない。
+	useEffect(() => {
+		const pos = singleToken?.getPosition();
+		const qs = `[data-offset][data-offset-start="${pos?.start}"][data-offset-end="${pos?.end}"]`;
+		const dom = docRef.current?.querySelectorAll(qs ?? '');
+
+		if(dom && dom.length > 0)
+		{
+			dom[0].scrollIntoView({behavior: "smooth", block: "center"});
+			// 選択ハイライト
+			dom.forEach(d => d.classList.add('selected-token'));
+			// 前の選択をクリア
+			return () => {
+				dom.forEach(d => d.classList.remove('selected-token'));
+			}
+		}
+	}, [singleToken]);
+
+	// ビューが再レンダリングされると選択ハイライトが解除されてしまうため、isLoadingの際に再びsetSelectionsAndToken()で初期化する。
+	useEffect(() => {
+		if(!isLoading)
+		{
+			tokenContext.setSelectionsAndToken(null);
+		}
+	}, [isLoading])
 
 	useEffect(() => {
 		const updater = new EventUpdateManager(800);
@@ -179,6 +208,9 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 			// @ts-ignore
 			const doc = (iframe?.contentDocument ?? iframe?.contentWindow.document);
 
+			// docを更新
+			docRef.current = doc;
+
 			if(doc)
 			{
 				doc.body.innerHTML = html;
@@ -189,7 +221,7 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 					const end = parseInt(dom.getAttribute('data-offset-end') || '0');
 					const line = parseInt(dom.getAttribute('data-line-number') || '0');
 					e.stopPropagation();
-					eventRef.current([[start, end]]);
+					eventRef.current.setSelectionsAndToken([[start, end]]);
 				}));
 
 				// @ts-ignore
@@ -218,6 +250,20 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 
 					doc.head.innerHTML = scripts;
 					doc.head.appendChild(fragment);
+
+					// test
+					const style = doc.createElement('style');
+					style.textContent = `
+.markdown-content-style
+{
+    .selected-token
+    {
+        border: dotted 2px #ffcc00;
+        color: red!important;
+    }
+}
+	`;
+					doc.head.appendChild(style);
 				}
 
 			}

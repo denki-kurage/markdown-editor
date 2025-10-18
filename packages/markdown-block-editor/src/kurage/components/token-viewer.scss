@@ -53,3 +53,13 @@ $left: 1.2em;
     }
 
 }
+
+ul.token-deps
+{
+    li.left-0 { padding-left: $left * 0; }
+    li.left-1 { padding-left: $left * 1; }
+    li.left-2 { padding-left: $left * 2; }
+    li.left-3 { padding-left: $left * 3; }
+    li.left-4 { padding-left: $left * 4; }
+    li.left-5 { padding-left: $left * 5; }
+}

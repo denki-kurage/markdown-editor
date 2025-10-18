@@ -1,8 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { AppContextGenerateParams, useAppContext } from "../context/Markdown-app-context";
 import { MonacoEditor } from "./monaco-editor";
-import { useMarkdownTokenContext } from "../context/markdown-token-context";
-import { IToken } from "@mde/markdown-core";
 
 export const EditorGeneratorCollection: EditorGenerator[] = [];
 
@@ -42,27 +40,3 @@ export function useMarkdownEditorGenerator(name: string): EditorGenerator
 
 }
 
-
-const findTokenByIndex = (token: IToken, index: number): IToken | undefined =>
-{
-    const { start, end } = token.getPosition();
-
-    // 子孫を優先して探索
-    for (const child of token.getChildren())
-    {
-        const found = findTokenByIndex(child, index);
-
-        if (found)
-        {
-            return found;
-        }
-    }
-
-    // 子孫にヒットしなかった場合は自分自身を返す
-    if (start <= index && end > index)
-    {
-        return token;
-    }
-    
-    return undefined;
-}
