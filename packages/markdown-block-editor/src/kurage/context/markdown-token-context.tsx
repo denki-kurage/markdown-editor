@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useMarkdownContext } from "./markdown-context";
-import { useAppContext } from "./Markdown-app-context";
+import { useAppContext } from "./markdown-app-context";
 import { IReplaceText, IToken, MarkdownParser, Utils } from "@mde/markdown-core";
 
 
@@ -66,40 +66,6 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
     const [selections, setSelections] = useState<[number, number][]>([]);
     
     const rootToken = useMemo(() => (new MarkdownParser()).parseTokenTree(markdown), [markdown]);
-
-    useEffect(() => {
-        console.log("markdown changed", markdown);
-    }, [markdown]);
-
-    /*
-    useEffect(() => {
-        console.log("rootToken changed", rootToken);
-        const cursor = appContext.getEditorModel().getCursor();
-        const index = cursor ? Utils.positionToIndex(markdown, cursor) : 0;
-        const tokenByIndex = findTokenByIndex(rootToken, index);
-        setCurrentToken(tokenByIndex);
-        setSelections([]);
-    }, [rootToken])
-    */
-
-    useEffect(() => {
-        console.log("singleToken changed", singleToken);
-    }, [singleToken]);
-
-    useEffect(() => {
-        console.log("selections changed", selections);
-    }, [selections]);
-
-    useEffect(() => {
-        console.log("markdownCore changed", markdownCore);
-    }, [markdownCore]);
-
-    useEffect(() => {
-        console.log("appContext changed", appContext);
-    }, [appContext]);
-
-
-
 
     const ctx = useMemo<MarkdownTokenContextProps>(() => {
         return {

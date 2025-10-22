@@ -1,6 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 
 import './style.scss';
+//import './components/token-viewer.scss'
 
 import Edit from './edit';
 import save from './save';

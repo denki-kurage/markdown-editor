@@ -4,7 +4,6 @@ export class SelectCommand extends MarkdownCommandBase {
         const p = parameter?.selections;
         if (Array.isArray(p)) {
             this.appContext.getEditorModel().setSelections(p);
-            console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
             if (p.length) {
                 this.appContext.getEditorModel().scroll(p[0].sPos.docIndex);
             }

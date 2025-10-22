@@ -1,14 +1,15 @@
 import { BlockControls } from "@wordpress/block-editor";
-import { ToolbarButton, ToolbarDropdownMenu } from "@wordpress/components";
+import { ToolbarButton, ToolbarDropdownMenu, ToolbarGroup } from "@wordpress/components";
 import { ICommand, ICommandItem } from "@mde/markdown-core";
-import { useAppContext } from "../context/Markdown-app-context";
+import { useAppContext } from "../context/markdown-app-context";
 import { useMemo } from "react";
 //import { DefaultCommandItems, lightIconsMap } from "@mde/markdown-core-extensions";
 
 const toIcon = (item: ICommandItem) =>
 {
+	console.log(item)
 	const icon = item.icon;
-	return typeof icon === 'string' ? icon : (size: any) => <img width={16} height={size} src={icon} />
+	return (size: any) => <img width={16} height={size} src={icon} />
 }
 
 const toAction = (item: ICommandItem, p?: any) =>
@@ -34,37 +35,22 @@ export const CommandControl = ({ item }: { item: ICommandItem }) =>
 	const [cmd, canExecute] = toAction(item);
 	const icon = toIcon(item) as any;
 	return (
-		<ToolbarButton label={item.label} text={item.icon ? undefined : item.label} icon={icon} disabled={!canExecute} onClick={cmd} />
-	)
-}
-
-export const CommandToolbar = () =>
-{
-	const { markdownCore } = useAppContext();
-	const root = useMemo(() => markdownCore.getCommandsMap(), [markdownCore]);
-	const children = root?.children ?? [];
-
-	if(!root)
-	{
-		return <></>
-	}
-
-	return (
-		<BlockControls>
-			<ToolbarDropdownMenu
-				label={root.label}
-				text={root.icon ? undefined : root.label}
-				icon={root.icon ?? null}
-				controls={ children.map(toControl) }
+		<ToolbarButton
+			label=""
+			text=""
+			icon={icon}
+			disabled={!canExecute}
+			onClick={cmd}
 			/>
-		</BlockControls>
 	)
 }
 
-export const FlatCommandToolbar = () =>
+export type CommandToolbarProps =
 {
-	const { markdownCore } = useAppContext();
-	const root = useMemo(() => markdownCore.getCommandsMap(), [markdownCore]);
+	root: ICommandItem;
+}
+export const CommandToolbar = ({ root }: CommandToolbarProps) =>
+{
 	const children = root?.children ?? [];
 
 	if(!root)
@@ -73,9 +59,32 @@ export const FlatCommandToolbar = () =>
 	}
 
 	return (
-		<BlockControls>
+		<ToolbarDropdownMenu
+			label={root.label}
+			text={root.icon ? undefined : root.label}
+			icon={root.icon ?? null}
+			controls={ children.map(toControl) }
+		/>
+	)
+}
+
+export type FlatCommandToolbarProps =
+{
+	root: ICommandItem;
+}
+export const FlatCommandToolbar = ({ root }: FlatCommandToolbarProps) =>
+{
+	const children = root?.children ?? [];
+
+	if(!root)
+	{
+		return <></>
+	}
+
+	return (
+		<ToolbarGroup>
 			{ children.map(c => <CommandControl item={c} />)}
-		</BlockControls>
+		</ToolbarGroup>
 	)
 }
 

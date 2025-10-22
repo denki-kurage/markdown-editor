@@ -1,14 +1,29 @@
 import { PanelBody } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { TokenEditor } from "./token-editor";
-import TokenExplorer from "./token-explorer";
 import { useMarkdownContext } from "../context/markdown-context";
 import { InspectorControls } from "@wordpress/block-editor";
+import { applyFilters } from "@wordpress/hooks";
+import { useMemo } from "react";
+import { useMarkdownTokenContext } from "../context/markdown-token-context";
 
 
 export const TokenInspectors = () =>
 {
-    const { markdown } = useMarkdownContext();
+    const tokenContext = useMarkdownTokenContext();
+    const markdownContext = useMarkdownContext();
+    const panels = useMemo(() =>
+    {
+        const contexts = { tokenContext, markdownContext }
+        const components = applyFilters(
+            'extensionInspectorPanels',
+            []
+        ) as any[];
+        return components.map(Component => <Component {...contexts} />)
+    },
+    [tokenContext, markdownContext]) as JSX.Element[];
+
+    
 
     return (
         <InspectorControls>
@@ -17,14 +32,7 @@ export const TokenInspectors = () =>
                 <TokenEditor />
             </PanelBody>
 
-            <PanelBody title={__('Token Explorer', 'mdtableeditor')}>
-                {
-                <TokenExplorer
-                    markdown={markdown}
-                    index={0}
-                    />
-                    }
-            </PanelBody>
+            { panels[0] }
 
         </InspectorControls>
 

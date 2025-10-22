@@ -62,7 +62,7 @@ const appContext: IAppContext =
     returnKey: () => 'none'
 }
 
-const defaultAMarkdownCore = new MarkdownCore(appContext, new MarkdownConfigureStorage());
+const defaultMarkdownCore = new MarkdownCore(appContext, new MarkdownConfigureStorage());
 
 
 const Context = createContext<AppContextProps>(null as any);
@@ -71,7 +71,7 @@ export const useAppContext = () => useContext(Context);
 
 export const MarkdownAppContextWrapper = ({ children }: any) =>
 {
-    const [markdownCore, setMarkdownCore] = useState<MarkdownCore>(defaultAMarkdownCore);
+    const [markdownCore, setMarkdownCore] = useState<MarkdownCore>(defaultMarkdownCore);
 
     const configStorage = useMemo(() => new MarkdownConfigureStorage(), [])
     const generateAppContext = (params?: AppContextGenerateParams) =>
@@ -81,15 +81,16 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
             const { appContext } = params;
             const core = applyFilters(
                 'extensionAppContext',
+                new MarkdownCore(appContext, configStorage),
                 appContext,
                 configStorage
-            ) as any ?? new MarkdownCore(appContext, configStorage)
+            ) as any;
 
             setMarkdownCore(core);
         }
         else
         {
-            setMarkdownCore(defaultAMarkdownCore);
+            setMarkdownCore(defaultMarkdownCore);
         }
     }
 

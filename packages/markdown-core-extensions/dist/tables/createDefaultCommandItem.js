@@ -93,15 +93,19 @@ const maps = {
 const toCamelCase = (str) => {
     return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
 };
+const upCap = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
 export const createDefaultCommandItem = (commands, mode) => {
     const iconsMap = mode === 'light' ? lightIconsList : darkIconsList;
     const children = Object.keys(maps).map((group) => {
         const children = maps[group].map((name) => {
             const commandName = `markdown:table:${group}:${name}`;
+            const iconName = toCamelCase(group) + upCap(toCamelCase(name)) + (mode === 'light' ? 'Light' : 'Dark');
             return {
                 name: commandName,
                 label: `${group} ${name}`,
-                icon: iconsMap[toCamelCase(group) + toCamelCase(name) + (mode === 'light' ? 'Light' : 'Dark')],
+                icon: iconsMap[iconName],
                 command: commands.get(commandName)
             };
         });

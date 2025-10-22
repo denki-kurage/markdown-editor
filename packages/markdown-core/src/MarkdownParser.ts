@@ -4,6 +4,7 @@ import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm"
 import rehypeStringify from 'rehype-stringify'
 import remarkRehype from 'remark-rehype'
+import { visit } from "unist-util-visit";
 import { IToken } from "./IToken";
 
 
@@ -47,11 +48,42 @@ export class MarkdownParser
             }
         }
 
+        const addTextElement = () =>tree => {
+            
+            visit(tree, 'element', (node) => {
+                const { tagName } = node;
+                console.log(tagName)
+    
+                if(['td', 'th', 'li', 'strong', 'paragraph'].includes(tagName))
+                {
+                    for(const textNode of node?.children ?? [])
+                    {
+                        if(textNode.type === 'text')
+                        {
+                            Object.assign(textNode,
+                                {
+                                    type: 'element',
+                                    tagName: 'span',
+                                    //properties: { className: 'table-cell' },
+                                    children: [{ type: 'text', value: textNode.value }]
+                                }
+                            )
+                        }
+
+                        console.log("------------------")
+                        console.log(textNode)
+                    }
+
+                }
+            })
+        }
+
         return unified()
             .use(remarkParse)
             .use(remarkBreaks)
             .use(remarkGfm)
             .use(remarkRehype, { allowDangerousHtml: true })
+            .use(addTextElement)
             .use(rec)
             .use(rehypeStringify, { allowDangerousHtml: true })
             .processSync(markdown)

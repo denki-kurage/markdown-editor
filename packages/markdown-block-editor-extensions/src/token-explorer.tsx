@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Button, SelectControl } from "@wordpress/components";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { Button, PanelBody, SelectControl } from "@wordpress/components";
 
-import './token-viewer.scss';
-import { useMarkdownTokenContext } from "../context/markdown-token-context";
 import { IToken } from "@mde/markdown-core";
+import './token-viewer.scss';
+
+
 
 const c = `
 # Hello World
@@ -66,60 +67,6 @@ const TokenTypeOptions = [...TokenTypes.entries()].map(t => {
     return ({ label, value })
 })
 
-const getEditorTypes = () =>
-{
-    return ['heding', 'list', 'listItem', 'paragraph']
-}
-
-const getTargetToken = (tokens: IToken[]) =>
-{
-    const rev = [...tokens].reverse()
-    const types = getEditorTypes();
-
-    for(const current of rev)
-    {
-        if(types.includes(current.getType()))
-        {
-            return current;
-        }
-    }
-
-    return rev[0];
-}
-
-
-const getSelectedTokens = (token: IToken, index: number) =>
-{
-    let current: IToken | undefined;
-    let matches: IToken[] = [];
-
-    const stack = [token];
-    
-    while(current = stack.shift())
-    {
-        const p = current.getPosition();
-        const f = p.start <= index && p.end >= index;
-        const c = current.getChildren();
-
-        // 真になれば子以外のノードを除外。
-        if(f)
-        {
-            matches.push(current);
-            stack.splice(0);
-        }
-
-        stack.unshift(...c);
-    }
-
-    return matches;
-}
-
-
-type TokenExplorerProps =
-{
-    markdown: string;
-    index: number;
-}
 
 type TokenSet = { token: IToken, children: TokenSet[] }
 type tokenFilterFunc = (current: IToken, predicate: (token: IToken) => boolean) => TokenSet | null;
@@ -176,12 +123,27 @@ const useAncestors = (token?: IToken) =>
 
 }
 
-export const TokenExplorer = ({ markdown, index }: TokenExplorerProps) =>
+
+type TokenExplorerProps =
 {
-    const { rootToken } = useMarkdownTokenContext();
-    const { singleToken } = useMarkdownTokenContext();
+    tokenContext: any;
+}
+
+const Contexts = createContext<TokenExplorerProps>({} as any);
+const { Provider } = Contexts;
+const useContexts = () => useContext(Contexts);
+
+export const TokenExplorer = (contexts: TokenExplorerProps) =>
+{
+    console.log("#########################")
+    const { tokenContext } = contexts;
+    const { rootToken, singleToken } = tokenContext;
     const [tokenTypes, setTokenTypes] = useState<string[]>([]);
     const ancestors = useAncestors(singleToken);
+
+    console.log("=================================")
+    console.log(rootToken)
+    console.log(singleToken);
 
 
     const filteredToken = tokenFilter(rootToken, token => {
@@ -192,24 +154,25 @@ export const TokenExplorer = ({ markdown, index }: TokenExplorerProps) =>
     const r = filteredToken ? [filteredToken] : []
 
     return (
-        <>
-            <TokenFilter tokenTypes={tokenTypes} tokenTypesChanged={setTokenTypes} />
-            
-            <div className="token-viewer">
-                <TokenTree tokens={r} depsTokens={ancestors} />
-            </div>
+        <Provider value={contexts}>
+            <PanelBody title="Token Explorer">
+                <TokenFilter tokenTypes={tokenTypes} tokenTypesChanged={setTokenTypes} />
+                
+                <div className="token-viewer">
+                    <TokenTree tokens={r} depsTokens={ancestors} />
+                </div>
 
-            { singleToken && <TokenDeps token={singleToken} depsTokens={ancestors} /> }
-
-        </>
+                { singleToken && <TokenDeps token={singleToken} depsTokens={ancestors} /> }
+            </PanelBody>
+        </Provider>
     );
 }
 export default TokenExplorer;
 
 const TokenSelectButton = ({ token }: { token: IToken }) =>
 {
-    
-    const { setSelectionsAndToken: setSelections } = useMarkdownTokenContext();
+    const { tokenContext } = useContexts();
+    const { setSelectionsAndToken: setSelections } = tokenContext;
     const selectText = () =>
     {
         const pos = token.getPosition();
@@ -256,7 +219,8 @@ const TokenView = ({ tokenSet, depsTokens }: { tokenSet: TokenSet, depsTokens: I
 {
     const { token, children } = tokenSet;
     const targetRef = useRef<HTMLDivElement>(null);
-    const { singleToken } = useMarkdownTokenContext();
+    const { tokenContext } = useContexts();
+    const { singleToken } = tokenContext;
     const isCurrent = singleToken === token;
     const isAncestors = depsTokens.includes(token);
 

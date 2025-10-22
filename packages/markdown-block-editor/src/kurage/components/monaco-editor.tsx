@@ -5,7 +5,7 @@ import root from 'react-shadow';
 // @ts-ignore
 import css2 from './table.dscss';
 import { useMarkdownContext } from "../context/markdown-context";
-import { AppContextGenerateParams } from '../context/Markdown-app-context';
+import { AppContextGenerateParams } from '../context/markdown-app-context';
 import { MarkdownEditorProps } from './editor-wrapper';
 import { MonacoEditorContext } from '../classes/MonacoEditorContext';
 
@@ -80,7 +80,7 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
                     rel="stylesheet"
                     type="text/css"
                     data-name="vs/editor/editor.main"
-                    href="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/editor/editor.main.css"
+                    href="https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs/editor/editor.main.css"
                     />
 
 

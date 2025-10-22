@@ -13,13 +13,13 @@ import { MarkdownContextProviderWrapper, useMarkdownContext } from './context/ma
 import { useMarkdownEditorGenerator } from './components/editor-wrapper';
 import { useEditorInterlocking } from './useEditorInterlocking';
 import { MarkdownTokenContextProviderWrapper, useMarkdownTokenContext } from './context/markdown-token-context';
-import { MarkdownAppContextWrapper, useAppContext } from './context/Markdown-app-context';
-import { EventUpdateManager, Utils } from '@mde/markdown-core';
+import { MarkdownAppContextWrapper, useAppContext } from './context/markdown-app-context';
+import { EventUpdateManager, IToken } from '@mde/markdown-core';
 import { parseEditMarkdown } from './components/parser';
-import { CommandToolbar, FlatCommandToolbar } from './components/edit-toolbar';
-import { applyFilters, hasFilter } from '@wordpress/hooks';
-import { use } from 'marked';
-
+import { applyFilters, doAction } from '@wordpress/hooks';
+import { MarkdownEditorContextProviderWrapper, useMarkdownEditorContext } from './context/markdown-editor-context';
+import './components/token-viewer.scss'
+import { CommandsInspector } from './components/commands-inspector';
 //import Prism from 'prismjs'
 
 const str = `
@@ -33,51 +33,59 @@ const str = `
 
 type EditMode = "code"|"view"|"both";
 const standardizeReturnKey = (str: string) => str.replace(/\r\n|\n/g, "\n");
+
+
 export default ({ attributes, setAttributes }: any) =>
 {
 	return (
-		<div { ...useBlockProps() }>
-			<MarkdownContextProviderWrapper attributes={attributes} setAttributes={setAttributes} standardizeReturnKey={standardizeReturnKey}>
-				<MarkdownAppContextWrapper>
+		<MarkdownContextProviderWrapper attributes={attributes} setAttributes={setAttributes} standardizeReturnKey={standardizeReturnKey}>
+			<MarkdownAppContextWrapper>
+				<MarkdownEditorContextProviderWrapper>
 					<MarkdownTokenContextProviderWrapper>
-						<div className="wp-block-kurage-worker-md-table-editor-label">MdTableEditor with Block Editor</div>
-						<EditorPanel />
+						<InternalBlockEditor />
 					</MarkdownTokenContextProviderWrapper>
-				</MarkdownAppContextWrapper>
-			</MarkdownContextProviderWrapper>
-		</div>
-
+				</MarkdownEditorContextProviderWrapper>
+			</MarkdownAppContextWrapper>
+		</MarkdownContextProviderWrapper>
 	)
 }
+
+const InternalBlockEditor = () =>
+{
+	const { maximized } = useMarkdownEditorContext();
+  	const className = maximized ? 'block-editor-maximizer' : '';
+	return (
+		<div { ...useBlockProps({ className }) }>
+			<div className="wp-block-kurage-worker-md-table-editor-label">MdTableEditor with Block Editor</div>
+			<EditorPanel />
+		</div>
+	)
+}
+
 const EditorPanel = () =>
 {
 	const { editHeight, setAttributes } = useMarkdownContext();
-	const { markdownCore } = useAppContext();
 
 	return (
 		<>
-
 			<ControlPanelInspector />
 
-
 			<AppToolbars />
-{/* 
-			<CommandToolbar />
-			<FlatCommandToolbar />
- */}
  
 			<MainEditor editorName="monaco" />
 
+			<CommandsInspector />
+			
 			<TokenInspectors />
 			
 			<InspectorControls>
+
 				<BasicInspectors 
 					editHeight={editHeight}
 					onEditHeightChanged={editHeight => setAttributes({editHeight: editHeight || null})}
 				/>
+
 			</InspectorControls>
-			
-		
 		</>
 	)
 }
@@ -93,11 +101,12 @@ const MainEditor = ({ editorName }: any) =>
 	useEffect(() => {
 		if(win)
 		{
-			const d = useEditorInterlocking(appContext, win);
-			return () => d.dispose();
+			const { dispose, editReveal, viewScroll } = useEditorInterlocking(appContext, win);
+			return () => dispose();
 		}
 	}, [appContext, win]);
 
+	
 	const isBoth = viewMode === 'both';
 	const both = { width: "50%" };
 	const full = { width: "100%" };
@@ -117,12 +126,15 @@ const MainEditor = ({ editorName }: any) =>
 }
 
 const ControlPanelInspector = () =>
-{	
+{
+	const { maximized, toggleMaximized } = useMarkdownEditorContext();
+
 	const { viewMode, setAttributes } = useMarkdownContext();
 	const onPanelChange = (viewMode: EditMode) =>
 	{
 		setAttributes({viewMode});
 	}
+
 
 	return (
 		<InspectorControls>
@@ -132,6 +144,10 @@ const ControlPanelInspector = () =>
 					<Button variant="primary" disabled={viewMode === "view"} onClick={() => onPanelChange("view")}>{ __('View', 'mdtableeditor') }</Button>
 					<Button variant="primary" disabled={viewMode === "both"} onClick={() => onPanelChange("both")}>{ __('Both', 'mdtableeditor') }</Button>
 				</div>
+
+				<Button variant="primary" onClick={toggleMaximized}>
+					{ maximized ? '元に戻す' : '最大化' }
+				</Button>
 			</PanelBody>
 		</InspectorControls>
 	)
@@ -143,7 +159,7 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 	const tokenContext = useMarkdownTokenContext();
 	const frameRef = useRef(null);
 	const valueRef = useRef(value);
-	const eventRef = useRef(tokenContext);
+	const tokenContextRef = useRef(tokenContext);
 	const docRef = useRef<Document|undefined>(undefined);
 	const singleToken = tokenContext.singleToken;
 
@@ -165,26 +181,27 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 	}, [frameRef.current])
 
 	useEffect(() => {
-		eventRef.current = tokenContext;
+		tokenContextRef.current = tokenContext;
 	}, [tokenContext]);
 
 	// 選択トークンの位置までスクロールとハイライト
 	// 注意：テーブルセルを選択してもヒットしない場合がある。セル内のテキストノードにヒットしてしまうため、テーブルセル自体にはヒットしない。
 	useEffect(() => {
-		const pos = singleToken?.getPosition();
-		const qs = `[data-offset][data-offset-start="${pos?.start}"][data-offset-end="${pos?.end}"]`;
-		const dom = docRef.current?.querySelectorAll(qs ?? '');
-
-		if(dom && dom.length > 0)
+		if(!docRef.current || !singleToken)
 		{
-			dom[0].scrollIntoView({behavior: "smooth", block: "center"});
-			// 選択ハイライト
-			dom.forEach(d => d.classList.add('selected-token'));
-			// 前の選択をクリア
-			return () => {
-				dom.forEach(d => d.classList.remove('selected-token'));
-			}
+			return;
 		}
+		const execute = applyFilters(
+			'extensionSingleTokenChanged',
+			(token: IToken, doc: Document) => () => {}
+		) as any;
+
+		const dispose = execute(singleToken, docRef.current);
+
+		return () => dispose();
+
+
+
 	}, [singleToken]);
 
 	// ビューが再レンダリングされると選択ハイライトが解除されてしまうため、isLoadingの際に再びsetSelectionsAndToken()で初期化する。
@@ -215,14 +232,7 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 			{
 				doc.body.innerHTML = html;
 
-				// クリックイベントで選択範囲をエディタに反映
-				doc.querySelectorAll('[data-offset]').forEach((dom: HTMLElement) => dom.addEventListener('click', e => {
-					const start = parseInt(dom.getAttribute('data-offset-start') || '0');
-					const end = parseInt(dom.getAttribute('data-offset-end') || '0');
-					const line = parseInt(dom.getAttribute('data-line-number') || '0');
-					e.stopPropagation();
-					eventRef.current.setSelectionsAndToken([[start, end]]);
-				}));
+				doAction('extensionDomChanged', doc, value, () => tokenContextRef.current);
 
 				// @ts-ignore
 				window.Prism.highlightAllUnder(doc);
@@ -251,19 +261,8 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 					doc.head.innerHTML = scripts;
 					doc.head.appendChild(fragment);
 
-					// test
-					const style = doc.createElement('style');
-					style.textContent = `
-.markdown-content-style
-{
-    .selected-token
-    {
-        border: dotted 2px #ffcc00;
-        color: red!important;
-    }
-}
-	`;
-					doc.head.appendChild(style);
+					doAction('extensionHeaderInitalize', doc);
+
 				}
 
 			}
@@ -313,10 +312,12 @@ const Loading = ({isLoading}: any) =>
 
 const SplitPanel = ({children, height}: any) =>
 {
+	const { maximized } = useMarkdownEditorContext();
+
     // @ts-ignore
     const post: any = useSelect(select => select(editorStore).getCurrentPost(), []);
 
-	const style = { height: height ?? post?.md_table_editor_height ?? undefined };
+	const style = { height: maximized ? '100%' : height ?? post?.md_table_editor_height ?? '500px' };
 
 	return (
 		<div className="md-table-editor split-panel" style={style}>

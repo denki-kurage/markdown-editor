@@ -29,12 +29,7 @@
 		"@wordpress/notices": "^5.21.0",
 		"marked": "^16.1.1",
 		"marked-token-position": "^1.0.0",
-		"react-shadow": "^20.6.0",
-		"rehype-stringify": "^10.0.1",
-		"remark-gfm": "^4.0.1",
-		"remark-parse": "^11.0.0",
-		"remark-rehype": "^11.1.2",
-		"unified": "^11.0.5"
+		"react-shadow": "^20.6.0"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.18",
