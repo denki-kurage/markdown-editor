@@ -4,7 +4,7 @@ import { MoveCommandBase } from "./CommandBaseClasses";
 import { MovableArray } from "@mde/markdown-core";
 export class MoveColumnCommand extends MoveCommandBase {
     canExecuteOverride(cellInfo, parameter) {
-        return !cellInfo.row.isFirstOrLast(cellInfo.cell) && !!this.getTargetHeaderCell(cellInfo);
+        return !cellInfo.row.isFirstOrLast(cellInfo.cell) && !!this.getTargetHeaderCell(cellInfo, parameter);
     }
     /**
      * |A|B|C|   .1
@@ -24,7 +24,7 @@ export class MoveColumnCommand extends MoveCommandBase {
      * @param parameter
      */
     executeOverride(cellInfo, parameter, focus) {
-        const targetHeaderPos = this.getTargetHeaderCell(cellInfo);
+        const targetHeaderPos = this.getTargetHeaderCell(cellInfo, parameter);
         const itemColumnIndex = cellInfo.columnIndex;
         const targetColumnIndex = targetHeaderPos.columnIndex;
         for (const row of cellInfo.table) {
@@ -36,16 +36,16 @@ export class MoveColumnCommand extends MoveCommandBase {
                 CellInfoHelper.fillCells(row, fillIndex, () => new TableCell(''));
             }
             // 移動させます。
-            const ba = this.getInsertLine(this.isBefore);
+            const ba = this.getInsertLine(parameter);
             const movable = new MovableArray(row.cells);
             movable.move(targetColumnIndex, [itemColumnIndex], ba);
         }
         focus.format();
         focus.setFocusedCellInfo(cellInfo.newCellInfo()?.getForcus());
     }
-    getTargetHeaderCell(cellInfo) {
+    getTargetHeaderCell(cellInfo, parameter) {
         const cellPos = cellInfo.tablePosition;
-        const targetHeaderPos = cellPos.newAdded(this.getMoveColumnDirection(this.isBefore)).newRowIndex(-2);
+        const targetHeaderPos = cellPos.newAdded(this.getMoveColumnDirection(parameter)).newRowIndex(-2);
         return cellInfo.getCellFromAbsolute(targetHeaderPos);
     }
 }

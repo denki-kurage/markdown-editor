@@ -52,7 +52,6 @@ export class MarkdownParser
             
             visit(tree, 'element', (node) => {
                 const { tagName } = node;
-                console.log(tagName)
     
                 if(['td', 'th', 'li', 'strong', 'paragraph'].includes(tagName))
                 {
@@ -70,8 +69,6 @@ export class MarkdownParser
                             )
                         }
 
-                        console.log("------------------")
-                        console.log(textNode)
                     }
 
                 }

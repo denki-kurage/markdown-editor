@@ -1,15 +1,14 @@
 import { Button, TextareaControl } from "@wordpress/components";
 import { useEffect, useMemo, useState } from "react";
 import { Table } from "./token-editor-forms/table";
-import { useMarkdownContext } from "../context/markdown-context";
-import { useMarkdownTokenContext } from "../context/markdown-token-context";
 import { IToken } from "@mde/markdown-core";
 
 
-export const TokenEditor = () =>
+export const TokenEditor = ({ contexts }: any) =>
 {
-    const { markdown } = useMarkdownContext();
-    const { singleToken, onEdits } = useMarkdownTokenContext();
+    const { tokenContext, markdownContext } = contexts;
+    const { markdown } = markdownContext;
+    const { singleToken, onEdits } = tokenContext;
 
     if(!singleToken)
     {

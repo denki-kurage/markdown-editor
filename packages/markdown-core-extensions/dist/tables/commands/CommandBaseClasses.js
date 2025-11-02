@@ -4,17 +4,13 @@
  */
 import { TableCellCommandBase } from "./TableCellCommandBase";
 export class MoveCommandBase extends TableCellCommandBase {
-    isBefore;
     constructor(commandContext, isBefore) {
-        super(commandContext);
-        this.isBefore = isBefore;
+        super(commandContext, isBefore);
     }
 }
 export class InsertCommandBase extends TableCellCommandBase {
-    isBefore;
     constructor(commandContext, isBefore) {
-        super(commandContext);
-        this.isBefore = isBefore;
+        super(commandContext, isBefore);
     }
 }
 export class RemoveCommandBase extends TableCellCommandBase {
@@ -23,10 +19,8 @@ export class RemoveCommandBase extends TableCellCommandBase {
     }
 }
 export class ChangeAlignmentCommandBase extends TableCellCommandBase {
-    align;
     constructor(commandContext, align) {
-        super(commandContext);
-        this.align = align;
+        super(commandContext, align);
     }
 }
 export class FormatCommandBase extends TableCellCommandBase {
@@ -35,17 +29,13 @@ export class FormatCommandBase extends TableCellCommandBase {
     }
 }
 export class FocusCommandBase extends TableCellCommandBase {
-    direction;
     constructor(commandContext, direction) {
-        super(commandContext);
-        this.direction = direction;
+        super(commandContext, direction);
     }
 }
 export class SortCommandBase extends TableCellCommandBase {
-    isAsc;
     constructor(commandContext, isAsc) {
-        super(commandContext);
-        this.isAsc = isAsc;
+        super(commandContext, isAsc);
     }
 }
 export class TextSortCommandBase extends TableCellCommandBase {

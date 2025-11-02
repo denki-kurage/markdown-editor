@@ -12,24 +12,24 @@ import { ICommandContext } from "../ICommandContext";
 
 
 
-export abstract class MoveCommandBase extends TableCellCommandBase<number>
+export abstract class MoveCommandBase extends TableCellCommandBase<boolean>
 {
-	public constructor(commandContext: ICommandContext, public readonly isBefore: boolean)
+	public constructor(commandContext: ICommandContext, isBefore: boolean)
 	{
-		super(commandContext)
+		super(commandContext, isBefore)
 	}
 }
 
 
-export abstract class InsertCommandBase extends TableCellCommandBase<number>
+export abstract class InsertCommandBase extends TableCellCommandBase<boolean>
 {
-	public constructor(commandContext: ICommandContext, public readonly isBefore: boolean)
+	public constructor(commandContext: ICommandContext, isBefore: boolean)
 	{
-		super(commandContext);
+		super(commandContext, isBefore);
 	}
 }
 
-export abstract class RemoveCommandBase extends TableCellCommandBase<number>
+export abstract class RemoveCommandBase extends TableCellCommandBase<void>
 {
 	public constructor(commandContext: ICommandContext)
 	{
@@ -37,11 +37,11 @@ export abstract class RemoveCommandBase extends TableCellCommandBase<number>
 	}
 }
 
-export abstract class ChangeAlignmentCommandBase extends TableCellCommandBase<void>
+export abstract class ChangeAlignmentCommandBase extends TableCellCommandBase<MarkdownAlignments>
 {
-	public constructor(commandContext: ICommandContext, public readonly align: MarkdownAlignments)
+	public constructor(commandContext: ICommandContext, align: MarkdownAlignments)
 	{
-		super(commandContext);
+		super(commandContext, align);
 	}
 }
 
@@ -53,20 +53,20 @@ export abstract class FormatCommandBase extends TableCellCommandBase<void>
 	}
 }
 
-export abstract class FocusCommandBase extends TableCellCommandBase<void>
+export abstract class FocusCommandBase extends TableCellCommandBase<Direction>
 {
-	public constructor(commandContext: ICommandContext, public readonly direction: Direction)
+	public constructor(commandContext: ICommandContext, direction: Direction)
 	{
-		super(commandContext);
+		super(commandContext, direction);
 	}
 }
 
 
-export abstract class SortCommandBase extends TableCellCommandBase<void>
+export abstract class SortCommandBase extends TableCellCommandBase<boolean>
 {
-	public constructor(commandContext: ICommandContext, public readonly isAsc: boolean)
+	public constructor(commandContext: ICommandContext, isAsc: boolean)
 	{
-		super(commandContext);
+		super(commandContext, isAsc);
 	}
 }
 

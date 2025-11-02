@@ -44,7 +44,7 @@ export class MarkdownTable {
         this.configuration.decorator.on();
     }
     getCommandsMap() {
-        return createDefaultCommandItem(this.commands, 'light');
+        return createDefaultCommandItem(this, this.commands, 'light');
     }
     registerRecievers(eventCollection, cache) {
         const formatterContext = this.createFormatterContext(this.editorContext);

@@ -7,14 +7,19 @@ import { __ } from "@wordpress/i18n";
 import { useAppContext } from "../context/markdown-app-context";
 import { CommandToolbar } from "./edit-toolbar";
 import { useMarkdownEditorContext } from "../context/markdown-editor-context";
+import { useMarkdownTokenContext } from "../context/markdown-token-context";
 
 const AppToolbars = () =>
 {
     const [imageOpen, setImageOpen] = useState(false);
     const [linkOpen, setLinkOpen] = useState(false);
 
+
+    const { selections } = useMarkdownTokenContext();
+    
+
     const { markdownCore, appContext } = useAppContext();
-    const { commands } = useMarkdownEditorContext();
+    const { commandItems } = useMarkdownEditorContext();
     const commandCollection = markdownCore?.createCommandCollection();
 
     return (
@@ -36,7 +41,7 @@ const AppToolbars = () =>
             </ToolbarButtonModal>
 
             {
-                !!commands.length && <BlockControls>{ commands.map(command => <CommandToolbar root={command} />) }</BlockControls>
+                !!commandItems.length && <BlockControls>{ commandItems.map(ci => <CommandToolbar root={ci} />) }</BlockControls>
             }
             
 

@@ -6,17 +6,17 @@ import { IFormattableParameter } from "@mde/markdown-core";
 
 export class FocusCommand extends FocusCommandBase
 {
-	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: void): boolean
+	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: Direction): boolean
 	{
 		// TODO: メニューバーとの問題がありどうするか検討中。
-		const nextCellInfo = this.getNextCellInfo(cellInfo);
+		const nextCellInfo = this.getNextCellInfo(cellInfo, parameter);
 
 		return !cellInfo.isOuterSide && !!nextCellInfo;
 	}
 
-	protected executeOverride(cellInfo: TableCellInfo, parameter: void, focus: IFormattableParameter): void
+	protected executeOverride(cellInfo: TableCellInfo, parameter: Direction, focus: IFormattableParameter): void
 	{
-		let targetCellInfo = this.getNextCellInfo(cellInfo);
+		let targetCellInfo = this.getNextCellInfo(cellInfo, parameter);
 		if(targetCellInfo)
 		{
 			targetCellInfo = targetCellInfo.newCellInfo(0);
@@ -25,7 +25,7 @@ export class FocusCommand extends FocusCommandBase
 		}
 	}
 
-	private getNextCellInfo(cellInfo: TableCellInfo): TableCellInfo | undefined
+	private getNextCellInfo(cellInfo: TableCellInfo, parameter: Direction): TableCellInfo | undefined
 	{
 		const colIndex = cellInfo.columnIndex; // firstCell or lastCell is -1
 		const rowIndex = cellInfo.rowIndex;
@@ -33,7 +33,7 @@ export class FocusCommand extends FocusCommandBase
 		let currentCell: TableCellInfo | undefined = cellInfo;
 
 		// 左移動(ワープ)
-		if(this.direction === Direction.Left)
+		if(parameter === Direction.Left)
 		{
 			if(colIndex > 0)
 			{
@@ -46,7 +46,7 @@ export class FocusCommand extends FocusCommandBase
 		}
 
 		// 右移動(ワープ)
-		if(this.direction === Direction.Right)
+		if(parameter === Direction.Right)
 		{
 			const lastColIndex = cellInfo.rowCellsLength - 1 || 0;
 
@@ -60,12 +60,12 @@ export class FocusCommand extends FocusCommandBase
 		}
 
 
-		if(this.direction === Direction.Top)
+		if(parameter === Direction.Top)
 		{
 			return currentCell.getCellFromRelative(new TablePosition(rowIndex === 0 ? -2 : -1, 0));
 		}
 
-		if(this.direction === Direction.Bottom)
+		if(parameter === Direction.Bottom)
 		{
 			return currentCell.getCellFromRelative(new TablePosition(rowIndex === -2 ? 2 : 1, 0));
 		}

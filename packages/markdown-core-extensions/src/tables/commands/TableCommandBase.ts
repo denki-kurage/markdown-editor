@@ -9,7 +9,9 @@ export abstract class TableCommandBase<T> extends CommandBaseGeneric<T>
 	protected readonly appContext: IAppContext;
 	protected readonly appHelper: AppHelper;
 
-	public constructor(protected readonly commandContext: ICommandContext)
+	public constructor(
+		protected readonly commandContext: ICommandContext,
+		protected readonly sealValue?: T)
 	{
 		super();
 		this.appContext = commandContext.appContext;
@@ -23,7 +25,7 @@ export abstract class TableCommandBase<T> extends CommandBaseGeneric<T>
 	 */
 	protected convert(parameter: any): T | undefined
 	{
-		return parameter as T;
+		return parameter as T ?? this.sealValue;
 	}
 	
 

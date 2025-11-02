@@ -23,7 +23,6 @@ export abstract class CommandBaseGeneric<T> extends CommandBase
 	protected abstract executeGeneric(parameter: T | undefined): void;
 	protected abstract canExecuteGeneric(parameter: T | undefined): boolean;
 
-
 	public execute(parameter?: any): void
 	{
 		const p = this.convert(parameter);

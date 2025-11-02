@@ -246,7 +246,7 @@ export class DefaultCommandFactory
 		commands.set('markdown:table:focus:bottom', factory.createFocusBottom());
         commands.set('markdown:table:focus:right', factory.createFocusRight());
 
-        commands.set('markdown:table:multi-select:select', factory.createColumnSelect());
+        commands.set('markdown:table:multi-select:nonempty', factory.createColumnSelect());
         commands.set('markdown:table:multi-select:all', factory.createColumnSelectAll());
         commands.set('markdown:table:multi-select:empty', factory.createColumnSelectEmpty());
 

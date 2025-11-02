@@ -6,14 +6,14 @@ import { SortCommandBase } from "./CommandBaseClasses";
 export class SortCommand extends SortCommandBase
 {
 
-	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: void): boolean
+	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: boolean): boolean
 	{
 		return true;
 	}
 
-	protected executeOverride(cellInfo: TableCellInfo, parameter: void, focus: IFormattableParameter): void
+	protected executeOverride(cellInfo: TableCellInfo, parameter: boolean, focus: IFormattableParameter): void
 	{
-		this.sortNumber(cellInfo, this.isAsc);
+		this.sortNumber(cellInfo, parameter);
 		focus.format();
 		const f = cellInfo.newCellInfo()?.getForcus()
 		focus.setFocusedCellInfo(f);

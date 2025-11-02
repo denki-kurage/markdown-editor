@@ -112,6 +112,7 @@ addFilter(
 );
 
 
+// return [commands: ICommandItem, enabledCommandNames: () => string[]]
 addFilter(
 	'extensionCommandItemRoot',
 	'kurage/markdown-block-editor',
@@ -119,9 +120,8 @@ addFilter(
 	{
 		if(markdownCore instanceof ExMarkdownCore)
 		{
-			console.log("wwwwwwwwwwwwwwwwwwwwwwww")
 			const maps = markdownCore.table.getCommandsMap().children ?? [];
-			commandItems.push(...maps);
+			commandItems.push(...maps)
 		}
 
 		return commandItems;

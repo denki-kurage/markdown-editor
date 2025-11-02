@@ -4,12 +4,12 @@ import { RemoveCommandBase } from "./CommandBaseClasses";
 
 export class RemoveRowCommand extends RemoveCommandBase
 {
-	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: number): boolean
+	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: void): boolean
 	{
 		return this.getInfo(cellInfo) !== undefined;
 	}
 
-	protected executeOverride(cellInfo: TableCellInfo, parameter: number, focus: IFormattableParameter): void
+	protected executeOverride(cellInfo: TableCellInfo, parameter: void, focus: IFormattableParameter): void
 	{
 		const removeRowIndex = this.getInfo(cellInfo) as number;
 		cellInfo.table.rows.splice(removeRowIndex, 1);

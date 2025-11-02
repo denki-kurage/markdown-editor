@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import './editor.scss';
@@ -20,6 +20,7 @@ import { applyFilters, doAction } from '@wordpress/hooks';
 import { MarkdownEditorContextProviderWrapper, useMarkdownEditorContext } from './context/markdown-editor-context';
 import './components/token-viewer.scss'
 import { CommandsInspector } from './components/commands-inspector';
+import { Loading } from './components/loading';
 //import Prism from 'prismjs'
 
 const str = `
@@ -119,7 +120,7 @@ const MainEditor = ({ editorName }: any) =>
 				<EditorComponent initializedMarkdownCore={updateAppContext} />
 			</Panel>
 			<Panel style={styles[1]}>
-				<MarkdownViewer value={markdown} setWindow={setWin} />
+				<MarkdownViewer markdown={markdown} setWindow={setWin} />
 			</Panel>
 		</SplitPanel>
 	)
@@ -154,24 +155,69 @@ const ControlPanelInspector = () =>
 }
 
 
-const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Window) => void }) =>
+const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWindow: (win: Window) => void }) =>
 {
 	const tokenContext = useMarkdownTokenContext();
-	const frameRef = useRef(null);
-	const valueRef = useRef(value);
-	const tokenContextRef = useRef(tokenContext);
-	const docRef = useRef<Document|undefined>(undefined);
-	const singleToken = tokenContext.singleToken;
+	const { singleToken } = tokenContext;
+	const { isEditing, setIsEditing } = useMarkdownContext();
 
-	const [isLoading, setIsLoading] = useState(false);
+	const frameRef = useRef(null);
+	const docRef = useRef<Document|undefined>(undefined);
+
 	const [updateManager, setUpdateManager] = useState<EventUpdateManager|undefined>(undefined);
 
 
+	const renderHtmlRef = useRef<any>(null);
+	renderHtmlRef.current = useCallback(() => {
+			const parsedCode = parseEditMarkdown(markdown, true);
+			const html = `<div class="markdown-content-style">${parsedCode}</div>`;
+
+			const iframe = frameRef.current;
+			// @ts-ignore
+			const doc = (iframe?.contentDocument ?? iframe?.contentWindow.document);
+
+			// docを更新
+			docRef.current = doc;
+
+			if(doc)
+			{
+				doc.body.innerHTML = html;
+
+				doAction('extensionDomChanged', doc, markdown, () => tokenContext);
+
+				// @ts-ignore
+				window.Prism.highlightAllUnder(doc);
+
+				// 
+				if(!doc.head.hasChildNodes())
+				{
+					const createLink = (link: string) =>
+					{
+						const elm = document.createElement("link");
+						Object.entries({ rel: 'stylesheet', type: "text/css", href: link }).map(p => elm.setAttribute(...p))
+						return elm;
+					}
+					const fragment = doc.createDocumentFragment();
+					const metas = [...window.document.querySelectorAll('meta[property="is-markdown-content-style"], meta[content^=http]')];
+					// @ts-ignore
+					metas.map(meta => fragment.appendChild(createLink(meta.content)));
+
+					doc.head.appendChild(fragment);
+
+					doAction('extensionHeaderInitalize', doc);
+				}
+
+			}
+			
+			setIsEditing(false);
+
+
+	}, [markdown, tokenContext, setIsEditing]);
+
 	useEffect(() => {
-		valueRef.current = value;
 		updateManager?.lazyUpdate();
-		setIsLoading(true);
-	}, [value]);
+		setIsEditing(true);
+	}, [markdown]);
 
 	useEffect(() => {
 		// @ts-ignore
@@ -180,12 +226,8 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 
 	}, [frameRef.current])
 
-	useEffect(() => {
-		tokenContextRef.current = tokenContext;
-	}, [tokenContext]);
 
 	// 選択トークンの位置までスクロールとハイライト
-	// 注意：テーブルセルを選択してもヒットしない場合がある。セル内のテキストノードにヒットしてしまうため、テーブルセル自体にはヒットしない。
 	useEffect(() => {
 		if(!docRef.current || !singleToken)
 		{
@@ -204,70 +246,12 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 
 	}, [singleToken]);
 
-	// ビューが再レンダリングされると選択ハイライトが解除されてしまうため、isLoadingの際に再びsetSelectionsAndToken()で初期化する。
-	useEffect(() => {
-		if(!isLoading)
-		{
-			tokenContext.setSelectionsAndToken(null);
-		}
-	}, [isLoading])
 
 	useEffect(() => {
-		const updater = new EventUpdateManager(800);
+		const updater = new EventUpdateManager(5000);
 		updater.updated.push(() =>
 		{
-
-			const value = valueRef.current;
-			const parsedCode = parseEditMarkdown(value, true);
-			const html = `<div class="markdown-content-style">${parsedCode}</div>`;
-
-			const iframe = frameRef.current;
-			// @ts-ignore
-			const doc = (iframe?.contentDocument ?? iframe?.contentWindow.document);
-
-			// docを更新
-			docRef.current = doc;
-
-			if(doc)
-			{
-				doc.body.innerHTML = html;
-
-				doAction('extensionDomChanged', doc, value, () => tokenContextRef.current);
-
-				// @ts-ignore
-				window.Prism.highlightAllUnder(doc);
-
-				// 
-				if(!doc.head.hasChildNodes())
-				{
-					const scripts = [
-					//'<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />',
-					//'<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />',
-					//'<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>',
-					//'<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>'
-					].join("\n");
-					
-					const createLink = (link: string) =>
-					{
-						const elm = document.createElement("link");
-						Object.entries({ rel: 'stylesheet', type: "text/css", href: link }).map(p => elm.setAttribute(...p))
-						return elm;
-					}
-					const fragment = doc.createDocumentFragment();
-					const metas = [...window.document.querySelectorAll('meta[property="is-markdown-content-style"], meta[content^=http]')];
-					// @ts-ignore
-					metas.map(meta => fragment.appendChild(createLink(meta.content)));
-
-					doc.head.innerHTML = scripts;
-					doc.head.appendChild(fragment);
-
-					doAction('extensionHeaderInitalize', doc);
-
-				}
-
-			}
-
-			setIsLoading(false);
+			renderHtmlRef.current();
 		});
 
 		updater.lazyUpdate();
@@ -281,31 +265,8 @@ const MarkdownViewer = ({value, setWindow}: { value: string, setWindow: (win: Wi
 	return (
 		<div>
 			<iframe className='width-panel' ref={frameRef}></iframe>
-			<Loading isLoading={isLoading} />
+			<Loading isLoading={isEditing} />
 		</div>
-	)
-}
-
-const Loading = ({isLoading}: any) =>
-{
-	const style: any = {
-		position: 'absolute',
-		top: 0,
-		width: "100%",
-		height: "100%",
-	};
-
-	return (
-		<>
-			{ isLoading &&
-				<>
-				<div style={{...style, opacity: 0.5, backgroundColor: "white"}}></div>
-				<div style={{...style, alignContent: "center", textAlign: "center"}}>
-					<Spinner style={{width: 100, height: 100}} />
-				</div>
-				</>
-			}
-		</>
 	)
 }
 

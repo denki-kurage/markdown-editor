@@ -67,7 +67,7 @@ export class AutoFormatter implements Partial<IMarkdownEvents>
 		{
 			const helper = new AppHelper(this.appContext);
 
-			// しまった、ここでテーブルの構造に変化が加わるので、
+			// ここでテーブルの構造に変化が加わるので、
 			const fmt = helper.formatAndRender(table, this.getFormatterContext()); // 改行コードなし
 			const doc = helper.getDocumentText(table.range); // 改行コードあり
 			

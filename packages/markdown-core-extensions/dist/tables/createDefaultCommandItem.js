@@ -1,5 +1,5 @@
 import formatFillCellsLight from '../../resources/icons/format/light/fill-cells.svg';
-import formatButifulLight from '../../resources/icons/format/light/beautiful.svg';
+import formatBeautifulLight from '../../resources/icons/format/light/beautiful.svg';
 //import formatNaturalLight from '../../resources/icons/format/light/natural.svg';
 //import formatDeleteCommentLight from '../../resources/icons/format/light/delete-comment.svg';
 import focusLeftLight from '../../resources/icons/focus/light/left.svg';
@@ -19,17 +19,17 @@ import moveLeftLight from '../../resources/icons/move/light/left.svg';
 import moveTopLight from '../../resources/icons/move/light/top.svg';
 import moveBottomLight from '../../resources/icons/move/light/bottom.svg';
 import moveRightLight from '../../resources/icons/move/light/right.svg';
-import multiSelectLight from '../../resources/icons/multi-select/light/select.svg';
+import multiSelectNonemptyLight from '../../resources/icons/multi-select/light/select.svg';
 import multiSelectAllLight from '../../resources/icons/multi-select/light/all.svg';
 import multiSelectEmptyLight from '../../resources/icons/multi-select/light/empty.svg';
-import numberSortAscLight from '../../resources/icons/sort/light/number-asc.svg';
-import numberSortDescLight from '../../resources/icons/sort/light/number-desc.svg';
-import textSortAscLight from '../../resources/icons/sort/light/text-asc.svg';
-import textSortDescLight from '../../resources/icons/sort/light/text-desc.svg';
-import textSortAscIgnoreLight from '../../resources/icons/sort/light/text-asc-ignore.svg';
-import textSortDescIgnoreLight from '../../resources/icons/sort/light/text-desc-ignore.svg';
+import sortNumberAscLight from '../../resources/icons/sort/light/number-asc.svg';
+import sortNumberDescLight from '../../resources/icons/sort/light/number-desc.svg';
+import sortTextAscLight from '../../resources/icons/sort/light/text-asc.svg';
+import sortTextDescLight from '../../resources/icons/sort/light/text-desc.svg';
+import sortTextAscIgnoreLight from '../../resources/icons/sort/light/text-asc-ignore.svg';
+import sortTextDescIgnoreLight from '../../resources/icons/sort/light/text-desc-ignore.svg';
 import formatFillCellsDark from '../../resources/icons/format/dark/fill-cells.svg';
-import formatButifulDark from '../../resources/icons/format/dark/beautiful.svg';
+import formatBeautifulDark from '../../resources/icons/format/dark/beautiful.svg';
 //import formatNaturalDark from '../../resources/icons/format/dark/natural.svg';
 //import formatDeleteCommentDark from '../../resources/icons/format/dark/delete-comment.svg';
 import focusLeftDark from '../../resources/icons/focus/dark/left.svg';
@@ -49,45 +49,45 @@ import moveLeftDark from '../../resources/icons/move/dark/left.svg';
 import moveTopDark from '../../resources/icons/move/dark/top.svg';
 import moveBottomDark from '../../resources/icons/move/dark/bottom.svg';
 import moveRightDark from '../../resources/icons/move/dark/right.svg';
-import multiSelectDark from '../../resources/icons/multi-select/dark/select.svg';
+import multiSelectNonemptyDark from '../../resources/icons/multi-select/dark/select.svg';
 import multiSelectAllDark from '../../resources/icons/multi-select/dark/all.svg';
 import multiSelectEmptyDark from '../../resources/icons/multi-select/dark/empty.svg';
-import numberSortAscDark from '../../resources/icons/sort/dark/number-asc.svg';
-import numberSortDescDark from '../../resources/icons/sort/dark/number-desc.svg';
-import textSortAscDark from '../../resources/icons/sort/dark/text-asc.svg';
-import textSortDescDark from '../../resources/icons/sort/dark/text-desc.svg';
-import textSortAscIgnoreDark from '../../resources/icons/sort/dark/text-asc-ignore.svg';
-import textSortDescIgnoreDark from '../../resources/icons/sort/dark/text-desc-ignore.svg';
+import sortNumberAscDark from '../../resources/icons/sort/dark/number-asc.svg';
+import sortNumberDescDark from '../../resources/icons/sort/dark/number-desc.svg';
+import sortTextAscDark from '../../resources/icons/sort/dark/text-asc.svg';
+import sortTextDescDark from '../../resources/icons/sort/dark/text-desc.svg';
+import sortTextAscIgnoreDark from '../../resources/icons/sort/dark/text-asc-ignore.svg';
+import sortTextDescIgnoreDark from '../../resources/icons/sort/dark/text-desc-ignore.svg';
 const lightIconsList = {
-    formatFillCellsLight, formatButifulLight, /* formatNaturalLight, formatDeleteCommentLight, */
+    formatFillCellsLight, formatBeautifulLight, /* formatNaturalLight, formatDeleteCommentLight, */
     focusLeftLight, focusTopLight, focusBottomLight, focusRightLight,
     alignLeftLight, alignCenterLight, alignRightLight,
     insertLeftLight, insertTopLight, insertBottomLight, insertRightLight,
     removeColumnLight, removeRowLight,
     moveLeftLight, moveTopLight, moveBottomLight, moveRightLight,
-    multiSelectLight, multiSelectAllLight, multiSelectEmptyLight,
-    numberSortAscLight, numberSortDescLight,
-    textSortAscLight, textSortDescLight, textSortAscIgnoreLight, textSortDescIgnoreLight
+    multiSelectNonemptyLight, multiSelectAllLight, multiSelectEmptyLight,
+    sortNumberAscLight, sortNumberDescLight,
+    sortTextAscLight, sortTextDescLight, sortTextAscIgnoreLight, sortTextDescIgnoreLight
 };
 const darkIconsList = {
-    formatFillCellsDark, formatButifulDark, /* formatNaturalDark, formatDeleteCommentDark, */
+    formatFillCellsDark, formatBeautifulDark, /* formatNaturalDark, formatDeleteCommentDark, */
     focusLeftDark, focusTopDark, focusBottomDark, focusRightDark,
     alignLeftDark, alignCenterDark, alignRightDark,
     insertLeftDark, insertTopDark, insertBottomDark, insertRightDark,
     removeColumnDark, removeRowDark,
     moveLeftDark, moveTopDark, moveBottomDark, moveRightDark,
-    multiSelectDark, multiSelectAllDark, multiSelectEmptyDark,
-    numberSortAscDark, numberSortDescDark,
-    textSortAscDark, textSortDescDark, textSortAscIgnoreDark, textSortDescIgnoreDark
+    multiSelectNonemptyDark, multiSelectAllDark, multiSelectEmptyDark,
+    sortNumberAscDark, sortNumberDescDark,
+    sortTextAscDark, sortTextDescDark, sortTextAscIgnoreDark, sortTextDescIgnoreDark
 };
 const maps = {
-    'format': ['fill-cells', 'beautiful', 'natural', 'delete-comment'],
+    'format': ['fill-cells', 'beautiful', /* 'natural', 'delete-comment' */],
     'focus': ['left', 'top', 'bottom', 'right'],
     'align': ['left', 'center', 'right'],
     'insert': ['left', 'top', 'bottom', 'right'],
     'remove': ['column', 'row'],
     'move': ['left', 'top', 'bottom', 'right'],
-    'multi-select': ['select', 'all', 'empty'],
+    'multi-select': ['nonempty', 'all', 'empty'],
     'sort': ['number-asc', 'number-desc', 'text-asc', 'text-desc', 'text-asc-ignore', 'text-desc-ignore']
 };
 const toCamelCase = (str) => {
@@ -96,23 +96,25 @@ const toCamelCase = (str) => {
 const upCap = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
-export const createDefaultCommandItem = (commands, mode) => {
+export const createDefaultCommandItem = (table, commands, mode) => {
     const iconsMap = mode === 'light' ? lightIconsList : darkIconsList;
     const children = Object.keys(maps).map((group) => {
         const children = maps[group].map((name) => {
             const commandName = `markdown:table:${group}:${name}`;
             const iconName = toCamelCase(group) + upCap(toCamelCase(name)) + (mode === 'light' ? 'Light' : 'Dark');
+            const cmd = commands.get(commandName);
             return {
                 name: commandName,
                 label: `${group} ${name}`,
                 icon: iconsMap[iconName],
-                command: commands.get(commandName)
+                // 直接 canExecute()を呼び出さず、キャッシュされたフラグから判断する。
+                command: { ...cmd, cmd, execute: p => cmd.execute(), canExecute: p => table.getEnabledCommandNames().includes(commandName) }
             };
         });
         return {
             name: group,
             label: group,
-            icon: '',
+            icon: (Math.random() < 0.5) ? insertBottomLight : moveBottomDark,
             command: undefined,
             children: children
         };

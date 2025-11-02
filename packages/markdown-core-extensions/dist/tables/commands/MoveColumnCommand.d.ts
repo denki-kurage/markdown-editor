@@ -2,7 +2,7 @@ import { TableCellInfo } from "../MarkdownTableContent";
 import { MoveCommandBase } from "./CommandBaseClasses";
 import { IFormattableParameter } from "@mde/markdown-core";
 export declare class MoveColumnCommand extends MoveCommandBase {
-    protected canExecuteOverride(cellInfo: TableCellInfo, parameter: number): boolean;
+    protected canExecuteOverride(cellInfo: TableCellInfo, parameter: boolean): boolean;
     /**
      * |A|B|C|   .1
      * |A|B|     .2
@@ -20,7 +20,7 @@ export declare class MoveColumnCommand extends MoveCommandBase {
      * @param cellInfo
      * @param parameter
      */
-    protected executeOverride(cellInfo: TableCellInfo, parameter: number, focus: IFormattableParameter): void;
+    protected executeOverride(cellInfo: TableCellInfo, parameter: boolean, focus: IFormattableParameter): void;
     private getTargetHeaderCell;
 }
 //# sourceMappingURL=MoveColumnCommand.d.ts.map

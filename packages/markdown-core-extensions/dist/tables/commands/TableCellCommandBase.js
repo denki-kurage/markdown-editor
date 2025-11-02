@@ -2,7 +2,7 @@ import { TableCellInfo, TableCell, TablePositionDirections } from "../MarkdownTa
 import { MarkdownTableRenderMode } from "../MarkdownTableConverter";
 import { TablePosition } from "../TablePosition";
 import { TableCommandBase } from "./TableCommandBase";
-import { TextReplacer } from "@mde/markdown-core";
+import { MarkdownRange, TextReplacer } from "@mde/markdown-core";
 class FormattableParameter {
     table;
     context;
@@ -33,7 +33,8 @@ class FormattableParameter {
         if (this._formatted) {
             const table = this.table;
             const txt = this.context.tableConverter.fromTable(table);
-            this.replacer.replaceLines([{ area: table.range, text: txt }]);
+            const area = new MarkdownRange(table.range.begin, table.range.end - 1);
+            this.replacer.replaceLines([{ area, text: txt }]);
         }
         if (this.focus.length) {
             this.replacer.select(this.focus);
@@ -47,9 +48,11 @@ class FormattableParameter {
  */
 export class TableCellCommandBase extends TableCommandBase {
     commandContext;
-    constructor(commandContext) {
-        super(commandContext);
+    sealValue;
+    constructor(commandContext, sealValue) {
+        super(commandContext, sealValue);
         this.commandContext = commandContext;
+        this.sealValue = sealValue;
     }
     getCellInfo() {
         const pos = this.appContext.getEditorModel().getCursor();

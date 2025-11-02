@@ -7,15 +7,15 @@ import { IFormattableParameter } from "@mde/markdown-core";
 
 export class InsertRowCommand extends InsertCommandBase
 {
-	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: number): boolean
+	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: boolean): boolean
 	{
 		return true;
 	}
 
-	protected executeOverride(cellInfo: TableCellInfo, parameter: number, focus: IFormattableParameter): void
+	protected executeOverride(cellInfo: TableCellInfo, parameter: boolean, focus: IFormattableParameter): void
 	{
 		const table = cellInfo.table;
-		const insertRowIndex = cellInfo.tablePosition.newAdded(this.getInsertRowDirection(this.isBefore)).rowIndex;
+		const insertRowIndex = cellInfo.tablePosition.newAdded(this.getInsertRowDirection(parameter)).rowIndex;
 		const insertRow = CellInfoHelper.createRow(MarkdownTableRows, table.columnLength, () => new TableCell(''));
 		table.rows.splice(insertRowIndex, 0, insertRow);
 

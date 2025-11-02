@@ -6,7 +6,7 @@ export class ChangeAlignmentCommand extends ChangeAlignmentCommandBase {
     executeOverride(cellInfo, parameter, focus) {
         const ac = this.getAlignmentCell(cellInfo);
         if (ac) {
-            ac.updateAlign(this.align);
+            ac.updateAlign(parameter);
             const rp = cellInfo.relativeCursorInnerPosition;
             focus.format();
             const f = cellInfo.newCellInfo(rp)?.getForcus();

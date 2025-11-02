@@ -1,27 +1,41 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useMarkdownContext } from "./markdown-context";
 import { useAppContext } from "./markdown-app-context";
-import { IReplaceText, IToken, MarkdownParser, Utils } from "@mde/markdown-core";
+import { IAppContext, IReplaceText, IToken, MarkdownCore, MarkdownParser, Utils } from "@mde/markdown-core";
 
+
+export type TokenStates =
+{
+
+    /**
+     * エディタレベルでの選択範囲。
+     */
+    selections: [number, number][] | null;
+
+    rootToken: IToken;
+
+    /**
+     * 単一の選択されたトークン。
+     */
+    singleToken?: IToken;
+}
 
 
 export type MarkdownTokenContextProps =
 {
     onEdits: (edits: [string, number, number][]) => void;
 
-    rootToken: IToken;
-    
-    /**
-     * 単一の選択されたトークン。
-     */
-    singleToken: IToken | undefined;
-
-
     /**
      * エディタレベルでの選択範囲。
      */
-    selections: [number, number][];
+    selections: [number, number][] | null;
 
+    rootToken: IToken;
+
+    /**
+     * 単一の選択されたトークン。
+     */
+    singleToken?: IToken;
     /**
      * セレクションが一つの場合、start地点をインデックスとしてtokenを設定する。
      */
@@ -58,20 +72,139 @@ const findTokenByIndex = (token: IToken, index: number): IToken | undefined =>
     return undefined;
 }
 
+const getRootTokenBy = (token: IToken) =>
+{
+    let parent: IToken|undefined = token;
+    let current: IToken|undefined = token;
+    do
+    {
+        parent = current;
+    }
+    while(current = current.getParent());
+
+    return parent;
+}
+
+const selectionsAndTokenAction = (
+    markdownCore: MarkdownCore,
+    markdown: string,
+    rootToken: IToken,
+    selections: [number, number][] | null,
+    singleToken?: IToken) => {
+
+    let newSelections: [number, number][] = [];
+    let newSingleToken: IToken|undefined;
+
+    // イベントから拾ったセレクションは現在のエディタのセレクションに同期させる
+    if(selections === null)
+    {
+        newSelections = markdownCore.appContext.getEditorModel().getSelections()
+        .map(sel => [Utils.positionToIndex(markdown, sel.sPos), Utils.positionToIndex(markdown, sel.ePos ?? sel.sPos)] as [number, number]);
+    }
+
+    // トークン変更からの場合は、コマンド実行したあとそのトークンの位置をセレクションに同期させる。
+    else
+    {
+        if(selections.length === 1)
+        {
+            const s = selections.map(sl => Utils.IndexToSelection(markdown, ...sl))
+            const cmd = markdownCore.createCommandCollection().getCommand('markdown:select');
+            cmd?.command?.execute({ selections: s });
+            newSelections = selections;
+        }
+    }
+
+    if(singleToken)
+    {
+        newSingleToken = singleToken;
+    }
+    else
+    {
+        if(newSelections.length === 1)
+        {
+            const [start, end] = newSelections[0];
+            const tokenByIndex = findTokenByIndex(rootToken, start);
+            newSingleToken = tokenByIndex;
+        }
+    }
+
+    return { newSelections, newSingleToken };
+}
+
+type ContextPropertyRef =
+{
+    isEditing: boolean;
+    markdown: string;
+    markdownCore: MarkdownCore;
+    tokenStates: TokenStates;
+}
+
 export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
 {
-    const { markdown } = useMarkdownContext();
+    const { markdown, isEditing } = useMarkdownContext();
     const { markdownCore, appContext } = useAppContext();
-    const [singleToken, setCurrentToken] = useState<IToken|undefined>(undefined);
-    const [selections, setSelections] = useState<[number, number][]>([]);
     
-    const rootToken = useMemo(() => (new MarkdownParser()).parseTokenTree(markdown), [markdown]);
+    const [tokenStates, setTokenStates] = useState<TokenStates>({
+        rootToken: new MarkdownParser().parseTokenTree(markdown),
+        selections: [],
+        singleToken: undefined
+    });
+
+    const contextPropertyRef = useRef<ContextPropertyRef>(null as any);
+    contextPropertyRef.current =
+    {
+        markdown,
+        isEditing,
+        markdownCore,
+        tokenStates
+    };
+
+
+    const updateTokenStatesRef = useRef<any>(null);
+    updateTokenStatesRef.current = (states: Partial<TokenStates>) =>
+    {
+        let s = tokenStates;
+        const { rootToken, selections, singleToken } = states;
+
+        if(selections) s = { ...s, selections }
+        if(singleToken) s = { ...s, singleToken }
+        if(rootToken) s = { ...s, rootToken }
+
+        if(s !== tokenStates)
+        {
+            console.log("wwwwwwwwwwwwwwwwwwwwwwwwwww update states wwwwwwwwwwwwwwwwwwwwwwwww")
+            console.log(s)
+            setTokenStates(s);
+            return s;
+        }
+
+        return tokenStates;
+    }
+
+    console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+    console.log("::::::::::::::::::::::: Token Context ReRender :::::::::::::::::::::")
+    
+
+    const setRootToken = useCallback(() => {
+        console.log(" >>>>>>>>>>>>>> RootChanged()")
+        const { markdown, markdownCore } = contextPropertyRef.current;
+        const rootToken = new MarkdownParser().parseTokenTree(markdown);
+        const { newSelections, newSingleToken } = selectionsAndTokenAction(markdownCore, markdown, rootToken, null);
+        updateTokenStatesRef.current({ rootToken, selections: newSelections, singleToken: newSingleToken });
+    }, [])
+
+
+    const setSelectionsAndToken = useCallback((selections: [number, number][] | null, singleToken?: IToken) => {
+        console.log(" >> >> >> >> >> >> >> Context Selection and Token Changed()")
+        const { markdown, markdownCore, tokenStates } = contextPropertyRef.current;
+        const { newSelections, newSingleToken } = selectionsAndTokenAction(markdownCore, markdown, tokenStates.rootToken, selections, singleToken);
+        updateTokenStatesRef.current({ selections: newSelections, singleToken: newSingleToken});
+    }, []);
 
     const ctx = useMemo<MarkdownTokenContextProps>(() => {
+        console.log("■■■■")
         return {
-            rootToken,
-            singleToken,
-            selections,
+            ...tokenStates,
             onEdits: (edits: [string, number, number][]) => {
                 const s = edits.map<IReplaceText>(e => {
                     const [text, start, end] = e;
@@ -83,56 +216,36 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
                     appContext.getEditorModel().replaces(s);
                 }
             },
-            setSingleToken: setCurrentToken,
-            setSelectionsAndToken: (selections, singleToken) =>
-            {
-                let newSelections: [number, number][] = [];
-
-                // イベントから拾ったセレクションは現在のエディタのセレクションに同期させる
-                if(selections === null)
-                {
-                    newSelections = appContext.getEditorModel().getSelections()
-                    .map(sel => [Utils.positionToIndex(markdown, sel.sPos), Utils.positionToIndex(markdown, sel.ePos ?? sel.sPos)] as [number, number]);
-                }
-
-                // トークン変更からの場合は、コマンド実行したあとそのトークンの位置をセレクションに同期させる。
-                else
-                {
-                    if(selections.length === 1)
-                    {
-                        const s = selections.map(sl => Utils.IndexToSelection(markdown, ...sl))
-                        const cmd = markdownCore.createCommandCollection().getCommand('markdown:select');
-                        cmd?.command?.execute({ selections: s });
-                        newSelections = selections;
-                    }
-                }
-
-                if(singleToken)
-                {
-                    setCurrentToken(singleToken);
-                }
-                else
-                {
-                    if(newSelections.length === 1)
-                    {
-                        const [start, end] = newSelections[0];
-                        const tokenByIndex = findTokenByIndex(rootToken, start);
-                        setCurrentToken(tokenByIndex);
-                    }
-                }
-
-                setSelections(newSelections);
-            }
+            setSelectionsAndToken
         }
-    }, [markdown, rootToken, selections, singleToken, markdownCore, appContext]);
+    }, [tokenStates]);
+
+    useEffect(() => console.log("-------------------------> context changed <--------------------------"), [tokenStates])
     
     useEffect(() => {
+        if(!isEditing)
+        {
+            setRootToken()
+        }
+    }, [isEditing])
+
+    console.log(contextPropertyRef.current.tokenStates.selections)
+
+    useEffect(() => {
         const ec = markdownCore.eventCollection.add({
-            selectChanged: () => ctx.setSelectionsAndToken(null),
+            selectChanged: () => {
+                if(!isEditing)
+                {
+                    console.log(" >>>>>>>>>>>>>> SelectChanged()");
+                    ctx.setSelectionsAndToken(null);
+                }
+            }
         })
 
         return () => ec.dispose();
-    }, [markdown, appContext, markdownCore, ctx]);
+    }, [ctx]);
+
+    useEffect(() => console.log("ROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOT CHANGE"), [ctx.rootToken])
 
     return (
         <MarkdownTokenContextProvider value={ctx}>

@@ -37,7 +37,6 @@ export class MarkdownParser {
         const addTextElement = () => tree => {
             visit(tree, 'element', (node) => {
                 const { tagName } = node;
-                console.log(tagName);
                 if (['td', 'th', 'li', 'strong', 'paragraph'].includes(tagName)) {
                     for (const textNode of node?.children ?? []) {
                         if (textNode.type === 'text') {
@@ -48,8 +47,6 @@ export class MarkdownParser {
                                 children: [{ type: 'text', value: textNode.value }]
                             });
                         }
-                        console.log("------------------");
-                        console.log(textNode);
                     }
                 }
             });

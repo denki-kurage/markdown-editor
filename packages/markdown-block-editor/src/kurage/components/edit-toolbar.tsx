@@ -1,49 +1,16 @@
-import { BlockControls } from "@wordpress/block-editor";
 import { ToolbarButton, ToolbarDropdownMenu, ToolbarGroup } from "@wordpress/components";
-import { ICommand, ICommandItem } from "@mde/markdown-core";
-import { useAppContext } from "../context/markdown-app-context";
-import { useMemo } from "react";
+import { ICommandItem } from "@mde/markdown-core";
+import { useCallback, useEffect, useMemo } from "react";
+import { useMarkdownTokenContext } from "../context/markdown-token-context";
+
 //import { DefaultCommandItems, lightIconsMap } from "@mde/markdown-core-extensions";
 
 const toIcon = (item: ICommandItem) =>
 {
-	console.log(item)
 	const icon = item.icon;
 	return (size: any) => <img width={16} height={size} src={icon} />
 }
 
-const toAction = (item: ICommandItem, p?: any) =>
-{
-	return [
-		() => item.command?.execute(p),
-		item.command?.canExecute(p)
-	] as [() => void, boolean]
-}
-
-const toControl = (item: ICommandItem) =>
-{
-	return ({
-		title: item.label,
-		icon: toIcon(item),
-		isDisabled: false,
-		onclick: () => {}
-	}) as any
-}
-
-export const CommandControl = ({ item }: { item: ICommandItem }) =>
-{
-	const [cmd, canExecute] = toAction(item);
-	const icon = toIcon(item) as any;
-	return (
-		<ToolbarButton
-			label=""
-			text=""
-			icon={icon}
-			disabled={!canExecute}
-			onClick={cmd}
-			/>
-	)
-}
 
 export type CommandToolbarProps =
 {
@@ -51,22 +18,42 @@ export type CommandToolbarProps =
 }
 export const CommandToolbar = ({ root }: CommandToolbarProps) =>
 {
-	const children = root?.children ?? [];
+	const { selections } = useMarkdownTokenContext();
+	const icon = useMemo(() => root?.icon ? toIcon(root) : null, [root])
+	const controls = useMemo(() => (root?.children ?? []).map(toControl), [root]);
 
+	controls.map(c => c.isDisabled = !c.item.command?.canExecute())
+	
 	if(!root)
 	{
-		return <></>
+		return null;
 	}
+
 
 	return (
 		<ToolbarDropdownMenu
 			label={root.label}
-			text={root.icon ? undefined : root.label}
-			icon={root.icon ?? null}
-			controls={ children.map(toControl) }
+			text={icon ? undefined : root.label}
+			icon={icon}
+			controls={ controls }
 		/>
 	)
 }
+
+const toControl = (item: ICommandItem) =>
+{
+	return ({
+		item,
+		title: item.label,
+		icon: toIcon(item),
+		isDisabled: !item.command?.canExecute(),
+		onClick: () => item.command?.execute(),
+	}) as any
+}
+
+
+
+
 
 export type FlatCommandToolbarProps =
 {
@@ -74,19 +61,38 @@ export type FlatCommandToolbarProps =
 }
 export const FlatCommandToolbar = ({ root }: FlatCommandToolbarProps) =>
 {
-	const children = root?.children ?? [];
+	const { selections } = useMarkdownTokenContext();
+	const items = (root.children ?? []).map(c => <CommandControl item={c} />)
 
 	if(!root)
 	{
-		return <></>
+		return null;
 	}
 
 	return (
 		<ToolbarGroup>
-			{ children.map(c => <CommandControl item={c} />)}
+			{ items }
 		</ToolbarGroup>
 	)
 }
+
+export const CommandControl = ({ item }: { item: ICommandItem }) =>
+{
+	const canExecuteResult = item.command?.canExecute();
+	const cmd = useCallback(() => item.command?.execute(), []);
+	const icon = useMemo(() => toIcon(item) as any, []);
+
+	return (
+		<ToolbarButton
+			label=""
+			text=""
+			icon={icon}
+			disabled={!canExecuteResult}
+			onClick={cmd}
+			/>
+	)
+}
+
 
 /*
 type CommandKeyMap = typeof DefaultCommandItems;

@@ -3,7 +3,7 @@ import { MarkdownTableRenderMode } from "../MarkdownTableConverter";
 import { TablePosition } from "../TablePosition";
 import { TableCommandBase } from "./TableCommandBase";
 import { IFormatterContext } from "../IFormatterContext";
-import { IFormattableParameter, ISelection, ITextReplacer, TextReplacer } from "@mde/markdown-core";
+import { IFormattableParameter, ISelection, ITextReplacer, MarkdownRange, TextReplacer } from "@mde/markdown-core";
 import { ICommandContext } from "../ICommandContext";
 
 
@@ -56,7 +56,9 @@ class FormattableParameter implements IFormattableParameter
 		{
 			const table = this.table;
 			const txt = this.context.tableConverter.fromTable(table);
-			this.replacer.replaceLines([{ area: table.range, text: txt }]);
+			const { begin, end } = table.range;
+			const area = new MarkdownRange(begin, Math.max(end, end - 1))
+			this.replacer.replaceLines([{ area, text: txt }]);
 		}
 
 		if (this.focus.length)
@@ -81,9 +83,12 @@ export abstract class TableCellCommandBase<T> extends TableCommandBase<T>
 {
 
 
-	public constructor(protected readonly commandContext: ICommandContext)
+	public constructor(
+		protected readonly commandContext: ICommandContext,
+		protected readonly sealValue?: T
+	)
 	{
-		super(commandContext);
+		super(commandContext, sealValue);
 	}
 
 
@@ -192,7 +197,6 @@ export abstract class TableCellCommandBase<T> extends TableCommandBase<T>
 
 
 }
-
 
 
 

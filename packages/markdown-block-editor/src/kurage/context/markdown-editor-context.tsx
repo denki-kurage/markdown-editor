@@ -2,10 +2,11 @@ import { createContext, useContext, useMemo, useState } from "react";
 import { useAppContext } from "./markdown-app-context";
 import { applyFilters } from "@wordpress/hooks";
 import { ICommandItem } from "@mde/markdown-core";
+import { useMarkdownTokenContext } from "./markdown-token-context";
 
 export type MarkdownEditorContextProps =
 {
-    commands: ICommandItem[];
+    commandItems: ICommandItem[];
     maximized: boolean;
     toggleMaximized: () => void;
 }
@@ -20,20 +21,20 @@ export const MarkdownEditorContextProviderWrapper = ({children}: any) =>
     const [maximized, setMaximized] = useState(false);
 
 
-    const commands = useMemo(() => {
-        console.log(">>>>>>>>>>>>  <<<<<<<<<<<<<<<<<")
+    const commandItems = useMemo(() => {
         return applyFilters(
             'extensionCommandItemRoot',
             [],
             markdownCore
-        ) as ICommandItem[]
+        ) as ICommandItem[];
     }, [markdownCore]);
 
+
     const ctx = useMemo(() => ({
-        commands,
+        commandItems,
 		maximized,
 		toggleMaximized: () => setMaximized(!maximized)
-    }), [markdownCore, maximized, commands])
+    }), [markdownCore, maximized, commandItems])
 
 
     return <MarkdownEditorProvider value={ctx}>{children}</MarkdownEditorProvider>;

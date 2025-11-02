@@ -1,8 +1,9 @@
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Button, PanelBody, SelectControl } from "@wordpress/components";
 
 import { IToken } from "@mde/markdown-core";
 import './token-viewer.scss';
+import { useMarkdownTokenContext } from "../../markdown-block-editor/src/kurage/context/markdown-token-context";
 
 
 
@@ -123,27 +124,14 @@ const useAncestors = (token?: IToken) =>
 
 }
 
+const Context = createContext(null as any)
 
-type TokenExplorerProps =
+export const TokenExplorer = React.memo(({ contexts }: any) =>
 {
-    tokenContext: any;
-}
-
-const Contexts = createContext<TokenExplorerProps>({} as any);
-const { Provider } = Contexts;
-const useContexts = () => useContext(Contexts);
-
-export const TokenExplorer = (contexts: TokenExplorerProps) =>
-{
-    console.log("#########################")
     const { tokenContext } = contexts;
     const { rootToken, singleToken } = tokenContext;
     const [tokenTypes, setTokenTypes] = useState<string[]>([]);
     const ancestors = useAncestors(singleToken);
-
-    console.log("=================================")
-    console.log(rootToken)
-    console.log(singleToken);
 
 
     const filteredToken = tokenFilter(rootToken, token => {
@@ -154,7 +142,7 @@ export const TokenExplorer = (contexts: TokenExplorerProps) =>
     const r = filteredToken ? [filteredToken] : []
 
     return (
-        <Provider value={contexts}>
+        <Context.Provider value={contexts}>
             <PanelBody title="Token Explorer">
                 <TokenFilter tokenTypes={tokenTypes} tokenTypesChanged={setTokenTypes} />
                 
@@ -162,22 +150,24 @@ export const TokenExplorer = (contexts: TokenExplorerProps) =>
                     <TokenTree tokens={r} depsTokens={ancestors} />
                 </div>
 
-                { singleToken && <TokenDeps token={singleToken} depsTokens={ancestors} /> }
+                { singleToken && <TokenDeps depsTokens={ancestors} /> }
             </PanelBody>
-        </Provider>
+        </Context.Provider>
     );
-}
+});
 export default TokenExplorer;
 
-const TokenSelectButton = ({ token }: { token: IToken }) =>
+const TokenSelectButton = React.memo(({ token }: { token: IToken }) =>
 {
-    const { tokenContext } = useContexts();
-    const { setSelectionsAndToken: setSelections } = tokenContext;
-    const selectText = () =>
+    const { tokenContext } = useContext(Context);
+    const { setSelectionsAndToken } = tokenContext;
+
+    const selectText = useCallback(() =>
     {
         const pos = token.getPosition();
-        setSelections([[pos.start, pos.end]], token);
-    }
+        setSelectionsAndToken?.([[pos.start, pos.end]], token);
+    }, [token, setSelectionsAndToken]);
+
 
     return (
         <Button
@@ -187,8 +177,8 @@ const TokenSelectButton = ({ token }: { token: IToken }) =>
         </Button>
     )
 
-}
-const TokenDeps = ({ token, depsTokens }: { token: IToken, depsTokens: IToken[] }) =>
+})
+const TokenDeps = ({ depsTokens }: { depsTokens: IToken[] }) =>
 {
     
     return (
@@ -204,7 +194,7 @@ const TokenDeps = ({ token, depsTokens }: { token: IToken, depsTokens: IToken[] 
     )
 }
 
-const TokenTree = ({ tokens, depsTokens }: { tokens: TokenSet[], depsTokens: IToken[] }) =>
+const TokenTree = React.memo(({ tokens, depsTokens }: { tokens: TokenSet[], depsTokens: IToken[] }) =>
 {
     return (
         <ul>
@@ -213,16 +203,19 @@ const TokenTree = ({ tokens, depsTokens }: { tokens: TokenSet[], depsTokens: ITo
         }
         </ul>
     )
-}
+})
 
-const TokenView = ({ tokenSet, depsTokens }: { tokenSet: TokenSet, depsTokens: IToken[] }) =>
+const TokenView = React.memo(({ tokenSet, depsTokens }: { tokenSet: TokenSet, depsTokens: IToken[] }) =>
 {
     const { token, children } = tokenSet;
     const targetRef = useRef<HTMLDivElement>(null);
-    const { tokenContext } = useContexts();
+    const { tokenContext } = useContext(Context);
     const { singleToken } = tokenContext;
     const isCurrent = singleToken === token;
     const isAncestors = depsTokens.includes(token);
+
+
+    console.log("--- Token View ---")
 
     useEffect(() => {
         if(isCurrent)
@@ -243,7 +236,7 @@ const TokenView = ({ tokenSet, depsTokens }: { tokenSet: TokenSet, depsTokens: I
             { children?.length !== 0 && <TokenTree tokens={children} depsTokens={depsTokens} /> }
         </li>
     )
-}
+});
 
 
 

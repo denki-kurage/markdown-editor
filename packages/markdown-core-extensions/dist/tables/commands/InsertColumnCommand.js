@@ -11,7 +11,7 @@ export class InsertColumnCommand extends InsertCommandBase {
                 const factory = row instanceof MarkdownTableAlignments ?
                     () => TableAlignmentCell.createCellFromWAlignWord('---') :
                     () => new TableCell('');
-                const ba = cellInfo.tablePosition.newAdded(this.getInsertColumnDirection(this.isBefore)).columnIndex;
+                const ba = cellInfo.tablePosition.newAdded(this.getInsertColumnDirection(parameter)).columnIndex;
                 CellInfoHelper.insertCell(row, ba, factory);
             }
         }

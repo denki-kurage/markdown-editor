@@ -8,9 +8,9 @@ import { IFormattableParameter, MovableArray } from "@mde/markdown-core";
 export class MoveColumnCommand extends MoveCommandBase
 {
 
-	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: number): boolean
+	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: boolean): boolean
 	{
-		return !cellInfo.row.isFirstOrLast(cellInfo.cell) && !!this.getTargetHeaderCell(cellInfo);
+		return !cellInfo.row.isFirstOrLast(cellInfo.cell) && !!this.getTargetHeaderCell(cellInfo, parameter);
 	}
 	
 	/**
@@ -30,9 +30,9 @@ export class MoveColumnCommand extends MoveCommandBase
 	 * @param cellInfo 
 	 * @param parameter 
 	 */
-	protected executeOverride(cellInfo: TableCellInfo, parameter: number, focus: IFormattableParameter): void
+	protected executeOverride(cellInfo: TableCellInfo, parameter: boolean, focus: IFormattableParameter): void
 	{
-		const targetHeaderPos = this.getTargetHeaderCell(cellInfo) as TableCellInfo;
+		const targetHeaderPos = this.getTargetHeaderCell(cellInfo, parameter) as TableCellInfo;
 		
 		const itemColumnIndex = cellInfo.columnIndex;
 		const targetColumnIndex = targetHeaderPos.columnIndex;
@@ -50,7 +50,7 @@ export class MoveColumnCommand extends MoveCommandBase
 			}
 
 			// 移動させます。
-			const ba = this.getInsertLine(this.isBefore);
+			const ba = this.getInsertLine(parameter);
 			const movable = new MovableArray<TableCell>(row.cells);
 			movable.move(targetColumnIndex, [itemColumnIndex], ba);
 			
@@ -63,10 +63,10 @@ export class MoveColumnCommand extends MoveCommandBase
 
 	
 
-	private getTargetHeaderCell(cellInfo: TableCellInfo): TableCellInfo | undefined
+	private getTargetHeaderCell(cellInfo: TableCellInfo, parameter: boolean): TableCellInfo | undefined
 	{
 		const cellPos = cellInfo.tablePosition;
-		const targetHeaderPos = cellPos.newAdded(this.getMoveColumnDirection(this.isBefore)).newRowIndex(-2);
+		const targetHeaderPos = cellPos.newAdded(this.getMoveColumnDirection(parameter)).newRowIndex(-2);
 		return cellInfo.getCellFromAbsolute(targetHeaderPos);
 	}
 

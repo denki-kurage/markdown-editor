@@ -5,12 +5,12 @@ import { RemoveCommandBase } from "./CommandBaseClasses";
 export class RemoveColumnCommand extends RemoveCommandBase
 {
 
-	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: number): boolean
+	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: void): boolean
 	{
 		return !cellInfo.isOuterSide;
 	}
 
-	protected executeOverride(cellInfo: TableCellInfo, parameter: number, focus: IFormattableParameter): void
+	protected executeOverride(cellInfo: TableCellInfo, parameter: void, focus: IFormattableParameter): void
 	{
 		for (const row of cellInfo.table)
 		{

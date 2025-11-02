@@ -1,13 +1,12 @@
 import { InspectorControls } from "@wordpress/block-editor";
 import { useMarkdownEditorContext } from "../context/markdown-editor-context"
-import { Button, PanelBody, RangeControl, ToolbarButton, ToolbarGroup } from "@wordpress/components";
+import { PanelBody } from "@wordpress/components";
 import { FlatCommandToolbar } from "./edit-toolbar";
-
 const iconDisabled = '.components-button[aria-disabled=true]{ opacity: 0.3; }';
 
 export const CommandsInspector = ({}) =>
 {
-    const { commands } = useMarkdownEditorContext();
+    const { commandItems } = useMarkdownEditorContext();
 
     return (
         <InspectorControls>
@@ -16,13 +15,13 @@ export const CommandsInspector = ({}) =>
 
                 <div>
                     {
-                        commands.map(command => {
-                            const children = command.children;
+                        commandItems.map(ci => {
+                            const children = ci.children;
                             return children && (
                                 <>
-                                    <p>{command.label}</p>
+                                    <p style={{marginBottom: ".1em"}}>{ci.label}</p>
 
-                                    <FlatCommandToolbar root={command} />
+                                    <FlatCommandToolbar root={ci} />
                                 </>
                             )
                         })

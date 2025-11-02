@@ -11,7 +11,8 @@ import { ICommandContext } from "../ICommandContext";
  */
 export declare abstract class TableCellCommandBase<T> extends TableCommandBase<T> {
     protected readonly commandContext: ICommandContext;
-    constructor(commandContext: ICommandContext);
+    protected readonly sealValue?: T;
+    constructor(commandContext: ICommandContext, sealValue?: T);
     protected getCellInfo(): TableCellInfo | undefined;
     protected canExecuteGeneric(parameter: T | undefined): boolean;
     protected executeGeneric(parameter: T | undefined): void;

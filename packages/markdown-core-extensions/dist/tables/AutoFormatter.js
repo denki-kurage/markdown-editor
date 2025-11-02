@@ -47,9 +47,12 @@ export class AutoFormatter {
         let table = this.cache.newItem;
         if (table) {
             const helper = new AppHelper(this.appContext);
-            // しまった、ここでテーブルの構造に変化が加わるので、
+            // ここでテーブルの構造に変化が加わるので、
             const fmt = helper.formatAndRender(table, this.getFormatterContext()); // 改行コードなし
             const doc = helper.getDocumentText(table.range); // 改行コードあり
+            console.log("#######################################");
+            console.log(fmt + "***");
+            console.log(doc + "***");
             // 新しくテーブルを再取得する必要がある。
             table = this.cache.newItem;
             const newPos = this.appContext.getEditorModel().getCursor();

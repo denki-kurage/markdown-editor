@@ -7,7 +7,7 @@ export class InsertRowCommand extends InsertCommandBase {
     }
     executeOverride(cellInfo, parameter, focus) {
         const table = cellInfo.table;
-        const insertRowIndex = cellInfo.tablePosition.newAdded(this.getInsertRowDirection(this.isBefore)).rowIndex;
+        const insertRowIndex = cellInfo.tablePosition.newAdded(this.getInsertRowDirection(parameter)).rowIndex;
         const insertRow = CellInfoHelper.createRow(MarkdownTableRows, table.columnLength, () => new TableCell(''));
         table.rows.splice(insertRowIndex, 0, insertRow);
         // フォーマット

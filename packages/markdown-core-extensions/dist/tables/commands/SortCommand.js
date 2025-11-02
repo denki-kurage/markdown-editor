@@ -4,7 +4,7 @@ export class SortCommand extends SortCommandBase {
         return true;
     }
     executeOverride(cellInfo, parameter, focus) {
-        this.sortNumber(cellInfo, this.isAsc);
+        this.sortNumber(cellInfo, parameter);
         focus.format();
         const f = cellInfo.newCellInfo()?.getForcus();
         focus.setFocusedCellInfo(f);

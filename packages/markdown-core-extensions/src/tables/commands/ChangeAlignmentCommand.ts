@@ -10,17 +10,17 @@ import { IFormattableParameter } from "@mde/markdown-core";
 export class ChangeAlignmentCommand extends ChangeAlignmentCommandBase
 {
 
-	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: void): boolean
+	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: MarkdownAlignments): boolean
 	{
 		return !!this.getAlignmentCell(cellInfo);
 	}
 
-	protected executeOverride(cellInfo: TableCellInfo, parameter: void, focus: IFormattableParameter): void
+	protected executeOverride(cellInfo: TableCellInfo, parameter: MarkdownAlignments, focus: IFormattableParameter): void
 	{
 		const ac = this.getAlignmentCell(cellInfo);
 		if (ac)
 		{
-			ac.updateAlign(this.align);
+			ac.updateAlign(parameter);
 
 			const rp = cellInfo.relativeCursorInnerPosition;
 

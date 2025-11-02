@@ -7,12 +7,12 @@ import { IFormattableParameter } from "@mde/markdown-core";
 
 export class InsertColumnCommand extends InsertCommandBase
 {
-	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: number): boolean
+	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: boolean): boolean
 	{
 		return !cellInfo.row.isFirstOrLast(cellInfo.cell)
 	}
 
-	protected executeOverride(cellInfo: TableCellInfo, parameter: number, focus: IFormattableParameter): void
+	protected executeOverride(cellInfo: TableCellInfo, parameter: boolean, focus: IFormattableParameter): void
 	{
 		for (const row of cellInfo.table)
 		{
@@ -22,7 +22,7 @@ export class InsertColumnCommand extends InsertCommandBase
 					() => TableAlignmentCell.createCellFromWAlignWord('---') :
 					() => new TableCell('');
 
-				const ba = cellInfo.tablePosition.newAdded(this.getInsertColumnDirection(this.isBefore)).columnIndex;
+				const ba = cellInfo.tablePosition.newAdded(this.getInsertColumnDirection(parameter)).columnIndex;
 				CellInfoHelper.insertCell(row, ba, factory);
 			}
 		}

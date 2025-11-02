@@ -4,16 +4,16 @@ import { MoveCommandBase } from "./CommandBaseClasses";
 
 export class MoveRowCommand extends MoveCommandBase
 {
-	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: number): boolean
+	protected canExecuteOverride(cellInfo: TableCellInfo, parameter: boolean): boolean
 	{
-		return !cellInfo.isOuterSide && this.getTargetRowIndex(cellInfo) !== undefined;
+		return !cellInfo.isOuterSide && this.getTargetRowIndex(cellInfo, parameter) !== undefined;
 	}
 
-	protected executeOverride(cellInfo: TableCellInfo, parameter: number, focus: IFormattableParameter): void
+	protected executeOverride(cellInfo: TableCellInfo, parameter: boolean, focus: IFormattableParameter): void
 	{
 		const itemRowIndex = cellInfo.rowIndex;
-		const targetRowIndex = this.getTargetRowIndex(cellInfo) as number;
-		const ba = this.getInsertLine(this.isBefore);
+		const targetRowIndex = this.getTargetRowIndex(cellInfo, parameter) as number;
+		const ba = this.getInsertLine(parameter);
 		new MovableArray<MarkdownTableRows>(cellInfo.table.rows).move(targetRowIndex, [itemRowIndex], ba);
 
 		focus.format();
@@ -21,9 +21,9 @@ export class MoveRowCommand extends MoveCommandBase
 		focus.setFocusedCellInfo(f);
 	}
 	
-	private getTargetRowIndex(cellInfo: TableCellInfo): number | undefined
+	private getTargetRowIndex(cellInfo: TableCellInfo, p: boolean): number | undefined
 	{
-		const targetRowIndex = cellInfo.tablePosition.newAdded(this.getMoveRowDirection(this.isBefore)).rowIndex;
+		const targetRowIndex = cellInfo.tablePosition.newAdded(this.getMoveRowDirection(p)).rowIndex;
 		if(cellInfo.table.isRow(targetRowIndex))
 		{
 			return targetRowIndex;
