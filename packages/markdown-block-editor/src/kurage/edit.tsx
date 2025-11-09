@@ -21,6 +21,9 @@ import { MarkdownEditorContextProviderWrapper, useMarkdownEditorContext } from '
 import './components/token-viewer.scss'
 import { CommandsInspector } from './components/commands-inspector';
 import { Loading } from './components/loading';
+import { ExtensionContextProvider, MarkdownExtensionContextWrapper } from './context/markdown-extension-context';
+import { MarkdownConfigContextWrapper } from './context/markdown-config-context';
+import { withEditorRegistryComponent } from './components/withRegistryProvider';
 //import Prism from 'prismjs'
 
 const str = `
@@ -36,25 +39,36 @@ type EditMode = "code"|"view"|"both";
 const standardizeReturnKey = (str: string) => str.replace(/\r\n|\n/g, "\n");
 
 
-export default ({ attributes, setAttributes }: any) =>
+const Edit = ({ attributes, setAttributes, ...props }: any) =>
 {
+	const { clientId } = props;
 	return (
 		<MarkdownContextProviderWrapper attributes={attributes} setAttributes={setAttributes} standardizeReturnKey={standardizeReturnKey}>
 			<MarkdownAppContextWrapper>
-				<MarkdownEditorContextProviderWrapper>
+				<MarkdownEditorContextProviderWrapper clientId={clientId} {...props}>
 					<MarkdownTokenContextProviderWrapper>
-						<InternalBlockEditor />
+						<MarkdownExtensionContextWrapper>
+							<MarkdownConfigContextWrapper>
+								<InternalBlockEditor />
+							</MarkdownConfigContextWrapper>
+						</MarkdownExtensionContextWrapper>
 					</MarkdownTokenContextProviderWrapper>
 				</MarkdownEditorContextProviderWrapper>
 			</MarkdownAppContextWrapper>
 		</MarkdownContextProviderWrapper>
 	)
-}
+};
+
+const EditMemo = React.memo(Edit);
+
+export default EditMemo;
+
 
 const InternalBlockEditor = () =>
 {
-	const { maximized } = useMarkdownEditorContext();
-  	const className = maximized ? 'block-editor-maximizer' : '';
+	const { editorState, blockEditorProps } = useMarkdownEditorContext();
+	const { isSelected } = blockEditorProps;
+  	const className = editorState.maximized && isSelected ? 'block-editor-maximizer' : '';
 	return (
 		<div { ...useBlockProps({ className }) }>
 			<div className="wp-block-kurage-worker-md-table-editor-label">MdTableEditor with Block Editor</div>
@@ -128,7 +142,7 @@ const MainEditor = ({ editorName }: any) =>
 
 const ControlPanelInspector = () =>
 {
-	const { maximized, toggleMaximized } = useMarkdownEditorContext();
+	const { editorState, setEditorState } = useMarkdownEditorContext();
 
 	const { viewMode, setAttributes } = useMarkdownContext();
 	const onPanelChange = (viewMode: EditMode) =>
@@ -146,8 +160,8 @@ const ControlPanelInspector = () =>
 					<Button variant="primary" disabled={viewMode === "both"} onClick={() => onPanelChange("both")}>{ __('Both', 'mdtableeditor') }</Button>
 				</div>
 
-				<Button variant="primary" onClick={toggleMaximized}>
-					{ maximized ? '元に戻す' : '最大化' }
+				<Button variant="primary" onClick={() => setEditorState({ maximized: !editorState.maximized})}>
+					{ editorState.maximized ? '元に戻す' : '最大化' }
 				</Button>
 			</PanelBody>
 		</InspectorControls>
@@ -247,6 +261,9 @@ const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWindow: (w
 	}, [singleToken]);
 
 
+	useEffect(() => console.log("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★"), [])
+
+
 	useEffect(() => {
 		const updater = new EventUpdateManager(5000);
 		updater.updated.push(() =>
@@ -273,12 +290,15 @@ const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWindow: (w
 
 const SplitPanel = ({children, height}: any) =>
 {
-	const { maximized } = useMarkdownEditorContext();
+	const { editorState, blockEditorProps } = useMarkdownEditorContext();
+	const { isSelected } = blockEditorProps;
+
+	const isMax = editorState.maximized && isSelected;
 
     // @ts-ignore
     const post: any = useSelect(select => select(editorStore).getCurrentPost(), []);
 
-	const style = { height: maximized ? '100%' : height ?? post?.md_table_editor_height ?? '500px' };
+	const style = { height: isMax ? '100%' : height ?? post?.md_table_editor_height ?? '500px' };
 
 	return (
 		<div className="md-table-editor split-panel" style={style}>

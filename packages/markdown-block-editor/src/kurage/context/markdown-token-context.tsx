@@ -202,7 +202,6 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
     }, []);
 
     const ctx = useMemo<MarkdownTokenContextProps>(() => {
-        console.log("■■■■")
         return {
             ...tokenStates,
             onEdits: (edits: [string, number, number][]) => {

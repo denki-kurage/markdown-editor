@@ -106,7 +106,7 @@ addFilter(
 	'kurage/markdown-block-editor',
 	(panels: any[]) =>
 	{
-		panels.push(TokenExplorer);
+		panels.push({label: 'Token Explorer', panel: TokenExplorer});
 		return panels;
 	}
 );

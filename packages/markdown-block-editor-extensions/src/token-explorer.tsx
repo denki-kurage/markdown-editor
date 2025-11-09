@@ -1,9 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Button, PanelBody, SelectControl } from "@wordpress/components";
+import { Button, CheckboxControl, SelectControl } from "@wordpress/components";
 
 import { IToken } from "@mde/markdown-core";
 import './token-viewer.scss';
-import { useMarkdownTokenContext } from "../../markdown-block-editor/src/kurage/context/markdown-token-context";
+import { getAncestors, tokenFilter, TokenSet } from "./token-explorer-hooks";
+import { useExtensionContext } from "../../markdown-block-editor/src/kurage/context/markdown-extension-context";
+import { ExtensionContext } from "../../markdown-block-editor/src/kurage/components/token-inspectors";
 
 
 
@@ -60,7 +62,19 @@ const TokenTypes = new Map<string, string>([
     ['tableRow', 'テーブル行'],
     ['tableCell', 'テーブルセル'],
     ['paragraph', '段落'],
-    ['text', 'テキスト']
+    ['text', 'テキスト'],
+    ['emphasis', 'イタリック'],
+    ['strong', '太字'],
+    ['break', '改行'],
+    ['list', 'リスト'],
+    ['listItem', 'リストアイテム'],
+    ['blockquote', '引用'],
+    ['code', 'コード'],
+    ['inlineCode', 'インラインコード'],
+    ['link', 'リンク'],
+    ['image', '画像'],
+    ['thematicBreak', '水平線'],
+    ['html', 'HTML']
 ])
 
 const TokenTypeOptions = [...TokenTypes.entries()].map(t => {
@@ -69,26 +83,22 @@ const TokenTypeOptions = [...TokenTypes.entries()].map(t => {
 })
 
 
-type TokenSet = { token: IToken, children: TokenSet[] }
-type tokenFilterFunc = (current: IToken, predicate: (token: IToken) => boolean) => TokenSet | null;
-
-export const tokenFilter: tokenFilterFunc = (current, predicate) =>
-{
-    const matched = predicate(current);
-    const children = current.getChildren().map(c => tokenFilter(c, predicate)).filter(f => !!f)
-
-    if(children.length || matched)
-    {
-        return { token: current, children }
-    }
-
-    return null;
-}
-
+const Context = createContext<ExtensionContext>(null as any);
+const useLocalCotnext = () => useContext(Context);
 
 
 const TokenFilter = ({ tokenTypes, tokenTypesChanged }: any) =>
 {
+    // 後で変更
+    const { editorContext } = useLocalCotnext();
+    const { editorState, setEditorState } = editorContext;
+    const { enabledSelectionsFilter } = editorState;
+
+    const updateState = (f: boolean) =>
+    {
+        setEditorState({ enabledSelectionsFilter: f })
+    }
+
     return (
         <>
             <SelectControl
@@ -98,60 +108,82 @@ const TokenFilter = ({ tokenTypes, tokenTypesChanged }: any) =>
                 value={tokenTypes}
                 onChange={tokenTypesChanged}
                 />
+            
+            <CheckboxControl
+                checked={enabledSelectionsFilter}
+                onChange={updateState}
+                label="選択フィルターを有効にする"
+                />
         </>
     )
 }
 
-const useAncestors = (token?: IToken) =>
+
+const filter = (rootToken: IToken, tokenTypes: string[], selections: [number, number][], useSelections: boolean = false) =>
 {
-    return useMemo(() => {
-        const tokens: IToken[] = [];
-        let current: IToken | undefined = token;
+    const hasTypes = tokenTypes.length && !tokenTypes.includes('');
 
-        if(!current)
-        {
-            return tokens;
-        }
-
-        do
-        {
-            tokens.push(current);
-        }
-        while (current = current.getParent());
-
-        return tokens;
-    }, [token]);
-
-}
-
-const Context = createContext(null as any)
-
-export const TokenExplorer = React.memo(({ contexts }: any) =>
-{
-    const { tokenContext } = contexts;
-    const { rootToken, singleToken } = tokenContext;
-    const [tokenTypes, setTokenTypes] = useState<string[]>([]);
-    const ancestors = useAncestors(singleToken);
-
+    const newSelections = selections
+        // .filter(([s, e]) => s !== e)
+        .map(([s, e]) => [Math.min(s, e), Math.max(s, e)]);
 
     const filteredToken = tokenFilter(rootToken, token => {
         const type = token.getType();
-        return (!tokenTypes.length || tokenTypes[0] === '') ? true : tokenTypes.includes(type);
+        
+        // トークンタイプによるフィルタリング
+        if(hasTypes)
+        {
+            if(!tokenTypes.includes(type))
+            {
+                return false;
+            }
+        }
+
+        // セレクションによるフィルタリング(TODO: 単一セレクトの場合を想定すること)
+        if(useSelections && !!newSelections?.length)
+        {
+            const { start, end } = token.getPosition();
+
+            //if(!newSelections.some(([b, e]) => (b <= start && end <= e)))
+            if(!newSelections.some(([b, e]) => (b <= start && end <= e)))
+            {
+                return false;
+            }
+        }
+
+
+
+
+        return true;
     });
 
+    
+    return filteredToken;
+}
+
+
+
+export const TokenExplorer = React.memo(({ contexts, extensionData }: { contexts: ExtensionContext, extensionData: any }) =>
+{
+    const { tokenContext, editorContext } = contexts;
+    const { rootToken, singleToken, selections } = tokenContext;
+    const [tokenTypes, setTokenTypes] = useState<string[]>([]);
+    const ancestors = useMemo(() => getAncestors(singleToken), [singleToken]);
+
+
+
+    const filteredToken = filter(rootToken, tokenTypes, selections ?? [], editorContext.editorState.enabledSelectionsFilter);
     const r = filteredToken ? [filteredToken] : []
 
     return (
         <Context.Provider value={contexts}>
-            <PanelBody title="Token Explorer">
-                <TokenFilter tokenTypes={tokenTypes} tokenTypesChanged={setTokenTypes} />
-                
-                <div className="token-viewer">
-                    <TokenTree tokens={r} depsTokens={ancestors} />
-                </div>
+            <TokenFilter tokenTypes={tokenTypes} tokenTypesChanged={setTokenTypes} />
+            
+            <div className="token-viewer">
+                <TokenTree tokens={r} depsTokens={ancestors} />
+            </div>
 
-                { singleToken && <TokenDeps depsTokens={ancestors} /> }
-            </PanelBody>
+            { singleToken && <TokenDeps depsTokens={ancestors} /> }
         </Context.Provider>
     );
 });

@@ -1,5 +1,14 @@
 import { ICommand, ICommandItem } from '@mde/markdown-core';
 
+import focusLight from '../../resources/icons/focus/light/focus.svg'
+import alignLight from '../../resources/icons/align/light/align.svg'
+import insertLight from '../../resources/icons/insert/light/insert.svg';
+import removeLight from '../../resources/icons/remove/light/row.svg';
+import moveLight from '../../resources/icons/move/light/move.svg';
+import multiSelectLight from '../../resources/icons/multi-select/light/all.svg';
+import sortLight from '../../resources/icons/sort/light/number-asc.svg';
+import formatLight from '../../resources/icons/format/light/fill-cells.svg';
+
 import formatFillCellsLight from '../../resources/icons/format/light/fill-cells.svg';
 import formatBeautifulLight from '../../resources/icons/format/light/beautiful.svg';
 
@@ -33,11 +42,27 @@ import sortTextDescLight from '../../resources/icons/sort/light/text-desc.svg';
 import sortTextAscIgnoreLight from '../../resources/icons/sort/light/text-asc-ignore.svg';
 import sortTextDescIgnoreLight from '../../resources/icons/sort/light/text-desc-ignore.svg';
 
+
+
+
+
+import focusDark from '../../resources/icons/focus/dark/focus.svg'
+import alignDark from '../../resources/icons/align/dark/align.svg'
+import insertDark from '../../resources/icons/insert/dark/insert.svg';
+import removeDark from '../../resources/icons/remove/dark/row.svg';
+import moveDark from '../../resources/icons/move/dark/move.svg';
+import multiSelectDark from '../../resources/icons/multi-select/dark/all.svg';
+import sortDark from '../../resources/icons/sort/dark/number-asc.svg';
+import formatDark from '../../resources/icons/format/dark/fill-cells.svg';
+
+
+
 import formatFillCellsDark from '../../resources/icons/format/dark/fill-cells.svg';
 import formatBeautifulDark from '../../resources/icons/format/dark/beautiful.svg';
 
 //import formatNaturalDark from '../../resources/icons/format/dark/natural.svg';
 //import formatDeleteCommentDark from '../../resources/icons/format/dark/delete-comment.svg';
+
 
 import focusLeftDark from '../../resources/icons/focus/dark/left.svg';
 import focusTopDark from '../../resources/icons/focus/dark/top.svg';
@@ -69,6 +94,7 @@ import { MarkdownTable } from './MarkdownTable';
 
 const lightIconsList =
 {
+    focusLight, alignLight, insertLight, removeLight, moveLight, multiSelectLight, sortLight, formatLight,
     formatFillCellsLight, formatBeautifulLight, /* formatNaturalLight, formatDeleteCommentLight, */
     focusLeftLight, focusTopLight, focusBottomLight, focusRightLight,
     alignLeftLight, alignCenterLight, alignRightLight,
@@ -81,6 +107,7 @@ const lightIconsList =
 };
 
 const darkIconsList = {
+    focusDark, alignDark, insertDark, removeDark, moveDark, multiSelectDark, sortDark, formatDark,
     formatFillCellsDark, formatBeautifulDark, /* formatNaturalDark, formatDeleteCommentDark, */
     focusLeftDark, focusTopDark, focusBottomDark, focusRightDark,
     alignLeftDark, alignCenterDark, alignRightDark,
@@ -134,10 +161,12 @@ export const createDefaultCommandItem: (table: MarkdownTable, commands: Map<stri
                 command: { ...cmd, cmd, execute: p => cmd.execute(), canExecute: p => table.getEnabledCommandNames().includes(commandName) } as ICommand
             };
         });
+
+        const iconName = toCamelCase(group) + (mode === 'light' ? 'Light' : 'Dark');
         return {
             name: group,
             label: group,
-            icon: (Math.random() < 0.5) ? insertBottomLight : moveBottomDark,
+            icon: iconsMap[iconName],
             command: undefined,
             children: children
         };

@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import { parseSaveMarkdown } from "../components/parser";
 
-export type MarkdownContext =
+export type MarkdownContextProps =
 {
     markdown: string;
     
@@ -20,7 +20,7 @@ export type MarkdownContext =
     onMarkdownChanged: (v: string) => void;
 }
 
-const Context = createContext<MarkdownContext>({
+const Context = createContext<MarkdownContextProps>({
     markdown: '',
     editHeight: 500,
     viewMode: "both",
@@ -40,7 +40,7 @@ export const MarkdownContextProviderWrapper = ({ children, attributes, setAttrib
     const [isEditing, setIsEditing] = useState(false);
 
     
-	const markdownContextValue = useMemo<MarkdownContext>(() => {
+	const markdownContextValue = useMemo<MarkdownContextProps>(() => {
 
 		return {
             markdown: standardizeReturnKey(markdown),

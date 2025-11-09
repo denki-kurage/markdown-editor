@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">テキスト中央揃えアイコン</title>
+  <desc id="desc">中央揃えを示す白い横線が中央に整列したアイコン</desc>
+
+  <g stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" >
+    <!-- 左矢印 -->
+    <polyline points="12,32 24,32 20,28"/>
+    <polyline points="12,32 24,32 20,36"/>
+    <!-- ブロック -->
+    <rect x="24" y="24" width="16" height="16" fill="#ffffff"/>
+    <!-- 右矢印 -->
+    <polyline points="52,32 40,32 44,28"/>
+    <polyline points="52,32 40,32 44,36"/>
+  </g>
+  <!-- 薄い枠（デバッグ・プレビュー用／削除してもOK） -->
+  <!-- <rect x="4" y="4" width="56" height="56" rx="6" fill="none" stroke="#ffffff" stroke-width="0.6" opacity="0.05" /> -->
+</svg>

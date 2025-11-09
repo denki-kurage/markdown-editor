@@ -36,10 +36,6 @@ export class MarkdownTable {
         this.registerRecievers(eventCollection, this.cache);
         this.commands = this.createCommands(this.editorContext, this.cache);
         this.configuration = this.createSwitcher(eventCollection, storage, this.editorContext);
-        // 文字数カウントの設定、仕様が定まらない・・・。
-        //StringCounter.counter = this.editorContext.getStringCounter();
-        // TODO: 設計上どうかと思うけど面倒だから仕方ない。
-        //setAppContext(this.editorContext);
         // TODO: 実験
         this.configuration.decorator.on();
     }

@@ -33,7 +33,8 @@ class FormattableParameter {
         if (this._formatted) {
             const table = this.table;
             const txt = this.context.tableConverter.fromTable(table);
-            const area = new MarkdownRange(table.range.begin, table.range.end - 1);
+            const { begin, end } = table.range;
+            const area = new MarkdownRange(begin, Math.max(end, end - 1));
             this.replacer.replaceLines([{ area, text: txt }]);
         }
         if (this.focus.length) {

@@ -1,36 +1,50 @@
 import { PanelBody } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { TokenEditor } from "./token-editor";
-import { useMarkdownContext } from "../context/markdown-context";
+import { MarkdownContextProps, useMarkdownContext } from "../context/markdown-context";
 import { InspectorControls } from "@wordpress/block-editor";
 import { applyFilters } from "@wordpress/hooks";
 import { useEffect, useMemo, useRef } from "react";
-import { useMarkdownTokenContext } from "../context/markdown-token-context";
-import { Loading } from './loading'
+import { MarkdownTokenContextProps, useMarkdownTokenContext } from "../context/markdown-token-context";
+import { Loading, LoadingPanel } from './loading'
+import { useConfigContext } from "../context/markdown-config-context";
+import { MarkdownExtensionContextProps, useExtensionContext } from "../context/markdown-extension-context";
+import { MarkdownEditorContextProps, useMarkdownEditorContext } from "../context/markdown-editor-context";
 
-
+export type ExtensionContext =
+{
+    tokenContext: MarkdownTokenContextProps,
+    markdownContext: MarkdownContextProps,
+    extensionContext: MarkdownExtensionContextProps;
+    editorContext: MarkdownEditorContextProps;
+}
 export const TokenInspectors = () =>
 {
     const tokenContext = useMarkdownTokenContext();
     const markdownContext = useMarkdownContext();
+    const extensionContext = useExtensionContext();
+    const editorContext = useMarkdownEditorContext();
     const { isEditing } = markdownContext;
 
 
-    const contextsRef = useRef({ tokenContext, markdownContext });
+    const contextsRef = useRef({ tokenContext, markdownContext, extensionContext, editorContext });
     const contexts = contextsRef.current = useMemo(() => {
         if(isEditing)
         {
             return contextsRef.current;
         }
 
-        return { tokenContext, markdownContext }
-    }, [isEditing,  tokenContext, markdownContext]);
+        return { tokenContext, markdownContext, extensionContext, editorContext }
+    }, [isEditing,  tokenContext, markdownContext, extensionContext, editorContext]);
 
-    const panels = useMemo(() => applyFilters('extensionInspectorPanels', []) as any[], []);
-    const editors = useMemo(() => applyFilters('e', [TokenEditor]) as any[], []);
-
-    const editorComponents = useMemo(() => editors.map(Editor => <Editor contexts={contexts} />), [contexts]);
-    const panelComponents = useMemo(() => panels.map(Panel => <Panel contexts={contexts} />), [contexts]);
+    const panels = useMemo(() => applyFilters('extensionInspectorPanels', [{label: __('Token Editor', 'mdtableeditor'), panel: TokenEditor}]) as any[], []);
+    const panelComponents = useMemo(() => panels.map(({ label, panel: Panel }) => (
+        <PanelBody title={label}>
+                <LoadingPanel isLoading={isEditing}>
+            <Panel contexts={contexts} />
+                </LoadingPanel>
+        </PanelBody>
+    )), [contexts, isEditing]);
 
 
     return useMemo(() => {
@@ -40,24 +54,7 @@ export const TokenInspectors = () =>
 
         return (
             <InspectorControls>
-
-                <PanelBody title={__('Token Editor', 'mdtableeditor')}>
-                    <div style={{position: 'relative'}}>
-                        { editorComponents }
-                        { panelComponents }
-                        <Loading isLoading={isEditing} />
-                    </div>
-                </PanelBody>
-
-                {/* panels.map(Panel => {
-                    return (
-                        <div style={{position: 'relative'}}>
-                            <Panel contexts={contexts} />
-                            <Loading isLoading={isEditing} />
-                        </div>
-                    )
-                }) */}
-
+                    { panelComponents }
             </InspectorControls>
         )
 
