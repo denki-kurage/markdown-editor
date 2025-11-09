@@ -1,1 +1,0 @@
-{"version":3,"file":"MarkdownCommandBase.js","sourceRoot":"","sources":["../../src/commands/MarkdownCommandBase.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,YAAY,EAAE,MAAM,iBAAiB,CAAC;AAE/C,MAAM,OAAgB,mBAAmB;IAEC;IAAtC,YAAsC,UAAuB;QAAvB,eAAU,GAAV,UAAU,CAAa;IAG7D,CAAC;IAEM,eAAe;QAElB,OAAO,IAAI,YAAY,CAAC,IAAI,CAAC,UAAU,CAAC,CAAC;IAC7C,CAAC;IAID,iBAAiB,CAAiB;CACrC"}

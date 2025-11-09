@@ -1,1 +1,0 @@
-{"version":3,"file":"BoldCommands.d.ts","sourceRoot":"","sources":["../../src/commands/BoldCommands.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,MAAM,uBAAuB,CAAC;AAE5D,qBAAa,WAAY,SAAQ,mBAAmB,CAAC,GAAG,CAAC;IAE9C,OAAO,CAAC,SAAS,CAAC,EAAE,GAAG,GAAG,SAAS;IAenC,UAAU,CAAC,SAAS,CAAC,EAAE,GAAG,GAAG,SAAS,GAAG,OAAO;CAI1D"}

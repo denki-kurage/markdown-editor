@@ -1,1 +1,0 @@
-{"version":3,"file":"ITableCommandParameter.d.ts","sourceRoot":"","sources":["../../../src/tables/commands/ITableCommandParameter.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,iBAAiB,EAAE,MAAM,oBAAoB,CAAC;AACvD,OAAO,EAAE,oBAAoB,EAAE,MAAM,yBAAyB,CAAC;AAE/D,MAAM,WAAW,sBAAuB,SAAQ,iBAAiB;IAEhE,KAAK,EAAE,oBAAoB,CAAC;IAC5B,QAAQ,EAAE,MAAM,CAAC;IACjB,SAAS,EAAE,MAAM,CAAC;CAClB"}

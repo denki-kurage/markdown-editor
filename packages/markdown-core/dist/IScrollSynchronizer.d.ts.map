@@ -1,1 +1,0 @@
-{"version":3,"file":"IScrollSynchronizer.d.ts","sourceRoot":"","sources":["../src/IScrollSynchronizer.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,MAAM,mBAAmB,CAAC;AAGhD,MAAM,WAAW,mBAAmB;IAEnC,MAAM,CAAC,UAAU,EAAE,MAAM,GAAG,IAAI,CAAC;IACjC,sBAAsB,CAAC,QAAQ,EAAE,CAAC,UAAU,EAAE,MAAM,KAAK,IAAI,GAAG,WAAW,CAAC;CAC5E"}

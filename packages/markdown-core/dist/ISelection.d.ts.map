@@ -1,1 +1,0 @@
-{"version":3,"file":"ISelection.d.ts","sourceRoot":"","sources":["../src/ISelection.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,iBAAiB,EAAE,MAAM,qBAAqB,CAAC;AAExD,MAAM,WAAW,UAAU;IAEvB,QAAQ,CAAC,IAAI,EAAE,iBAAiB,CAAC;IACjC,QAAQ,CAAC,IAAI,CAAC,EAAE,iBAAiB,CAAC;CACrC"}

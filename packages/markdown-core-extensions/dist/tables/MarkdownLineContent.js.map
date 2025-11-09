@@ -1,1 +1,0 @@
-{"version":3,"file":"MarkdownLineContent.js","sourceRoot":"","sources":["../../src/tables/MarkdownLineContent.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,MAAM,oBAAoB,CAAC;AAGzD,MAAM,OAAO,mBAAoB,SAAQ,mBAAmB;IAExB;IAAnC,YAAmC,IAAY;QAE9C,KAAK,EAAE,CAAC;QAF0B,SAAI,GAAJ,IAAI,CAAQ;IAG/C,CAAC;IAGM,QAAQ;QAEd,OAAO,IAAI,CAAC,IAAI,CAAC;IAClB,CAAC;CAED"}

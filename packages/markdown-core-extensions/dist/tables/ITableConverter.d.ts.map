@@ -1,1 +1,0 @@
-{"version":3,"file":"ITableConverter.d.ts","sourceRoot":"","sources":["../../src/tables/ITableConverter.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,oBAAoB,EAAE,MAAM,wBAAwB,CAAC;AAE9D;;;GAGG;AACH,MAAM,WAAW,eAAe,CAAC,SAAS;IAEzC,SAAS,CAAC,KAAK,EAAE,oBAAoB,GAAG,SAAS,CAAC;IAClD,OAAO,CAAC,IAAI,EAAE,SAAS,GAAG,oBAAoB,CAAC;CAC/C"}
