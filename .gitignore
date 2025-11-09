@@ -1,0 +1,12 @@
+markdown-block-editor/node_modules
+markdown-block-editor/build
+
+markdown-block-edotir-extensions/node_modules
+markdown-block-edotir-extensions/build
+
+markdown-core/node_modules
+markdown-core/dist
+
+markdown-core-extensions/node_modules
+markdown-core-extensions/dist
+
