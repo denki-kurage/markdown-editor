@@ -4,7 +4,6 @@ import { applyFilters } from "@wordpress/hooks";
 import { ICommandItem } from "@mde/markdown-core";
 import { useDispatch, useRegistry, useSelect } from "@wordpress/data";
 import { store } from "../store";
-import { store as blockEditorStore, useBlockProps } from "@wordpress/block-editor";
 import { EditorState, IMarkdownBlockEditorState } from "../store/type";
 
 export type MarkdownEditorContextProps =
@@ -22,7 +21,6 @@ export const useMarkdownEditorContext = () => useContext(Context);
 
 export const MarkdownEditorContextProviderWrapper = ({children, clientId, ...blockEditorProps}: any) =>
 {
-    console.log("ｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘｘ", blockEditorProps)
     const { markdownCore } = useAppContext();
     const { setEditorState, deleteEditorState } = useDispatch(store);
     const editorState = useSelect(select => select(store).getEditorState(clientId), [clientId]);

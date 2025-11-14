@@ -1,83 +1,64 @@
 import { Button, TextareaControl } from "@wordpress/components";
-import { useEffect, useMemo, useState } from "react";
-import { Table } from "./token-editor-forms/table";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IToken } from "@mde/markdown-core";
-
-
-export const TokenEditor = ({ contexts }: any) =>
-{
-    const { tokenContext, markdownContext } = contexts;
-    const { markdown } = markdownContext;
-    const { singleToken, onEdits } = tokenContext;
-
-    if(!singleToken)
-    {
-        return null;
-    }
-
-    // @ts-ignore
-
-
-    const { form, start, end } = useMemo(() =>
-        {
-            const { start, end } = singleToken.getPosition();
-            const text = markdown.substring(start, end);
-            const form = getEditForm({
-                token: singleToken,
-                text,
-                start,
-                end,
-                onEdit: (...p) => onEdits([[...p]])
-            });
-            return { start, end, form }
-        },
-        [singleToken]
-    );
-
-
-    return (
-        <div className="token-editor">
-            <p>{ singleToken?.getType() }</p>
-            { form }
-            <p>start: {start} end: {end}</p>
-        </div>
-    );
-}
+import { applyFilters } from "@wordpress/hooks";
+import { ExtensionContexts } from "./token-inspectors";
+import React from "react";
 
 
 
-export type TokenEditorBaseProps =
+export type TokenEditorProps =
 {
     token: IToken;
-    start: number;
-    end: number;
-    text: string;
-    onEdit: (text: string, start: number, end: number) => void;
+    contexts: ExtensionContexts;
 }
 
-const getEditForm = (props: TokenEditorBaseProps) =>
+export type TokenEditorComponentInfo =
 {
-    const { token } = props;
-
-    switch (token.getType())
-    {
-        case 'table':
-            return <Table />
-    }
-
-    return <TextTokenEditor {...props} />;
+    type: string;
+    label: string;
+    component: (props: TokenEditorProps) => JSX.Element
 }
 
-const TextTokenEditor = ({ token, text, start, end, onEdit }: TokenEditorBaseProps) =>
+export type ExtensionEditorProps =
 {
-    const [value, setValue] = useState(text);
+    contexts: ExtensionContexts;
+}
+export type ExtensionComponentInfo =
+{
+    label: string;
+    component: (props: ExtensionEditorProps) => JSX.Element
+}
 
-    useEffect(() => setValue(text), [text]);
+export const useTokenEditorComponents = (type: string) =>
+{
+    const components = useMemo(() => {
+        const defaults: TokenEditorComponentInfo = { type: 'text', label: 'Text Editor', component: TextTokenEditor };
+        return applyFilters('getTokenEditorComponents', [defaults]) as TokenEditorComponentInfo[];
+    }, []);
 
-    const edit = () =>
+    return components.filter(c => c.type === type);
+}
+
+export const useExtensionComponents = () =>
+{
+    return useMemo(() => {
+        return applyFilters('getExtensionComponents', []) as ExtensionComponentInfo[];
+    }, []);
+}
+
+
+export const TextTokenEditor = ({ token, contexts }: TokenEditorProps) =>
+{
+    const { tokenContext } = contexts;
+    const { start, end } = token.getPosition();
+    const [value, setValue] = useState(tokenContext.getSingleText() ?? '');
+
+
+    const edit = useCallback(() =>
     {
-        onEdit(value, start, end);
-    }
+        tokenContext.onEdits([[value, start, end]]);
+    }, []);
 
     return (
         <div className="text-token-editor">
@@ -88,7 +69,7 @@ const TextTokenEditor = ({ token, text, start, end, onEdit }: TokenEditorBasePro
                 onChange={setValue}
                 rows={6}
             />
-            <Button value={value} onClick={edit} variant="primary">Update</Button>
+            <Button value={value} onClick={edit} variant="primary">Text Update</Button>
         </div>
     )
-}
+};

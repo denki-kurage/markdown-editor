@@ -18,6 +18,9 @@ import { IAppContext, ICommandItem, IConfigureStorage, IToken, MarkdownCore } fr
 import { ExMarkdownCore } from '@mde/markdown-core-extensions'
 import { addAction, addFilter } from '@wordpress/hooks';
 import TokenExplorer from './token-explorer';
+import { ExtensionComponentInfo, TokenEditorComponentInfo } from '../../markdown-block-editor/src/kurage/components/token-editor';
+import { TableTokenEditor } from './token-table-editor';
+
 
 addFilter(
 	'extensionAppContext',
@@ -102,19 +105,36 @@ addFilter(
 )
 
 addFilter(
-	'extensionInspectorPanels',
+	'getExtensionComponents',
 	'kurage/markdown-block-editor',
-	(panels: any[]) =>
+	(panels: ExtensionComponentInfo[]) =>
 	{
-		panels.push({label: 'Token Explorer', panel: TokenExplorer});
+		panels.push({label: 'Token Explorer', component: TokenExplorer as any});
 		return panels;
 	}
 );
 
 
+addFilter(
+	'getTokenEditorComponents',
+	'kurage/markdown-block-editor',
+	(components: TokenEditorComponentInfo[]) =>
+	{
+		return [
+			...components, 
+			{ type: 'table', label: 'Table', component: TableTokenEditor },
+			{ type: 'tableRow', label: 'Table Row', component: TableTokenEditor },
+			{ type: 'tableCell', label: 'Table Cell', component: TableTokenEditor },
+		]
+	}
+);
+
+
+
+
 // return [commands: ICommandItem, enabledCommandNames: () => string[]]
 addFilter(
-	'extensionCommandItemRoot',
+	'getTokenCommands',
 	'kurage/markdown-block-editor',
 	(commandItems: ICommandItem[], markdownCore: MarkdownCore) =>
 	{

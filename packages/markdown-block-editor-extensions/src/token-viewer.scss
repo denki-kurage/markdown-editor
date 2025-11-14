@@ -54,12 +54,22 @@ $left: 1.2em;
 
 }
 
-ul.token-deps
+.token-deps
 {
-    li.left-0 { padding-left: $left * 0; }
-    li.left-1 { padding-left: $left * 1; }
-    li.left-2 { padding-left: $left * 2; }
-    li.left-3 { padding-left: $left * 3; }
-    li.left-4 { padding-left: $left * 4; }
-    li.left-5 { padding-left: $left * 5; }
+    .left-0 { padding-left: $left * 0; }
+    .left-1 { padding-left: $left * 1; }
+    .left-2 { padding-left: $left * 2; }
+    .left-3 { padding-left: $left * 3; }
+    .left-4 { padding-left: $left * 4; }
+    .left-5 { padding-left: $left * 5; }
+    .left-6 { padding-left: $left * 6; }
+    .left-7 { padding-left: $left * 7; }
+    .left-8 { padding-left: $left * 8; }
+    .left-9 { padding-left: $left * 9; }
+    .left-10 { padding-left: $left * 10; }
+    .left-11 { padding-left: $left * 11; }
+    .left-12 { padding-left: $left * 12; }
+    .left-13 { padding-left: $left * 13; }
+    .left-14 { padding-left: $left * 14; }
+    .left-15 { padding-left: $left * 15; }
 }

@@ -12,8 +12,10 @@ export interface IMarkdownBlockEditorInfo
 
 export interface IMarkdownBlockEditorState
 {
+    tokenTypes: string[];
     selections: [number, number][];
     enabledSelectionsFilter: boolean;
+    enabledSelectionsFilterFillMode: boolean;
     maximized: boolean;
     extensionsData: {[key: string]: any}
 }

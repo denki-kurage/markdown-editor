@@ -11,6 +11,7 @@ export type TokenStates =
      * エディタレベルでの選択範囲。
      */
     selections: [number, number][] | null;
+    
 
     rootToken: IToken;
 
@@ -30,16 +31,25 @@ export type MarkdownTokenContextProps =
      */
     selections: [number, number][] | null;
 
+
     rootToken: IToken;
 
     /**
      * 単一の選択されたトークン。
      */
     singleToken?: IToken;
+
     /**
      * セレクションが一つの場合、start地点をインデックスとしてtokenを設定する。
      */
     setSelectionsAndToken: (selections: [number, number][] | null, singleToken?: IToken) => void;
+
+    /**
+     * 複数の選択の場合
+     */
+    setSelections: (selections: [number, number][]) => void;
+
+    getSingleText: () => string | undefined;
 
 }
 
@@ -85,6 +95,14 @@ const getRootTokenBy = (token: IToken) =>
     return parent;
 }
 
+
+const execSelections = (selections: [number, number][], markdown: string, markdownCore: MarkdownCore) =>
+{
+    const s = selections.map(sl => Utils.IndexToSelection(markdown, ...sl))
+    const cmd = markdownCore.createCommandCollection().getCommand('markdown:select');
+    cmd?.command?.execute({ selections: s });
+}
+
 const selectionsAndTokenAction = (
     markdownCore: MarkdownCore,
     markdown: string,
@@ -107,9 +125,7 @@ const selectionsAndTokenAction = (
     {
         if(selections.length === 1)
         {
-            const s = selections.map(sl => Utils.IndexToSelection(markdown, ...sl))
-            const cmd = markdownCore.createCommandCollection().getCommand('markdown:select');
-            cmd?.command?.execute({ selections: s });
+            execSelections(selections, markdown, markdownCore);
             newSelections = selections;
         }
     }
@@ -201,13 +217,15 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
         updateTokenStatesRef.current({ selections: newSelections, singleToken: newSingleToken});
     }, []);
 
+    
+
     const ctx = useMemo<MarkdownTokenContextProps>(() => {
         return {
             ...tokenStates,
             onEdits: (edits: [string, number, number][]) => {
                 const s = edits.map<IReplaceText>(e => {
                     const [text, start, end] = e;
-                    return { area: Utils.IndexToSelection(markdown, start, end), text };
+                    return { area: Utils.IndexToSelection(contextPropertyRef.current.markdown, start, end), text };
                 })
 
                 if(s.length)
@@ -215,7 +233,21 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
                     appContext.getEditorModel().replaces(s);
                 }
             },
-            setSelectionsAndToken
+            setSelections: (selections) =>
+            {
+                const { markdown, markdownCore } = contextPropertyRef.current;
+                execSelections(selections, markdown, markdownCore)
+            },
+            setSelectionsAndToken,
+            getSingleText: () =>
+            {
+                const pos = tokenStates.singleToken?.getPosition();
+                if(pos)
+                {
+                    const {start, end} = pos;
+                    return contextPropertyRef.current.markdown.slice(start, end)
+                }
+            }
         }
     }, [tokenStates]);
 
@@ -236,7 +268,14 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
                 if(!isEditing)
                 {
                     console.log(" >>>>>>>>>>>>>> SelectChanged()");
-                    ctx.setSelectionsAndToken(null);
+                    try
+                    {
+                        ctx.setSelectionsAndToken(null);
+                    }
+                    catch(ex)
+                    {
+                        console.log("######################################", ex);
+                    }
                 }
             }
         })

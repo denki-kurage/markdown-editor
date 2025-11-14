@@ -1,15 +1,19 @@
 import { registerBlockType } from '@wordpress/blocks';
 
+
 import './style.scss';
-//import './components/token-viewer.scss'
+
 
 import Edit from './edit';
 import save from './save';
+
+// @ts-ignore
 import metadata from './block.json';
+
+// @ts-ignore
 import { ReactComponent as M } from './m.svg';
 
-import '../../../markdown-block-editor-extensions/build/index'
-
+// @ts-ignore
 registerBlockType( metadata.name, {
 
 	edit: Edit,

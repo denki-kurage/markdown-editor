@@ -1,17 +1,16 @@
 import { PanelBody } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { TokenEditor } from "./token-editor";
-import { MarkdownContextProps, useMarkdownContext } from "../context/markdown-context";
+import { useExtensionComponents, useTokenEditorComponents } from "./token-editor";
+import { MarkdownContextProps } from "../context/markdown-context";
 import { InspectorControls } from "@wordpress/block-editor";
-import { applyFilters } from "@wordpress/hooks";
-import { useEffect, useMemo, useRef } from "react";
-import { MarkdownTokenContextProps, useMarkdownTokenContext } from "../context/markdown-token-context";
-import { Loading, LoadingPanel } from './loading'
-import { useConfigContext } from "../context/markdown-config-context";
-import { MarkdownExtensionContextProps, useExtensionContext } from "../context/markdown-extension-context";
-import { MarkdownEditorContextProps, useMarkdownEditorContext } from "../context/markdown-editor-context";
+import { useMemo, useRef } from "react";
+import { MarkdownTokenContextProps } from "../context/markdown-token-context";
+import { LoadingPanel } from './loading'
+import { MarkdownExtensionContextProps } from "../context/markdown-extension-context";
+import { MarkdownEditorContextProps } from "../context/markdown-editor-context";
+import { useExtensionContexts } from "./hooks";
 
-export type ExtensionContext =
+export type ExtensionContexts =
 {
     tokenContext: MarkdownTokenContextProps,
     markdownContext: MarkdownContextProps,
@@ -20,41 +19,47 @@ export type ExtensionContext =
 }
 export const TokenInspectors = () =>
 {
-    const tokenContext = useMarkdownTokenContext();
-    const markdownContext = useMarkdownContext();
-    const extensionContext = useExtensionContext();
-    const editorContext = useMarkdownEditorContext();
+    const contexts = useExtensionContexts();
+    const { markdownContext, tokenContext } = contexts;
+    const { singleToken } = tokenContext;
     const { isEditing } = markdownContext;
 
 
-    const contextsRef = useRef({ tokenContext, markdownContext, extensionContext, editorContext });
-    const contexts = contextsRef.current = useMemo(() => {
+    const contextsRef = useRef(contexts);
+    contextsRef.current = useMemo(() => {
         if(isEditing)
         {
             return contextsRef.current;
         }
 
-        return { tokenContext, markdownContext, extensionContext, editorContext }
-    }, [isEditing,  tokenContext, markdownContext, extensionContext, editorContext]);
+        return contexts;
+    }, [isEditing]);
 
-    const panels = useMemo(() => applyFilters('extensionInspectorPanels', [{label: __('Token Editor', 'mdtableeditor'), panel: TokenEditor}]) as any[], []);
-    const panelComponents = useMemo(() => panels.map(({ label, panel: Panel }) => (
+    const editors = useTokenEditorComponents(singleToken?.getType() ?? '');
+    const extensions = useExtensionComponents();
+
+
+    const tokenEditors = useMemo(() => editors.map(({ label, component: TokenEditor }) => (
         <PanelBody title={label}>
                 <LoadingPanel isLoading={isEditing}>
-            <Panel contexts={contexts} />
+                    { singleToken && <TokenEditor token={singleToken} contexts={contexts} /> }
                 </LoadingPanel>
         </PanelBody>
-    )), [contexts, isEditing]);
+    )), [contexts, isEditing, singleToken]);
 
+    const extensionEditors = useMemo(() => extensions.map(({ label, component: ExtensionEditor }) => (
+        <PanelBody title={label}>
+                <LoadingPanel isLoading={isEditing}>
+                    { singleToken && <ExtensionEditor contexts={contexts} /> }
+                </LoadingPanel>
+        </PanelBody>
+    )), [contexts, isEditing, singleToken])
 
     return useMemo(() => {
-
-        console.log("======================================== <<<")
-        console.log(isEditing)
-
         return (
             <InspectorControls>
-                    { panelComponents }
+                    { tokenEditors }
+                    { extensionEditors }
             </InspectorControls>
         )
 

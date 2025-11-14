@@ -18,8 +18,11 @@ export const getEditMaximized = (state: IMarkdownBlockEditor, id: string) =>
 export const getEditorState = (state: IMarkdownBlockEditor, id: string) =>
 {
     return state.editorStates[id] || ({
+        extensionsData: {},
         enabledSelectionsFilter: false,
+        enabledSelectionsFilterFillMode: false,
         selections: [],
+        tokenTypes: [],
         maximized: false
     })
 }

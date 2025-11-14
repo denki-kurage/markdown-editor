@@ -1,24 +1,17 @@
 import { IToken } from "@mde/markdown-core"
 
-export const filterSelections = (tokens: IToken[], selections: [number, number][]) =>
-{
-
-}
-
-export const flatTokenNodes = (rootToken: IToken) =>
-{
-
-}
 
 export type TokenSet = { token: IToken, children: TokenSet[] }
 export type tokenFilterFunc = (current: IToken, predicate: (token: IToken) => boolean) => TokenSet | null;
 /**
  * 子から走査、つまり末端からフィルタリングして切り離されていきます。
+ * 末端(リーフ)からチェックされますが、上位の階層(枝)はフィルタリングされません。
+ * リーフが発見された時点でその上位ノードも無条件に追加されることに注意してください。
  */
-export const tokenFilter: tokenFilterFunc = (current, predicate) =>
+export const filterTokenTreeFromBottom: tokenFilterFunc = (current, predicate) =>
 {
     const matched = predicate(current);
-    const children = current.getChildren().map(c => tokenFilter(c, predicate)).filter(f => !!f)
+    const children = current.getChildren().map(c => filterTokenTreeFromBottom(c, predicate)).filter(f => !!f)
 
     if(children.length || matched)
     {
@@ -28,23 +21,43 @@ export const tokenFilter: tokenFilterFunc = (current, predicate) =>
     return null;
 }
 
-
-export const getAncestors = (token?: IToken) =>
+export const getAncestorsByToken = (token: IToken, tokenSet: TokenSet) =>
 {
-    const tokens: IToken[] = [];
-    let current: IToken | undefined = token;
+    const tokenStack = [...getAncestors(token)];
+    const tokenSetList = new Map([...flatItem(tokenSet, ts => ts.children)].map(s => [s.token, s]));
+    return tokenStack.map(token => tokenSetList.get(token)).filter(s => !!s);
+}
 
-    if(!current)
-    {
-        return tokens;
-    }
-
+export function *getAncestors(token: IToken)
+{
+    let current = token;
     do
     {
-        tokens.push(current);
+        yield current;
     }
-    while (current = current.getParent());
+    while (current = current.getParent()!);
+}
 
-    return tokens;
+/**
+ * ITokenから探索していき子孫一覧を返します。
+ */
+export function *flatItem<T>(item: T, getChildren: (item: T) => T[], predicate?: (item: T) => boolean)
+{
+    let current = item;
+    const list = [item];
 
+    while(current = list.shift()!)
+    {
+        // 成功したら子は追加しない。
+        if(!predicate?.(current))
+        {
+            list.unshift(...getChildren(current));
+        }
+        yield current;
+    }
+}
+
+export const flatLeafTokenSet = (tokenSet: TokenSet) =>
+{
+    return [...flatItem(tokenSet, ts => ts.children)].filter(ts => ts.children.length === 0);
 }

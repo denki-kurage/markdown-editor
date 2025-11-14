@@ -67,6 +67,21 @@ add_action('init', function(){
 
 });
 
+
+
+#
+#
+#
+#
+#
+#
+add_action('admin_enqueue_scripts', fn() => wp_enqueue_script('markdown-block-editor-extensions', plugin_dir_url(__FILE__) . 'extensions.js'));
+#
+#
+#
+
+
+
 add_action('rest_api_init', function(){
 
 	// グローバル設定のデータを受け取る(getCurrentPost()から取得)

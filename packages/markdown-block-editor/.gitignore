@@ -16,6 +16,7 @@ node_modules/
 venders/md-table-editor/node_modules/
 venders/md-table-editor/dist/
 build/
+extensions.js
 
 
 # Optional npm cache directory

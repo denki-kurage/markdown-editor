@@ -8,6 +8,7 @@
 	"scripts": {
 		"build": "wp-scripts build",
 		"dev": "wp-scripts build --mode development",
+		"typing": "tsc -p tsconfig-types.json",
 		"now": "npx wp-now start",
 		"all": "../build.sh",
 		"format": "wp-scripts format",

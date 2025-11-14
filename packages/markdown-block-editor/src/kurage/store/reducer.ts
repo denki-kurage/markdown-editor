@@ -17,7 +17,7 @@ const editorStates = (state: EditorState = {}, action: any) =>
     switch(action.type)
     {
         case 'SET_EDITOR_STATE':
-            return { ...state, [action.id]: action.editorState }
+            return { ...state, [action.id]: { ...state[action.id], ...action.editorState } }
         case 'DELETE_EDITOR_STATE':
             delete state[action.id];
             return { ...state }
