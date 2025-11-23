@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="512" height="512" viewBox="0 0 512 512"
+     aria-label="checkbox checked (white on black)">
+  <!-- 背景黒 -->
+  <rect width="512" height="512" fill="#ffffffff"/>
+
+  <!-- 白い枠 -->
+  <rect x="96" y="96" width="320" height="320"
+        rx="32" ry="32"
+        fill="none" stroke="#000000ff" stroke-width="32"/>
+
+  <!-- 白いチェックマーク -->
+  <path d="M160 260 L230 330 L360 190"
+        fill="none" stroke="#000000ff" stroke-width="40"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

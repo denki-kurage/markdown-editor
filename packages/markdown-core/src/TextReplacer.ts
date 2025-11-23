@@ -24,7 +24,7 @@ export class TextReplacer implements ITextReplacer
             const r: ISelection =
             {
                 sPos: { charIndex: 0, docIndex: begin },
-                ePos: { charIndex: content.length, docIndex: end } // TODO: length
+                ePos: { charIndex: content.length, docIndex: end - 1 } // TODO: length
             }
             return { area: r, text };
         });

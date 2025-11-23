@@ -4,8 +4,8 @@ import { Button, CheckboxControl, Modal, SelectControl, ToggleControl } from "@w
 import { IToken } from "@mde/markdown-core";
 import './token-viewer.scss';
 import { filterTokenTreeFromBottom, TokenSet, flatLeafTokenSet, getAncestorsByToken } from "./token-explorer-hooks";
-import { ExtensionContexts } from "../../markdown-block-editor/src/kurage/components/token-inspectors";
 import { TokenCheckerModal } from "./token-checker-modal";
+import { ExtensionContexts } from "../../markdown-block-editor/src/kurage/components/hooks";
 
 
 
@@ -255,7 +255,7 @@ export const TokenExplorer = React.memo(({ contexts }: { contexts: ExtensionCont
     }, [rootToken, tokenTypes, selections, enabledSelectionsFilter, enabledSelectionsFilterFillMode])
 
     const { filteredTokenTree } = componentContext;
-    const ts = [filteredTokenTree].filter(t => !!t)
+    const ts = useMemo(() => filteredTokenTree ? [filteredTokenTree] : [], [filteredTokenTree]);
     const ancestors = useMemo(() => (singleToken && filteredTokenTree) ? getAncestorsByToken(singleToken, filteredTokenTree) : [], [singleToken, filteredTokenTree]);
 
     return (

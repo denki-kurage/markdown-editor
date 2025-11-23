@@ -18,8 +18,8 @@ import { IAppContext, ICommandItem, IConfigureStorage, IToken, MarkdownCore } fr
 import { ExMarkdownCore } from '@mde/markdown-core-extensions'
 import { addAction, addFilter } from '@wordpress/hooks';
 import TokenExplorer from './token-explorer';
-import { ExtensionComponentInfo, TokenEditorComponentInfo } from '../../markdown-block-editor/src/kurage/components/token-editor';
-import { TableTokenEditor } from './token-table-editor';
+import { ExtensionComponentInfo, TokenCommandsInfo,  TokenEditorComponentInfo } from '../../markdown-block-editor/src/kurage/components/inspector-hooks';
+import { ExtensionContexts } from '../../markdown-block-editor/src/kurage/components/hooks';
 
 
 addFilter(
@@ -121,11 +121,8 @@ addFilter(
 	(components: TokenEditorComponentInfo[]) =>
 	{
 		return [
-			...components, 
-			{ type: 'table', label: 'Table', component: TableTokenEditor },
-			{ type: 'tableRow', label: 'Table Row', component: TableTokenEditor },
-			{ type: 'tableCell', label: 'Table Cell', component: TableTokenEditor },
-		]
+			...components
+		] as TokenEditorComponentInfo[]
 	}
 );
 
@@ -136,15 +133,46 @@ addFilter(
 addFilter(
 	'getTokenCommands',
 	'kurage/markdown-block-editor',
-	(commandItems: ICommandItem[], markdownCore: MarkdownCore) =>
+	(commandItemInfomations: TokenCommandsInfo[]) =>
 	{
-		if(markdownCore instanceof ExMarkdownCore)
-		{
-			const maps = markdownCore.table.getCommandsMap().children ?? [];
-			commandItems.push(...maps)
-		}
+		const wm = new WeakMap<MarkdownCore, ICommandItem[]>();
 
-		return commandItems;
+		return [
+			...commandItemInfomations,
+			{
+				isShow: (type: string, contexts: ExtensionContexts) =>
+				{
+					const core = contexts?.appContext?.markdownCore;
+					if(core instanceof ExMarkdownCore)
+					{
+						if(!!core.currentTableContent)
+						{
+							return true;
+						}
+					}
+
+					return []
+				},
+				getCommandItems: (type: string, contexts: ExtensionContexts) =>
+				{
+					const core = contexts?.appContext?.markdownCore;
+					if(core instanceof ExMarkdownCore)
+					{
+						if(!!core.currentTableContent)
+						{
+							if(!wm.has(core))
+							{
+								wm.set(core, core.table.getCommandsMap().children ?? []);
+							}
+
+							return wm.get(core);
+						}
+					}
+
+					return [];
+				}
+			}
+		]
 	}
 )
 

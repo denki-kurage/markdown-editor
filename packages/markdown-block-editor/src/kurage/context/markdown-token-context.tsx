@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useMarkdownContext } from "./markdown-context";
-import { useAppContext } from "./markdown-app-context";
+import { useMarkdownAppContext } from "./markdown-app-context";
 import { IAppContext, IReplaceText, IToken, MarkdownCore, MarkdownParser, Utils } from "@mde/markdown-core";
 
 
@@ -82,19 +82,6 @@ const findTokenByIndex = (token: IToken, index: number): IToken | undefined =>
     return undefined;
 }
 
-const getRootTokenBy = (token: IToken) =>
-{
-    let parent: IToken|undefined = token;
-    let current: IToken|undefined = token;
-    do
-    {
-        parent = current;
-    }
-    while(current = current.getParent());
-
-    return parent;
-}
-
 
 const execSelections = (selections: [number, number][], markdown: string, markdownCore: MarkdownCore) =>
 {
@@ -158,7 +145,7 @@ type ContextPropertyRef =
 export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
 {
     const { markdown, isEditing } = useMarkdownContext();
-    const { markdownCore, appContext } = useAppContext();
+    const { markdownCore, appContext } = useMarkdownAppContext();
     
     const [tokenStates, setTokenStates] = useState<TokenStates>({
         rootToken: new MarkdownParser().parseTokenTree(markdown),
@@ -252,6 +239,7 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
     }, [tokenStates]);
 
     useEffect(() => console.log("-------------------------> context changed <--------------------------"), [tokenStates])
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", ctx.selections)
     
     useEffect(() => {
         if(!isEditing)
@@ -264,7 +252,7 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
 
     useEffect(() => {
         const ec = markdownCore.eventCollection.add({
-            selectChanged: () => {
+            selectChanged: (e) => {
                 if(!isEditing)
                 {
                     console.log(" >>>>>>>>>>>>>> SelectChanged()");
@@ -283,7 +271,6 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
         return () => ec.dispose();
     }, [ctx]);
 
-    useEffect(() => console.log("ROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOT CHANGE"), [ctx.rootToken])
 
     return (
         <MarkdownTokenContextProvider value={ctx}>

@@ -1,9 +1,17 @@
 import { IAppContext, IConfigureStorage, IEventsInitializer, IMarkdownEvents, MarkdownCore } from "@mde/markdown-core";
 import { MarkdownTable } from "./MarkdownTable";
+import { MarkdownTableContent } from "./MarkdownTableContent";
 
 export class ExMarkdownCore extends MarkdownCore
 {
     public readonly table: MarkdownTable;
+    private _currentTableContent: MarkdownTableContent | null = null;
+
+    public get currentTableContent():  MarkdownTableContent | null
+    {
+        return this._currentTableContent;
+    }
+
     
     public constructor(
         appContext: IAppContext,
@@ -12,6 +20,8 @@ export class ExMarkdownCore extends MarkdownCore
     {
         super(appContext, configStorage);
         this.table = this.createMarkdownTable();
+
+        this.init();
     }
 
     
@@ -22,13 +32,19 @@ export class ExMarkdownCore extends MarkdownCore
 
     private init()
     {
-        /*
-        markdownApp.eventCollection.add({ cursorChanged: onCursorPositionChanged });
-
         const table = this.table;
-        table.tableUpdated.addListener(tables => onTablesChanged(tables));
-        table.currentTableChanged.addListener(currentTable => onCurrentTableChanged(currentTable));
-        */
+        table.currentTableChanged.addListener(currentTable => this.onCurrentTableChanged(currentTable));
+    }
+
+    private onCurrentTableChanged(currentTable: MarkdownTableContent): void
+    {
+        this._currentTableContent = currentTable;
+    }
+
+    public override dispose(): void
+    {
+        super.dispose();
+        this.table.dispose();
     }
 
 }

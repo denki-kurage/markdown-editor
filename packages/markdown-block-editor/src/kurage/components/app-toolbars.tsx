@@ -4,22 +4,23 @@ import React, { useMemo, useState } from "react";
 import ImageUploadEditor from "./image-upload-editor";
 import BlogCardGenerator from "./blog-card-generator";
 import { __ } from "@wordpress/i18n";
-import { useAppContext } from "../context/markdown-app-context";
+import { useMarkdownAppContext } from "../context/markdown-app-context";
 import { CommandToolbar } from "./edit-toolbar";
-import { useMarkdownEditorContext } from "../context/markdown-editor-context";
 import { useMarkdownTokenContext } from "../context/markdown-token-context";
+import { useTokenCommands } from "./inspector-hooks";
+import { useExtensionContexts } from "./hooks";
 
 const AppToolbars = () =>
 {
+    const { markdownCore } = useMarkdownAppContext();
+    const { singleToken } = useMarkdownTokenContext();
+    const contexts = useExtensionContexts();
+
+    const tokenType = singleToken?.getType() ?? '';
+
     const [imageOpen, setImageOpen] = useState(false);
     const [linkOpen, setLinkOpen] = useState(false);
-
-
-    const { selections } = useMarkdownTokenContext();
-    
-
-    const { markdownCore, appContext } = useAppContext();
-    const { commandItems } = useMarkdownEditorContext();
+    const tokenCommands = useTokenCommands(tokenType, contexts);
     const commandCollection = markdownCore?.createCommandCollection();
 
     return (
@@ -41,7 +42,7 @@ const AppToolbars = () =>
             </ToolbarButtonModal>
 
             {
-                !!commandItems.length && <BlockControls>{ commandItems.map(ci => <CommandToolbar root={ci} />) }</BlockControls>
+                !!tokenCommands.length && <BlockControls>{ tokenCommands.map(ci => <CommandToolbar root={ci} />) }</BlockControls>
             }
             
 

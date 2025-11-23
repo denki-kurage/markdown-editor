@@ -1,9 +1,66 @@
 import { Monaco } from "@monaco-editor/react";
-import { editor, IRange, languages } from 'monaco-editor';
-import { IAppContext, IDisposable, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, IStringCounter, ITextSource } from "@mde/markdown-core"
+import { editor, IRange, ISelection as IMonacoSelection, languages, Position, Selection } from 'monaco-editor';
+import { IAppContext, IDisposable, IDocumentPosition, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, ISelection as IMdeSelection, IStringCounter, ITextSource } from "@mde/markdown-core"
 import { MonacoDecorator } from "./MonacoDecorator";
+import { codeLanguages } from "./CodeLanguages";
 
 
+
+class Utils
+{
+    public static fromMonaco(selection: IMonacoSelection): IMdeSelection
+    {
+        return {
+            sPos: {
+                docIndex: selection.selectionStartLineNumber - 1,
+                charIndex: selection.selectionStartColumn - 1
+            },
+            ePos: {
+                docIndex: selection.positionLineNumber - 1,
+                charIndex: selection.positionColumn - 1
+            }
+        }
+    }
+
+    public static toMonaco(selection: IMdeSelection): IMonacoSelection
+    {
+        const { sPos, ePos } = selection;
+
+        return ({
+            selectionStartLineNumber: sPos.docIndex + 1,
+            selectionStartColumn: sPos.charIndex + 1,
+            positionLineNumber: (ePos?.docIndex ?? sPos.docIndex) + 1,
+            positionColumn: (ePos?.charIndex ?? sPos.charIndex) + 1
+        })
+    }
+
+    public static toMonacoRange(selection: IMdeSelection): IRange
+    {
+        const { sPos, ePos } = selection;
+        const endPosition = ePos ?? sPos;
+
+        return ({
+            startLineNumber: sPos.docIndex + 1,
+            startColumn: sPos.charIndex + 1,
+            endLineNumber: endPosition.docIndex + 1,
+            endColumn: endPosition.charIndex + 1
+        })
+    }
+
+    public static fromMonacoRange(range: IRange): IMdeSelection
+    {
+        return {
+            sPos: {
+                docIndex: range.startLineNumber - 1,
+                charIndex: range.startColumn - 1
+            },
+            ePos: {
+                docIndex: range.endLineNumber - 1,
+                charIndex: range.endColumn - 1
+            }
+        }
+    }
+}
 
 
 export class MonacoEventsInitializer implements IEventsInitializer<IMarkdownEvents>
@@ -23,12 +80,12 @@ export class MonacoEventsInitializer implements IEventsInitializer<IMarkdownEven
 
         this.editor.getModel()?.onDidChangeContent(e => {
             const { startColumn, startLineNumber } = e.changes[0].range;
-            events.textChanged({ startPosition: { docIndex: startLineNumber, charIndex: startColumn } });
+            events.textChanged({ startPosition: { docIndex: startLineNumber - 1, charIndex: startColumn - 1 } });
         }),
 
         this.editor.onDidChangeCursorSelection(e => {
             const { startColumn, startLineNumber } = e.selection;
-            events.selectChanged({ startPosition: { docIndex: startLineNumber, charIndex: startColumn } });
+            events.selectChanged({ startPosition: { docIndex: startLineNumber - 1, charIndex: startColumn - 1 } });
         }),
 
         this.editor.onDidChangeCursorPosition(e => {
@@ -77,6 +134,36 @@ export class MonacoEventsInitializer implements IEventsInitializer<IMarkdownEven
                             });
                             return { suggestions: items };
                         }
+                    }
+                }
+            }
+        ),
+
+        /**
+         * コードブロックの言語補完完了後、セレクションを選択できない・・・。
+         * コマンドで実装する以外の方法がわかるまでそのままにしておく。
+         */
+        this.monaco.languages.registerCompletionItemProvider(
+            'markdown',
+            {
+                triggerCharacters: ['`'],
+                provideCompletionItems: (model, pos, content, token) =>
+                {
+                    const line = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
+
+                    if(line.endsWith('```'))
+                    {
+                        const items = codeLanguages.map(lang => {
+                            return <languages.CompletionItem>{
+                                label: `${lang.name} (${lang.label})`,
+                                kind: this.monaco.languages.CompletionItemKind.Snippet,
+                                detail: `Insert code block for ${lang.label}.`,
+                                insertText: `${lang.name}\n\n\`\`\`\n`,
+                                documentation: `\`\`\`${lang.name}\nYour code here...\n\`\`\``,
+                            };
+                        });
+
+                        return { suggestions: items };
                     }
                 }
             }
@@ -137,7 +224,7 @@ export class MonacoEditorContext implements IAppContext
         return "Monaco Editor";
     }
 
-    public getTextSource(): ITextSource | undefined
+    public getTextSource(): ITextSource
     {
         const self = this;
 
@@ -241,44 +328,30 @@ export class MonacoEditorContext implements IAppContext
                 const selections = this.editor.getSelections();
                 if(selections)
                 {
-                    return selections.map(s => ({
-                        sPos: { docIndex: s.selectionStartLineNumber - 1, charIndex: s.selectionStartColumn - 1 },
-                        ePos: { docIndex: s.positionLineNumber - 1, charIndex: s.positionColumn - 1 }
-                    }))
+                    return selections.map(s => Utils.fromMonaco(s));
                 }
                 return [];
             },
             setSelections: (selections) =>
             {
-                const sl = selections.length ? selections : [{ sPos: { docIndex: 0, charIndex: 0 } }];
-                const newSelections = sl.map(s => {
-                    const { docIndex: selectionStartLineNumber, charIndex: selectionStartColumn } = s.sPos;
-                    const { docIndex: positionLineNumber, charIndex: positionColumn } = s.ePos ?? {...s.sPos};
-                    return {
-                        selectionStartLineNumber: selectionStartLineNumber + 1,
-                        selectionStartColumn: selectionStartColumn + 1,
-                        positionLineNumber: positionLineNumber + 1,
-                        positionColumn: positionColumn + 1
-                    };
-                })
+                if(selections.some(s => s.ePos === undefined))
+                {
+                    throw new Error("MonacoEditorContext#setSelections: ePos is required.");
+                }
 
-                this.editor.setSelections(newSelections);
+                //const sl = selections.length ? selections : [{ sPos: { docIndex: 0, charIndex: 0 } }];
+                if(selections.length)
+                {
+                    const newSelections = selections.map(s => Utils.toMonaco(s));
+                    this.editor.setSelections(newSelections);
+                }
                 this.editor.focus();
             },
-            replaces: (items: IReplaceText[]) =>
+            replaces: (items: IReplaceText[], reselect) =>
             {
                 const edits = items.map(item => {
                     const { area, text } = item;
-                    const { ePos, sPos } = area;
-                    const endPosition = ePos ?? sPos;
-
-                    const r: IRange =
-                    {
-                        startLineNumber: sPos.docIndex + 1,
-                        endLineNumber: endPosition.docIndex + 1,
-                        startColumn: sPos.charIndex + 1,
-                        endColumn: endPosition.charIndex + 1
-                    }
+                    const r: IRange = Utils.toMonacoRange(area);
 
                     return {
                         forceMoveMarkers: false,
@@ -287,22 +360,31 @@ export class MonacoEditorContext implements IAppContext
                     }
                 });
 
-                this.model.applyEdits(edits);
+                //this.model.applyEdits(edits);
+                const r: undefined | editor.ICursorStateComputer  = reselect ? options => {
+                        return options.map((opt, idx) => {
+                            const { range, text } = opt;
+                            const newSelection = reselect(text, Utils.fromMonacoRange(range));
+                            const ms = Utils.toMonaco(newSelection);
+                            return new Selection(ms.selectionStartLineNumber, ms.selectionStartColumn, ms.positionLineNumber, ms.positionColumn);
+                        })
+                    } : undefined;
+                
+                const computedSelections = this.model.pushEditOperations(
+                    null,
+                    edits,
+                    r!
+                );
+                if(computedSelections)
+                {
+                    this.editor.setSelections(computedSelections);
+                }
                 this.editor.focus();
             },
             getText: (pos) =>
             {
-                const { sPos, ePos } = pos;
-                const endPosition = ePos ?? sPos;
-
-                return this.model.getValueInRange({
-                    startLineNumber: sPos.docIndex + 1,
-                    endLineNumber: endPosition.docIndex + 1,
-                    startColumn: sPos.charIndex + 1,
-                    endColumn: endPosition.charIndex + 1
-                });
+                return this.model.getValueInRange(Utils.toMonacoRange(pos));
             },
-            /*
             positionToIndex: (position: IDocumentPosition): number =>
             {
                 return this.model.getOffsetAt(new Position(position.docIndex + 1, position.charIndex + 1));
@@ -319,7 +401,6 @@ export class MonacoEditorContext implements IAppContext
                 }
                 return undefined;
             },
-            */
             scroll: (docIndex: number) =>
             {
                 this.editor.revealLine(docIndex + 1, editor.ScrollType.Smooth);

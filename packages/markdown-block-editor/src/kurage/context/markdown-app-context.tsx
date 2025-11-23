@@ -8,7 +8,7 @@ export type AppContextGenerateParams =
 {
     appContext: IAppContext;
 }
-export type AppContextProps =
+export type MarkdownAppContextProps =
 {
     appContext: IAppContext;
     eventCollection?: MarkdownEventCollection;
@@ -20,12 +20,14 @@ const appContext: IAppContext =
 {
     getEditorModel: () => {
         return {
-            getText: (pos) => '',
+            getText: (selection) => '',
             getCursor: () => undefined,
             getSelections: () => [],
             setSelections: (selections) => {},
             replaces: (items) => {},
-            scroll: (docIndex) => {}
+            scroll: (docIndex) => {},
+            indexToPosition: (docIndex) => ({ charIndex: 0, docIndex: 0}),
+            positionToIndex: (position) => 0
         } as IEditorModel
     },
     getDecorator: () => {
@@ -58,16 +60,19 @@ const appContext: IAppContext =
     getStringCounter: () => {
         return (str: string) => str.length;
     },
-    getTextSource: () => undefined,
+    getTextSource: () => ({
+        lineAt: (line: number) => '',
+        hasLine: (line: number) => false
+    }),
     returnKey: () => 'none'
 }
 
 const defaultMarkdownCore = new MarkdownCore(appContext, new MarkdownConfigureStorage());
 
 
-const Context = createContext<AppContextProps>(null as any);
+const Context = createContext<MarkdownAppContextProps>(null as any);
 export const { Provider: AppContextProvider } = Context;
-export const useAppContext = () => useContext(Context);
+export const useMarkdownAppContext = () => useContext(Context);
 
 export const MarkdownAppContextWrapper = ({ children }: any) =>
 {
@@ -94,7 +99,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
         }
     }
 
-    const ctx = useMemo<AppContextProps>(() =>
+    const ctx = useMemo<MarkdownAppContextProps>(() =>
     {
         return {
             appContext: markdownCore.appContext,

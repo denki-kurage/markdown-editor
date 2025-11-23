@@ -20,20 +20,23 @@ export const CommandToolbar = ({ root }: CommandToolbarProps) =>
 {
 	const { selections } = useMarkdownTokenContext();
 	const icon = useMemo(() => root?.icon ? toIcon(root) : null, [root])
-	const controls = useMemo(() => (root?.children ?? []).map(toControl), [root]);
+	const controls = useMemo(() => (root?.children ?? []).filter(c => !!c.icon).map(toControl), [root]);
 
 	controls.map(c => c.isDisabled = !c.item.command?.canExecute())
-	
+
 	if(!root)
 	{
 		return null;
 	}
 
-
+	if(!icon)
+	{
+		return <FlatCommandToolbar root={root} />
+	}
+	
 	return (
 		<ToolbarDropdownMenu
 			label={root.label}
-			text={icon ? undefined : root.label}
 			icon={icon}
 			controls={ controls }
 		/>
@@ -62,7 +65,7 @@ export type FlatCommandToolbarProps =
 export const FlatCommandToolbar = ({ root }: FlatCommandToolbarProps) =>
 {
 	const { selections } = useMarkdownTokenContext();
-	const items = (root.children ?? []).map(c => <CommandControl item={c} />)
+	const items = (root.children ?? []).filter(c => !!c.icon).map(c => <CommandControl item={c} />)
 
 	if(!root)
 	{
@@ -80,11 +83,11 @@ export const CommandControl = ({ item }: { item: ICommandItem }) =>
 {
 	const canExecuteResult = item.command?.canExecute();
 	const cmd = useCallback(() => item.command?.execute(), []);
-	const icon = useMemo(() => toIcon(item) as any, []);
+	const icon = useMemo(() => toIcon(item) as any, [item]);
 
 	return (
 		<ToolbarButton
-			label=""
+			label={item.label}
 			text=""
 			icon={icon}
 			disabled={!canExecuteResult}

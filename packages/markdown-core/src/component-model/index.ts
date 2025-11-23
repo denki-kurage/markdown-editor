@@ -13,4 +13,3 @@ export { ICommandsMapRoot } from './ICommandsMap'
 export { EventUpdateManager } from './EventUpdateManager'
 
 
-

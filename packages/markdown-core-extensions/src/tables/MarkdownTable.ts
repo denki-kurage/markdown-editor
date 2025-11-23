@@ -53,6 +53,8 @@ export class MarkdownTable implements ICommandsMapRoot
 
 	}
 
+	
+
 	public getCommandsMap(): ICommandItem
 	{
 		return createDefaultCommandItem(this, this.commands, 'light');

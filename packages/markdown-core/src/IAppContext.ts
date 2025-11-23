@@ -10,7 +10,7 @@ import { IMarkdownEvents } from "./IMarkdownEvents";
 export interface IAppContext
 {
 	getEditorName(): string;
-	getTextSource(): ITextSource | undefined;
+	getTextSource(): ITextSource;
 	getEditorModel(): IEditorModel;
 	getDecorator(): IEditorDecorator;
 	getScrollSynchronizer(): IScrollSynchronizer;

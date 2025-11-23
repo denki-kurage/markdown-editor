@@ -1,10 +1,8 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { useAppContext } from "./markdown-app-context";
-import { applyFilters } from "@wordpress/hooks";
-import { ICommandItem } from "@mde/markdown-core";
-import { useDispatch, useRegistry, useSelect } from "@wordpress/data";
+import { createContext, useContext, useEffect, useMemo } from "react";
+import { useMarkdownAppContext } from "./markdown-app-context";
+import { useDispatch, useSelect } from "@wordpress/data";
 import { store } from "../store";
-import { EditorState, IMarkdownBlockEditorState } from "../store/type";
+import { IMarkdownBlockEditorState } from "../store/type";
 
 export type MarkdownEditorContextProps =
 {
@@ -12,7 +10,6 @@ export type MarkdownEditorContextProps =
     clientId: string;
     editorState: IMarkdownBlockEditorState;
     setEditorState: (editorState: Partial<IMarkdownBlockEditorState>) => void;
-    commandItems: ICommandItem[];
 }
 const Context = createContext<MarkdownEditorContextProps>({} as any);
 
@@ -21,26 +18,17 @@ export const useMarkdownEditorContext = () => useContext(Context);
 
 export const MarkdownEditorContextProviderWrapper = ({children, clientId, ...blockEditorProps}: any) =>
 {
-    const { markdownCore } = useAppContext();
+    const { markdownCore } = useMarkdownAppContext();
     const { setEditorState, deleteEditorState } = useDispatch(store);
     const editorState = useSelect(select => select(store).getEditorState(clientId), [clientId]);
-
-    const commandItems = useMemo(() => {
-        return applyFilters(
-            'extensionCommandItemRoot',
-            [],
-            markdownCore
-        ) as ICommandItem[];
-    }, [markdownCore]);
 
 
     const ctx = useMemo(() => ({
         blockEditorProps,
         clientId,
         editorState,
-        setEditorState: (es: Partial<IMarkdownBlockEditorState>) => setEditorState(clientId, es),
-        commandItems,
-    }), [clientId, editorState, commandItems, blockEditorProps])
+        setEditorState: (es: Partial<IMarkdownBlockEditorState>) => setEditorState(clientId, es)
+    }), [clientId, editorState, blockEditorProps])
 
     useEffect(() => {
         setEditorState(clientId, editorState);

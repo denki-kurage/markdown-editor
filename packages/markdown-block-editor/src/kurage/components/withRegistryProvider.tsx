@@ -18,7 +18,6 @@ export const withRegistryProvider = createHigherOrderComponent(Wrapper => ({ sto
 		const sr = createRegistry({}, registry);
 		sr.registerStore(storeName, storeConfig);
 		subRegistries.set(registry, sr);
-		console.log("＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠")
 		return sr;
 	})();
 

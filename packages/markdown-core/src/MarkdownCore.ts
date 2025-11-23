@@ -6,6 +6,7 @@ import { IMarkdownEvents } from "./IMarkdownEvents";
 import { MarkdownEventCollection } from "./MarkdownEventCollection";
 import { ITextChanged, ISelectChanged } from "./ITextEventReciever";
 import { CommandCollection } from "./CommandCollection";
+import { createDefaultMarkdownCommandItem } from "./commands/createCommands";
 
 
 export class MarkdownCore implements ICommandsMapRoot, IDisposable, IMarkdownEvents
@@ -46,18 +47,7 @@ export class MarkdownCore implements ICommandsMapRoot, IDisposable, IMarkdownEve
 
 	protected createCommands(appContext: IAppContext, eventCollection: MarkdownEventCollection, configStorage: IConfigureStorage): ICommandItem
 	{
-		return ({
-			name: "root",
-			command: undefined,
-			icon: undefined,
-			label: 'root',
-			children: [
-				{ name: 'markdown:add-image', label: 'xxx', icon: 'media-default', command: new AddImageCommand(appContext) },
-				{ name: 'markdown:add-blog-card', label: 'xxx', icon: 'archive', command: new AddBlogCardCommand(appContext) },
-				{ name: 'markdown:bold', label: 'xxx', icon: 'editor-bold', command: new BoldCommand(appContext) },
-				{ name: 'markdown:select', label: 'xxx', icon: '', command: new SelectCommand(appContext) },
-			]
-		});
+		return createDefaultMarkdownCommandItem(appContext);
 	}
 
 	public createCommandCollection(): CommandCollection

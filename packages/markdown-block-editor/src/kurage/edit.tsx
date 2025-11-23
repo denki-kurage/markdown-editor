@@ -13,7 +13,7 @@ import { MarkdownContextProviderWrapper, useMarkdownContext } from './context/ma
 import { useMarkdownEditorGenerator } from './components/editor-wrapper';
 import { useEditorInterlocking } from './useEditorInterlocking';
 import { MarkdownTokenContextProviderWrapper, useMarkdownTokenContext } from './context/markdown-token-context';
-import { MarkdownAppContextWrapper, useAppContext } from './context/markdown-app-context';
+import { MarkdownAppContextWrapper, useMarkdownAppContext } from './context/markdown-app-context';
 import { EventUpdateManager, IToken } from '@mde/markdown-core';
 import { parseEditMarkdown } from './components/parser';
 import { applyFilters, doAction } from '@wordpress/hooks';
@@ -109,7 +109,7 @@ const EditorPanel = () =>
 const MainEditor = ({ editorName }: any) =>
 {
 	const { markdown, viewMode, editHeight } = useMarkdownContext();
-	const { appContext, updateAppContext } = useAppContext();
+	const { appContext, updateAppContext } = useMarkdownAppContext();
 	const [win, setWin] = useState<Window|undefined>();
 	const { name, EditorComponent } = useMarkdownEditorGenerator(editorName);
 	
