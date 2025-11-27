@@ -1,8 +1,7 @@
-import { CheckboxControl, SelectControl, ToggleControl } from "@wordpress/components"
+import { SelectControl } from "@wordpress/components"
 import { codeLanguages } from "../../classes/CodeLanguages"
 import { TokenEditorProps } from "../inspector-hooks"
 import { useState } from "react"
-import { CheckBoxEditCommand, CheckBoxState } from "@mde/markdown-core"
 
 export const TableTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 {
@@ -18,34 +17,6 @@ export const HeadingTokenEditor = ({}: TokenEditorProps) =>
     )
 }
 
-export const ListItemEditor = ({ token, contexts }: TokenEditorProps) =>
-{
-    const { tokenContext, appContext } = contexts;
-    const { appContext: markdownAppContext } = appContext;
-    const { onEdits } = tokenContext;
-    const text = tokenContext.getSingleText() || '';
-    const { start, end } = token.getPosition();
-
-    const command = new CheckBoxEditCommand(markdownAppContext, CheckBoxState.Toggle);
-    const [isChecked, setIsChecked] = useState(() => command.isChecked(text));
-    const hasCheckBox = command.hasCheckBox(text);
-
-    return (
-        <div>
-            { hasCheckBox && <ToggleControl
-                checked={isChecked}
-                label="チェックボックス"
-                onChange={checked => {
-                    setIsChecked(checked);
-                    const newText = command.toggleCheckBox(text);
-                    onEdits([[newText, start, end]]);
-                }}
-                />
-            }
-
-        </div>
-    )
-}
 
 export const CodeEditor = ({ token, contexts }: TokenEditorProps) =>
 {

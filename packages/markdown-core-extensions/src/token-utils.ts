@@ -1,6 +1,7 @@
 import { IToken } from "@mde/markdown-core"
 
 
+
 export type TokenSet = { token: IToken, children: TokenSet[] }
 export type tokenFilterFunc = (current: IToken, predicate: (token: IToken) => boolean) => TokenSet | null;
 /**
@@ -60,4 +61,56 @@ export function *flatItem<T>(item: T, getChildren: (item: T) => T[], predicate?:
 export const flatLeafTokenSet = (tokenSet: TokenSet) =>
 {
     return [...flatItem(tokenSet, ts => ts.children)].filter(ts => ts.children.length === 0);
+}
+
+
+
+export type filterParams =
+{
+    tokenTypes: string[];
+    selections: [number, number][];
+    useSelections: boolean;
+    selectionAllMode: boolean;
+}
+
+export const createFilter = (params: filterParams) =>
+{
+    const { selections, tokenTypes, useSelections, selectionAllMode } = params;
+
+    const hasTypes = tokenTypes.length && !tokenTypes.includes('');
+
+    const newSelections = selections
+        // .filter(([s, e]) => s !== e)
+        .map(([s, e]) => [Math.min(s, e), Math.max(s, e)]);
+    
+    const selector: (s: number, e: number, start: number, end: number) => boolean = selectionAllMode ?
+        (s, e, start, end) => (s <= start && end <= e) :
+        (s, e, start, end) => (e > start && end > s);
+    
+    return (token: IToken) =>
+    {
+        const type = token.getType();
+        
+        // トークンタイプによるフィルタリング
+        if(hasTypes)
+        {
+            if(!tokenTypes.includes(type))
+            {
+                return false;
+            }
+        }
+
+        // セレクションによるフィルタリング(TODO: 単一セレクトの場合を想定すること)
+        if(useSelections && !!newSelections?.length)
+        {
+            const { start, end } = token.getPosition();
+
+            if(!newSelections.some(([s, e]) => selector(s, e, start, end)))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

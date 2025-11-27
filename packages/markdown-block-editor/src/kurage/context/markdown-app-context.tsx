@@ -81,9 +81,12 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
     const configStorage = useMemo(() => new MarkdownConfigureStorage(), [])
     const generateAppContext = (params?: AppContextGenerateParams) =>
     {
+        // markdownCore.dispose();
+        
         if(params)
         {
             const { appContext } = params;
+
             const core = applyFilters(
                 'extensionAppContext',
                 new MarkdownCore(appContext, configStorage),

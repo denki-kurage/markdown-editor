@@ -2,35 +2,14 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { Button, CheckboxControl, Modal, SelectControl, ToggleControl } from "@wordpress/components";
 
 import { IToken } from "@mde/markdown-core";
+import { createFilter, filterTokenTreeFromBottom, flatLeafTokenSet, getAncestorsByToken, TokenSet, TokenTypes } from "@mde/markdown-core-extensions";
 import './token-viewer.scss';
-import { filterTokenTreeFromBottom, TokenSet, flatLeafTokenSet, getAncestorsByToken } from "./token-explorer-hooks";
 import { TokenCheckerModal } from "./token-checker-modal";
 import { ExtensionContexts } from "../../markdown-block-editor/src/kurage/components/hooks";
 
 
 
 
-const TokenTypes = new Map<string, string>([
-    ['', '選択無し'],
-    ['heading', 'ヘディング'],
-    ['table', 'テーブル'],
-    ['tableRow', 'テーブル行'],
-    ['tableCell', 'テーブルセル'],
-    ['paragraph', '段落'],
-    ['text', 'テキスト'],
-    ['emphasis', 'イタリック'],
-    ['strong', '太字'],
-    ['break', '改行'],
-    ['list', 'リスト'],
-    ['listItem', 'リストアイテム'],
-    ['blockquote', '引用'],
-    ['code', 'コード'],
-    ['inlineCode', 'インラインコード'],
-    ['link', 'リンク'],
-    ['image', '画像'],
-    ['thematicBreak', '水平線'],
-    ['html', 'HTML']
-])
 
 const TokenTypeOptions = [...TokenTypes.entries()].map(t => {
     const [value, label] = t;
@@ -88,7 +67,7 @@ const TokenFilter = ({ tokenTypes, tokenTypesChanged }: any) =>
                     <ToggleControl
                         checked={enabledSelectionsFilterFillMode}
                         onChange={fillMode}
-                        help="wwwwwwq"
+                        help="選択範囲に完全に含まれるトークンのみを対象とするかどうかを切り替えます。"
                         label={(enabledSelectionsFilterFillMode ? "全部" : "部分") + "選択"} />
                 </>
             )}
@@ -177,55 +156,7 @@ const TokenChecker = () =>
     )
 }
 
-type filterParams =
-{
-    tokenTypes: string[];
-    selections: [number, number][];
-    useSelections: boolean;
-    selectionAllMode: boolean;
-}
 
-const createFilter = (params: filterParams) =>
-{
-    const { selections, tokenTypes, useSelections, selectionAllMode } = params;
-
-    const hasTypes = tokenTypes.length && !tokenTypes.includes('');
-
-    const newSelections = selections
-        // .filter(([s, e]) => s !== e)
-        .map(([s, e]) => [Math.min(s, e), Math.max(s, e)]);
-    
-    const selector: (s: number, e: number, start: number, end: number) => boolean = selectionAllMode ?
-        (s, e, start, end) => (s <= start && end <= e) :
-        (s, e, start, end) => (e > start && end > s);
-    
-    return (token: IToken) =>
-    {
-        const type = token.getType();
-        
-        // トークンタイプによるフィルタリング
-        if(hasTypes)
-        {
-            if(!tokenTypes.includes(type))
-            {
-                return false;
-            }
-        }
-
-        // セレクションによるフィルタリング(TODO: 単一セレクトの場合を想定すること)
-        if(useSelections && !!newSelections?.length)
-        {
-            const { start, end } = token.getPosition();
-
-            if(!newSelections.some(([s, e]) => selector(s, e, start, end)))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-}
 
 
 export const TokenExplorer = React.memo(({ contexts }: { contexts: ExtensionContexts }) =>

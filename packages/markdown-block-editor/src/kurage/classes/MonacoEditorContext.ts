@@ -76,6 +76,7 @@ export class MonacoEventsInitializer implements IEventsInitializer<IMarkdownEven
 
     public initializeEvents(events: IMarkdownEvents): IDisposable
     {
+        
         const disposables = [
 
         this.editor.getModel()?.onDidChangeContent(e => {
@@ -93,104 +94,7 @@ export class MonacoEventsInitializer implements IEventsInitializer<IMarkdownEven
             events.cursorChanged(this.model.getOffsetAt(pos));
         }),
 
-        this.monaco.languages.registerCompletionItemProvider(
-            'markdown',
-            {
-                triggerCharacters: ['x'],
-                provideCompletionItems: (model, pos, content, token) =>
-                {
-                    if(pos.column === 3)
-                    {
-                        const txt = model.getLineContent(pos.lineNumber).substring(0, 2);
-                        const nbr = Number(txt.charAt(0));
-    
-                        if(!isNaN(nbr) && txt.charAt(1) === 'x')
-                        {
-                            const items = [...Array(9).keys()].map(_ => {
-    
-                                const len = _ + 1;
-                                const line = '|' + 'x'.repeat(nbr).split('').join('|') + '|';
-                                const row = line.replace(/x/g, '   ');
-                                const alignment = line.replace(/x/g, '---');
-    
-                                const table = [
-                                    row,
-                                    alignment,
-                                    ...[...Array(len).keys()].map(_ => row)
-                                ]
-                                
-                                // TODO: 改行コードってそのまま挿入するのまずそう、フォーマッターもそうだけど、検証が必要。
-                                .join("\n");
-    
-                                const doc = table.replace(/   /g, ' A ');
-    
-                                return <languages.CompletionItem>{
-                                    label: `${nbr}x${len}`,
-                                    kind: this.monaco.languages.CompletionItemKind.Snippet,
-                                    detail: `Create a new table.`,
-                                    documentation: doc,
-                                    insertText: table
-                                };
-                            });
-                            return { suggestions: items };
-                        }
-                    }
-                }
-            }
-        ),
 
-        /**
-         * コードブロックの言語補完完了後、セレクションを選択できない・・・。
-         * コマンドで実装する以外の方法がわかるまでそのままにしておく。
-         */
-        this.monaco.languages.registerCompletionItemProvider(
-            'markdown',
-            {
-                triggerCharacters: ['`'],
-                provideCompletionItems: (model, pos, content, token) =>
-                {
-                    const line = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
-
-                    if(line.endsWith('```'))
-                    {
-                        const items = codeLanguages.map(lang => {
-                            return <languages.CompletionItem>{
-                                label: `${lang.name} (${lang.label})`,
-                                kind: this.monaco.languages.CompletionItemKind.Snippet,
-                                detail: `Insert code block for ${lang.label}.`,
-                                insertText: `${lang.name}\n\n\`\`\`\n`,
-                                documentation: `\`\`\`${lang.name}\nYour code here...\n\`\`\``,
-                            };
-                        });
-
-                        return { suggestions: items };
-                    }
-                }
-            }
-        ),
-
-        this.monaco.languages.registerSelectionRangeProvider(
-            'markdown',
-            {
-
-                provideSelectionRanges: (model, positions) =>
-                {
-                    const ranges = positions.map(pos =>
-                    {
-                        const charIndex = pos.column - 1;
-                        const docIndex = pos.lineNumber - 1;
-
-                        return ({
-                            range: new this.monaco.Range(docIndex + 1, charIndex + 1, docIndex + 1, charIndex + 1) as IRange
-                        });
-                    });
-
-                    return [ranges];
-                    return null;
-                },
-                
-            }
-        )
 
         ]
 
@@ -202,9 +106,10 @@ export class MonacoEventsInitializer implements IEventsInitializer<IMarkdownEven
 
 
 
-export class MonacoEditorContext implements IAppContext
+export class MonacoEditorContext implements IAppContext, IDisposable
 {
     private decorator: MonacoDecorator;
+    private monacoEventsDisposables: IDisposable[] = [];
 
     public constructor(
         private readonly monaco: Monaco,
@@ -212,6 +117,151 @@ export class MonacoEditorContext implements IAppContext
         private readonly editor: editor.IStandaloneCodeEditor)
     {
         this.decorator = new MonacoDecorator(editor);
+        this.monacoEventsDisposables = this.registerMonacoEvents();
+    }
+
+    private registerMonacoEvents()
+    {
+        return [
+            this.monaco.languages.registerCompletionItemProvider(
+                'markdown',
+                {
+                    triggerCharacters: ['x'],
+                    provideCompletionItems: (model, pos, content, token) =>
+                    {
+                        if(pos.column === 3)
+                        {
+                            const txt = model.getLineContent(pos.lineNumber).substring(0, 2);
+                            const nbr = Number(txt.charAt(0));
+        
+                            if(!isNaN(nbr) && txt.charAt(1) === 'x')
+                            {
+                                const items = [...Array(9).keys()].map(_ => {
+        
+                                    const len = _ + 1;
+                                    const line = '|' + 'x'.repeat(nbr).split('').join('|') + '|';
+                                    const row = line.replace(/x/g, '   ');
+                                    const alignment = line.replace(/x/g, '---');
+        
+                                    const table = [
+                                        row,
+                                        alignment,
+                                        ...[...Array(len).keys()].map(_ => row)
+                                    ]
+                                    
+                                    // TODO: 改行コードってそのまま挿入するのまずそう、フォーマッターもそうだけど、検証が必要。
+                                    .join("\n");
+        
+                                    const doc = table.replace(/   /g, ' A ');
+        
+                                    return <languages.CompletionItem>{
+                                        label: `${nbr}x${len}`,
+                                        kind: this.monaco.languages.CompletionItemKind.Snippet,
+                                        detail: `Create a new table.`,
+                                        documentation: doc,
+                                        insertText: table
+                                    };
+                                });
+                                return { suggestions: items };
+                            }
+                        }
+                    }
+                }
+            ),
+            /**
+             * コードブロックの言語補完完了後、セレクションを選択できない・・・。
+             * コマンドで実装する以外の方法がわかるまでそのままにしておく。
+             */
+            this.monaco.languages.registerCompletionItemProvider(
+                'markdown',
+                {
+                    triggerCharacters: ['`'],
+                    provideCompletionItems: (model, pos, content, token) =>
+                    {
+                        const line = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
+
+                        // TODO: バグってる？
+                        if(line.endsWith('```'))
+                        {
+                            const items = codeLanguages.map(lang => {
+                                return <languages.CompletionItem>{
+                                    label: `${lang.name} (${lang.label})`,
+                                    kind: this.monaco.languages.CompletionItemKind.Snippet,
+                                    detail: `Insert code block for ${lang.label}.`,
+                                    insertText: `${lang.name}\n\n\`\`\`\n`,
+                                    documentation: `\`\`\`${lang.name}\nYour code here...\n\`\`\``,
+                                };
+                            });
+
+                            return { suggestions: items };
+                        }
+                    }
+                }
+            ),
+
+            this.monaco.languages.registerCompletionItemProvider(
+                'markdown',
+                {
+                    triggerCharacters: ['#'],
+                    provideCompletionItems: (model, pos, content, token) =>
+                    {
+                        const text = "\n" + model.getLinesContent().slice(0, Math.max(0, pos.lineNumber - 1)).join("\n");
+                        const line = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
+                        const lastSharps = text.match(/\n#+/g)?.pop()?.trim() || '';
+                        const currentDeps = lastSharps.length;
+
+
+                        if(line === '#')
+                        {
+                            const items = [...Array(7).keys()].map((i) => {
+                                const index = i + 1;
+                                const Heading = '#'.repeat(index - 1);
+                                const isCurrent = index === currentDeps;
+                                const isLower = index - 1 === currentDeps;
+                                const detail = isCurrent ? ' (current level)' : isLower ? ' (lower level)' : '';
+                                return <languages.CompletionItem>{
+                                    preselect: isLower,
+                                    label: `#${Heading} ${index} ${detail}`,
+                                    kind: this.monaco.languages.CompletionItemKind.Snippet,
+                                    detail: `Insert Heading level ${index} ${detail}.`,
+                                    insertText: `${Heading}`,
+                                };
+                            });
+
+                            return { suggestions: items };
+                        }
+                    }
+                }
+            ),
+
+            this.monaco.languages.registerSelectionRangeProvider(
+                'markdown',
+                {
+
+                    provideSelectionRanges: (model, positions) =>
+                    {
+                        const ranges = positions.map(pos =>
+                        {
+                            const charIndex = pos.column - 1;
+                            const docIndex = pos.lineNumber - 1;
+
+                            return ({
+                                range: new this.monaco.Range(docIndex + 1, charIndex + 1, docIndex + 1, charIndex + 1) as IRange
+                            });
+                        });
+
+                        return [ranges];
+                        return null;
+                    },
+                    
+                }
+            )            
+        ]
+    }
+
+    public dispose(): void
+    {
+        this.monacoEventsDisposables.forEach(d => d.dispose());
     }
     
     public getEventsInitializer(): IEventsInitializer<IMarkdownEvents>
@@ -383,6 +433,11 @@ export class MonacoEditorContext implements IAppContext
             },
             getText: (pos) =>
             {
+                if(!pos)
+                {
+                    return this.model.getValue();
+                }
+                
                 return this.model.getValueInRange(Utils.toMonacoRange(pos));
             },
             positionToIndex: (position: IDocumentPosition): number =>

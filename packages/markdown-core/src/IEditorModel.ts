@@ -5,7 +5,7 @@ import { ISelection } from "./ISelection";
 
 export interface IEditorModel
 {
-	getText(selection: ISelection): string;
+	getText(selection: ISelection|undefined): string;
 	getCursor(): IDocumentPosition | undefined;
 	getSelections(): ISelection[];
 	setSelections(selections: ISelection[]): void;

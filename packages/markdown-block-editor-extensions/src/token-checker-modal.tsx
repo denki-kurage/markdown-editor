@@ -1,5 +1,5 @@
 import { Button, CheckboxControl, Modal } from "@wordpress/components";
-import { flatLeafTokenSet, filterTokenTreeFromBottom, TokenSet, flatItem } from "./token-explorer-hooks";
+import { flatItem, flatLeafTokenSet, TokenSet } from '@mde/markdown-core-extensions';
 
 import { useEffect, useMemo, useState } from "react";
 import { IToken } from "@mde/markdown-core";

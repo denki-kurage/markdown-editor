@@ -20,6 +20,7 @@ import { addAction, addFilter } from '@wordpress/hooks';
 import TokenExplorer from './token-explorer';
 import { ExtensionComponentInfo, TokenCommandsInfo,  TokenEditorComponentInfo } from '../../markdown-block-editor/src/kurage/components/inspector-hooks';
 import { ExtensionContexts } from '../../markdown-block-editor/src/kurage/components/hooks';
+import { ListItemEditor } from './token-editors';
 
 
 addFilter(
@@ -120,8 +121,12 @@ addFilter(
 	'kurage/markdown-block-editor',
 	(components: TokenEditorComponentInfo[]) =>
 	{
+		const x = [
+			{ type: 'listItem', label: 'List Item', component: ListItemEditor },
+		];
 		return [
-			...components
+			...components,
+			...x
 		] as TokenEditorComponentInfo[]
 	}
 );

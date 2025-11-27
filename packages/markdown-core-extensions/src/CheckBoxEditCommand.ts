@@ -1,5 +1,4 @@
-import { IAppContext } from "../IAppContext";
-import { MarkdownCommandBase } from "./MarkdownCommandBase";
+import { IAppContext, MarkdownCommandBase } from "@mde/markdown-core";
 
 export enum CheckBoxState
 {

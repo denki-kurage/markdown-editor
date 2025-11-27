@@ -1,5 +1,4 @@
 export { createDefaultCommandItem } from "./createDefaultCommandItem";
-export { ExMarkdownCore } from "./ExMarkdownCore";
 export { MarkdownLineContent } from "./MarkdownLineContent";
 export { MarkdownLineParser } from "./MarkdownLineParser";
 export { MarkdownTableContent } from "./MarkdownTableContent";

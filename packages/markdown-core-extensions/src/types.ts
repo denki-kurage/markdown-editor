@@ -1,0 +1,22 @@
+export const TokenTypes = new Map<string, string>([
+    ['', '選択無し'],
+    ['heading', 'ヘディング'],
+    ['table', 'テーブル'],
+    ['tableRow', 'テーブル行'],
+    ['tableCell', 'テーブルセル'],
+    ['paragraph', '段落'],
+    ['text', 'テキスト'],
+    ['emphasis', 'イタリック'],
+    ['strong', '太字'],
+    ['delete', '取り消し線'],
+    ['break', '改行'],
+    ['list', 'リスト'],
+    ['listItem', 'リストアイテム'],
+    ['blockquote', '引用'],
+    ['code', 'コード'],
+    ['inlineCode', 'インラインコード'],
+    ['link', 'リンク'],
+    ['image', '画像'],
+    ['thematicBreak', '水平線'],
+    ['html', 'HTML']
+])

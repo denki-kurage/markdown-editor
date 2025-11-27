@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { ICommandItem, IToken, MarkdownCore } from "@mde/markdown-core";
 import { applyFilters } from "@wordpress/hooks";
 import { ExtensionContexts } from "./hooks";
-import { CodeEditor, HeadingTokenEditor, ListItemEditor, TableTokenEditor } from "./token-editor-forms/token-editors";
+import { CodeEditor, HeadingTokenEditor, TableTokenEditor } from "./token-editor-forms/token-editors";
 
 
 
@@ -47,7 +47,6 @@ export const useTokenEditorComponents = (type: string) =>
         const defaults: TokenEditorComponentInfo[] = [
             { type: 'text', label: 'Text Editor', component: TextTokenEditor },
             { type: 'heading', label: 'Heading', component: HeadingTokenEditor },
-            { type: 'listItem', label: 'List Item', component: ListItemEditor },
             { type: 'code', label: 'Code', component: CodeEditor },
 			{ type: 'table', label: 'Table', component: TableTokenEditor },
 			{ type: 'tableRow', label: 'Table Row', component: TableTokenEditor },
