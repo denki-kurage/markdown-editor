@@ -14,32 +14,29 @@ const toIcon = (item: ICommandItem) =>
 
 export type CommandToolbarProps =
 {
-	root: ICommandItem;
+	groupRoot: ICommandItem;
 }
-export const CommandToolbar = ({ root }: CommandToolbarProps) =>
+export const CommandToolbarGroup = ({ groupRoot }: CommandToolbarProps) =>
 {
-	const { selections } = useMarkdownTokenContext();
-	const icon = useMemo(() => root?.icon ? toIcon(root) : null, [root])
-	const controls = useMemo(() => (root?.children ?? []).filter(c => !!c.icon).map(toControl), [root]);
 
-	controls.map(c => c.isDisabled = !c.item.command?.canExecute())
+	const groupChildren = groupRoot.children ?? [];
+	const buttons = groupChildren.map(item => {
+		if(item.children?.length)
+		{
+			const controls = item.children.map(toControl);
+			controls.map(c => c.isDisabled = !c.item.command?.canExecute());
+			return <ToolbarDropdownMenu label={item.label} icon={toIcon(item)} controls={controls} />
+		}
+		else
+		{
+			return item.icon ? <CommandControl item={item} /> : undefined;
+		}
+	}).filter(item => !!item)
 
-	if(!root)
-	{
-		return null;
-	}
-
-	if(!icon)
-	{
-		return <FlatCommandToolbar root={root} />
-	}
-	
 	return (
-		<ToolbarDropdownMenu
-			label={root.label}
-			icon={icon}
-			controls={ controls }
-		/>
+		<ToolbarGroup>
+			{ buttons }
+		</ToolbarGroup>
 	)
 }
 
@@ -54,30 +51,6 @@ const toControl = (item: ICommandItem) =>
 	}) as any
 }
 
-
-
-
-
-export type FlatCommandToolbarProps =
-{
-	root: ICommandItem;
-}
-export const FlatCommandToolbar = ({ root }: FlatCommandToolbarProps) =>
-{
-	const { selections } = useMarkdownTokenContext();
-	const items = (root.children ?? []).filter(c => !!c.icon).map(c => <CommandControl item={c} />)
-
-	if(!root)
-	{
-		return null;
-	}
-
-	return (
-		<ToolbarGroup>
-			{ items }
-		</ToolbarGroup>
-	)
-}
 
 export const CommandControl = ({ item }: { item: ICommandItem }) =>
 {

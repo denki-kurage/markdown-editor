@@ -131,53 +131,20 @@ addFilter(
 	}
 );
 
-
-
-
-// return [commands: ICommandItem, enabledCommandNames: () => string[]]
 addFilter(
-	'getTokenCommands',
+	'getInspectorCommands',
 	'kurage/markdown-block-editor',
-	(commandItemInfomations: TokenCommandsInfo[]) =>
+	(rootCommandItem: ICommandItem, context: ExtensionContexts) =>
 	{
-		const wm = new WeakMap<MarkdownCore, ICommandItem[]>();
-
-		return [
-			...commandItemInfomations,
-			{
-				isShow: (type: string, contexts: ExtensionContexts) =>
-				{
-					const core = contexts?.appContext?.markdownCore;
-					if(core instanceof ExMarkdownCore)
-					{
-						if(!!core.currentTableContent)
-						{
-							return true;
-						}
-					}
-
-					return []
-				},
-				getCommandItems: (type: string, contexts: ExtensionContexts) =>
-				{
-					const core = contexts?.appContext?.markdownCore;
-					if(core instanceof ExMarkdownCore)
-					{
-						if(!!core.currentTableContent)
-						{
-							if(!wm.has(core))
-							{
-								wm.set(core, core.table.getCommandsMap().children ?? []);
-							}
-
-							return wm.get(core);
-						}
-					}
-
-					return [];
-				}
-			}
-		]
+		const core = context.appContext.markdownCore;
+		if(core instanceof ExMarkdownCore)
+		{
+			const cmap = core.table.getCommandsMap();
+			rootCommandItem.children?.push(cmap);
+		}
+		return rootCommandItem;
 	}
 )
+
+
 

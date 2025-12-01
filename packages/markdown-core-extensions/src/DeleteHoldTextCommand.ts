@@ -38,7 +38,7 @@ export class DeleteHoldTextCommand extends MarkdownCommandBase<any>
             useSelections: true
         });
 
-        return [...flatItem(rootToken, token => token.getChildren(), filter)];
+        return [...flatItem(rootToken, token => token.getChildren())].filter(filter);
     }
 
 

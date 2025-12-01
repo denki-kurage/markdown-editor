@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "settings",
+    "type": "object",
+    "properties": {
+        "adminCss": {
+            "type": "string"
+        },
+        "frontCss": {
+            "type": "string"
+        },
+        "fontSize": {
+            "type": "integer"
+        },
+        "fontFamily": {
+            "type": "string"
+        },
+        "recentCodeLanguages": {
+            "type": "array"
+        },
+        "configurations": {
+            "type": "object"
+        }
+    }
+}

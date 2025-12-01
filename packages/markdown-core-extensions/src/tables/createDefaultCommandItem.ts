@@ -176,7 +176,7 @@ export const createDefaultCommandItem: (table: MarkdownTable, commands: Map<stri
         name: 'table',
         label: 'table',
         icon: undefined,
-        command: undefined,
+        command: { canExecute: e => !!table.getCurrentContent(), execute: e => {}, canExecuteChanged: [] },
         children
     };
 }

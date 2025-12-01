@@ -47,7 +47,18 @@ export class MarkdownCore implements ICommandsMapRoot, IDisposable, IMarkdownEve
 
 	protected createCommands(appContext: IAppContext, eventCollection: MarkdownEventCollection, configStorage: IConfigureStorage): ICommandItem
 	{
-		return createDefaultMarkdownCommandItem(appContext);
+		const rootCommandItem: ICommandItem =
+		{
+			name: 'root',
+			command: undefined,
+			icon: undefined,
+			label: 'root',
+			children: []
+		};
+
+		const basicCommands = createDefaultMarkdownCommandItem(appContext);
+		rootCommandItem.children?.push(basicCommands);
+		return rootCommandItem;
 	}
 
 	public createCommandCollection(): CommandCollection

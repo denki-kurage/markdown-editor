@@ -7,10 +7,10 @@ import { IFormatterContext } from "./IFormatterContext";
 import { MarkdownTableRenderMode } from "./MarkdownTableConverter";
 import { TableCacheManager } from "./TableCacheManager";
 import { TableObserver } from "./TableObserver";
-import { MarkdownConfigurations } from "./configurations/MarkdownConfigurations";
 import { EventListeners, IAppContext, ICommand, ICommandItem, ICommandsMapRoot, IConfigureStorage, MarkdownEventCollection } from "@mde/markdown-core";
 import { MarkdownTableContent } from "./MarkdownTableContent";
 import { createDefaultCommandItem } from "./createDefaultCommandItem";
+import { MarkdownConfigurations } from "../configurations/MarkdownConfigurations";
 
 export class MarkdownTable implements ICommandsMapRoot
 {
@@ -19,12 +19,18 @@ export class MarkdownTable implements ICommandsMapRoot
 
 	protected readonly configuration: MarkdownConfigurations;
 	private readonly commands: Map<string, ICommand>;
+	private readonly commandItem: ICommandItem;
 	private enableCommandNames: string[] = [];
-
+	private currentContent: MarkdownTableContent|undefined;
 
 	public readonly tableUpdated: EventListeners<MarkdownTableContent[]> = new EventListeners();
 	public readonly currentTableChanged: EventListeners<MarkdownTableContent | undefined> = new EventListeners();
 	public readonly formatRequest: EventListeners<void> = new EventListeners();
+
+	public getCurrentContent(): MarkdownTableContent|undefined
+	{
+		return this.currentContent;
+	}
 
 	public getEnabledCommandNames()
 	{
@@ -46,6 +52,7 @@ export class MarkdownTable implements ICommandsMapRoot
 
 		this.registerRecievers(eventCollection, this.cache);
 		this.commands = this.createCommands(this.editorContext, this.cache);
+		this.commandItem = createDefaultCommandItem(this, this.commands, 'light');
 		this.configuration = this.createSwitcher(eventCollection, storage, this.editorContext);
 
 		// TODO: 実験
@@ -57,7 +64,7 @@ export class MarkdownTable implements ICommandsMapRoot
 
 	public getCommandsMap(): ICommandItem
 	{
-		return createDefaultCommandItem(this, this.commands, 'light');
+		return this.commandItem;
 	}
 
 	
@@ -88,6 +95,7 @@ export class MarkdownTable implements ICommandsMapRoot
 	 */
 	protected onCurrentTableChanged(nv: MarkdownTableContent | undefined, ov: MarkdownTableContent | undefined)
 	{
+		this.currentContent = nv;
 		this.enableCommandNames = this.checkEnabledCommandNames();
 		//this.configuration.decoratorSwitcher.decorate(nv);
 		this.configuration.decorator.decorate(nv);

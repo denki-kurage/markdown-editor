@@ -1,5 +1,6 @@
 import { combineReducers } from "@wordpress/data";
-import { EditorState, IMarkdownBlockEditorInfo, IMarkdownBlockEditorState } from "./type";
+import { EditorState, IMarkdownBlockEditorInfo, IMarkdownBlockEditorState, IStoreState } from "./type";
+import { ISettings } from "../../../ISettings";
 
 
 const info = (state: IMarkdownBlockEditorInfo = { version: '0.1' }, action: any) =>
@@ -26,8 +27,28 @@ const editorStates = (state: EditorState = {}, action: any) =>
             const extensionName = action.extensionName;
             const extensionData = action.extensionData;
             const newExtensionData = { ...editorState.extensionsData, [extensionName]: extensionData }
-            
             return { ...state, [action.id]: { ...editorState, extensionData: newExtensionData }}
+    }
+
+    return state;
+}
+
+const settings = (state: ISettings, action: any) =>
+{
+    switch(action.type)
+    {
+        case 'SET_SETTINGS':
+            return { ...state, ...action.value }
+    }
+
+    return state;
+}
+const storeState = (state: IStoreState = { isLoading: false, faultMessage: '' }, action: any) =>
+{
+    switch(action.type)
+    {
+        case 'SET_STORE_STATE':
+            return { ...state, ...action.value }
     }
 
     return state;
@@ -35,5 +56,7 @@ const editorStates = (state: EditorState = {}, action: any) =>
 
 export default combineReducers({
     info,
-    editorStates
+    editorStates,
+    settings,
+    storeState
 })

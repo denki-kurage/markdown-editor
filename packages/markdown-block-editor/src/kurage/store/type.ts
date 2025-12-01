@@ -1,10 +1,18 @@
+import { ISettings } from "../../../ISettings";
 
 export interface IMarkdownBlockEditor
 {
     editorStates: {[key: string]: IMarkdownBlockEditorState};
     info: IMarkdownBlockEditorInfo;
+    settings: ISettings;
+    storeState: IStoreState;
 }
 
+export interface IStoreState
+{
+    isLoading: boolean;
+    faultMessage: string;
+}
 export interface IMarkdownBlockEditorInfo
 {
     version: string
@@ -18,6 +26,7 @@ export interface IMarkdownBlockEditorState
     enabledSelectionsFilterFillMode: boolean;
     maximized: boolean;
     extensionsData: {[key: string]: any}
+    settings: ISettings
 }
 
 export type EditorState = {[key: string]: IMarkdownBlockEditorState};
@@ -28,7 +37,20 @@ export const createInitData = () =>
         info: {
             version: "0.1"
         },
-        editorStates: {}
+        editorStates: {},
+        storeState:
+        {
+            isLoading: false,
+            faultMessage: ''
+        },
+        settings: {
+            adminCss: '',
+            frontCss: '',
+            fontFamily: '',
+            fontSize: 12,
+            recentCodeLanguages: [],
+            configurations: {}
+        }
     } as IMarkdownBlockEditor;
 }
 

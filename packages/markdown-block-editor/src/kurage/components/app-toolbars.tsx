@@ -5,9 +5,9 @@ import ImageUploadEditor from "./image-upload-editor";
 import BlogCardGenerator from "./blog-card-generator";
 import { __ } from "@wordpress/i18n";
 import { useMarkdownAppContext } from "../context/markdown-app-context";
-import { CommandToolbar } from "./edit-toolbar";
+import { CommandToolbarGroup } from "./edit-toolbar";
 import { useMarkdownTokenContext } from "../context/markdown-token-context";
-import { useTokenCommands } from "./inspector-hooks";
+import { useToolbarActiveCommands } from "./inspector-hooks";
 import { useExtensionContexts } from "./hooks";
 
 const AppToolbars = () =>
@@ -16,11 +16,9 @@ const AppToolbars = () =>
     const { singleToken } = useMarkdownTokenContext();
     const contexts = useExtensionContexts();
 
-    const tokenType = singleToken?.getType() ?? '';
-
     const [imageOpen, setImageOpen] = useState(false);
     const [linkOpen, setLinkOpen] = useState(false);
-    const tokenCommands = useTokenCommands(tokenType, contexts);
+    const activeCommandItems = useToolbarActiveCommands(contexts);
     const commandCollection = markdownCore?.createCommandCollection();
 
     return (
@@ -42,7 +40,7 @@ const AppToolbars = () =>
             </ToolbarButtonModal>
 
             {
-                !!tokenCommands.length && <BlockControls>{ tokenCommands.map(ci => <CommandToolbar root={ci} />) }</BlockControls>
+                <BlockControls>{ activeCommandItems.map(ci => <CommandToolbarGroup groupRoot={ci} />) }</BlockControls>
             }
             
 

@@ -26,3 +26,13 @@ export const getEditorState = (state: IMarkdownBlockEditor, id: string) =>
         maximized: false
     })
 }
+
+export const getStoreState = (state: IMarkdownBlockEditor) =>
+{
+    return state.storeState;
+}
+
+export const getSettings = (state: IMarkdownBlockEditor) =>
+{
+    return state.settings;
+}

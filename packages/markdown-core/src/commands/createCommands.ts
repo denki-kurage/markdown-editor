@@ -51,10 +51,10 @@ export function createDefaultMarkdownCommandItem(appContext: IAppContext, mode: 
     const icons = mode === "light" ? lightIcons : darkIcons;
 
     return {
-        name: "root",
+        name: "basic",
         command: undefined,
         icon: undefined,
-        label: 'root',
+        label: 'basicCommands',
         children: [
             { name: 'markdown:add-bold', label: '**Bold**', icon: icons['bold'], command: new HoldTextCommand(appContext, '**') },
             { name: 'markdown:add-italic', label: '*Italic*', icon: icons['italic'], command: new HoldTextCommand(appContext, '*') },

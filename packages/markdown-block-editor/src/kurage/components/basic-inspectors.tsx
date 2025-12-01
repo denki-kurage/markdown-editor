@@ -1,5 +1,5 @@
 import { Button, Modal, PanelBody, RangeControl } from "@wordpress/components";
-import OptionSettings from "./option-settings";
+import { OptionSettings } from "./option-settings";
 import { useState } from "react";
 import { __ } from "@wordpress/i18n";
 
@@ -38,7 +38,7 @@ export const BasicInspectors = ({ editHeight, onEditHeightChanged }: BasicInspec
                     </Button>
                     { isSettingsOpen && (
                         <Modal title={ __('global settings', 'mdtableeditor') } onRequestClose={e => setIsSettingsOpen(false)}>
-                            <OptionSettings onCompleted={() => setIsSettingsOpen(false)} />
+                            <OptionSettings />
                         </Modal>
                     )}
                 </div>

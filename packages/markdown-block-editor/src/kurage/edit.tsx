@@ -47,11 +47,9 @@ const Edit = ({ attributes, setAttributes, ...props }: any) =>
 			<MarkdownAppContextWrapper>
 				<MarkdownEditorContextProviderWrapper clientId={clientId} {...props}>
 					<MarkdownTokenContextProviderWrapper>
-						<MarkdownExtensionContextWrapper>
-							<MarkdownConfigContextWrapper>
-								<InternalBlockEditor />
-							</MarkdownConfigContextWrapper>
-						</MarkdownExtensionContextWrapper>
+						<MarkdownConfigContextWrapper>
+							<InternalBlockEditor />
+						</MarkdownConfigContextWrapper>
 					</MarkdownTokenContextProviderWrapper>
 				</MarkdownEditorContextProviderWrapper>
 			</MarkdownAppContextWrapper>

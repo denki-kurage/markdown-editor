@@ -21,7 +21,11 @@ export class ExMarkdownCore extends MarkdownCore
     )
     {
         super(appContext, configStorage);
+
         this.table = this.createMarkdownTable();
+        const tableCommands = this.table.getCommandsMap();
+        this.getCommandsMap().children?.push(tableCommands);
+
 
         this.init();
     }
@@ -30,7 +34,8 @@ export class ExMarkdownCore extends MarkdownCore
     {
         const baseCommands = super.createCommands(appContext, eventCollection, configStorage);
         const commands = createExtensionMarkdownCommandItem(appContext);
-        return {...baseCommands, children: [...baseCommands.children, ...commands.children]};
+        baseCommands.children?.push(commands);
+        return baseCommands;
     }
     
 	protected createMarkdownTable(): MarkdownTable

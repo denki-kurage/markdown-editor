@@ -1,8 +1,11 @@
-import { IAppContext, IEditorModel, IEventsInitializer, IMarkdownEvents, MarkdownCore } from "@mde/markdown-core"
-import { createContext, useContext, useMemo, useState } from "react";
+import { IAppContext, IConfigureStorage, IEditorModel, IEventsInitializer, IMarkdownEvents, MarkdownCore } from "@mde/markdown-core"
+import { createContext, useContext, useMemo, useRef, useState } from "react";
 import { MarkdownConfigureStorage } from "../classes/MarkdownConfigureStorage";
 import { MarkdownEventCollection } from "@mde/markdown-core";
 import { applyFilters } from '@wordpress/hooks'
+import { useDispatch, useSelect } from "@wordpress/data";
+import { store } from "../store";
+import { ISettings } from "../../../ISettings";
 
 export type AppContextGenerateParams =
 {
@@ -67,7 +70,6 @@ const appContext: IAppContext =
     returnKey: () => 'none'
 }
 
-const defaultMarkdownCore = new MarkdownCore(appContext, new MarkdownConfigureStorage());
 
 
 const Context = createContext<MarkdownAppContextProps>(null as any);
@@ -76,9 +78,31 @@ export const useMarkdownAppContext = () => useContext(Context);
 
 export const MarkdownAppContextWrapper = ({ children }: any) =>
 {
+    const { updateSettings } = useDispatch(store);
+    const settingsRef = useRef<ISettings>(null as any);
+    settingsRef.current = useSelect(select => select(store).getSettings(), []);
+
+    const configStorage = useMemo<IConfigureStorage>(() => {
+
+        return {
+            getValue: <T,>(name: string) =>
+            {
+                return settingsRef.current?.configurations?.[name] as T;
+            },
+            setValue: <T,>(name: string, value: T) =>
+            {
+                if(settingsRef.current)
+                {
+                    const configurations = { ...settingsRef.current.configurations, [name]: value };
+                    updateSettings({ configurations });
+                }
+            }
+        }
+    }, []);
+
+    const defaultMarkdownCore = useMemo(() => new MarkdownCore(appContext, configStorage), []);
     const [markdownCore, setMarkdownCore] = useState<MarkdownCore>(defaultMarkdownCore);
 
-    const configStorage = useMemo(() => new MarkdownConfigureStorage(), [])
     const generateAppContext = (params?: AppContextGenerateParams) =>
     {
         // markdownCore.dispose();

@@ -61,17 +61,18 @@ export function createExtensionMarkdownCommandItem(appContext: IAppContext, mode
     const icons = mode === "light" ? lightIcons : darkIcons;
 
     return {
-        name: "root",
+        name: "extensions",
         command: undefined,
         icon: undefined,
-        label: 'root',
+        label: 'extensionsCommands',
         children: [
             {
                 name: 'del-decorations', label: 'Remove Text Decorations', icon: icons['delDecoration'], command: undefined, children: [
                     { name: 'del-bold', label: 'Remove Bold', icon: icons['delBold'], command: new DeleteHoldTextCommand(appContext, DelDecorations.Bold) },
                     { name: 'del-italic', label: 'Remove Italic', icon: icons['delItalic'], command: new DeleteHoldTextCommand(appContext, DelDecorations.Italic) },
                     { name: 'del-strike', label: 'Remove Strike', icon: icons['delStrike'], command: new DeleteHoldTextCommand(appContext, DelDecorations.Strike) },
-                    { name: 'del-under', label: 'Remove Underline', icon: icons['delUnder'], command: new DeleteHoldTextCommand(appContext, DelDecorations.Under) }
+                    { name: 'del-under', label: 'Remove Underline', icon: icons['delUnder'], command: new DeleteHoldTextCommand(appContext, DelDecorations.Under) },
+                    { name: 'del-decorations', label: 'Remove Text Decorations', icon: icons['delDecoration'], command: new DeleteHoldTextCommand(appContext, DelDecorations.All) }
                 ]
             },
             { name: 'markdown:add-checked', label: 'Checked Checkbox', icon: icons['checked'], command: new CheckBoxEditCommand(appContext, CheckBoxState.Checked) },

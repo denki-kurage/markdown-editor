@@ -65,32 +65,32 @@ export const useExtensionComponents = () =>
     }, []);
 }
 
-export const useTokenCommands = (tokenType: string, contexts: ExtensionContexts) =>
+export const useToolbarActiveCommands = (contexts: ExtensionContexts) =>
 {
-    const infos = useMemo(() => {
-        const defCmds = contexts.appContext.markdownCore.getCommandsMap();
-        const defCmdInfo: TokenCommandsInfo =
-        {
-            isShow: (type, contexts) =>
-            {
-                return true; // TODO: 後でセレクションがあるかをチェックする
-            },
-            getCommandItems: (type, contexts) =>
-            {
-                return [defCmds];
-            }
-        }
-        return applyFilters('getTokenCommands', [defCmdInfo]);
-    }, [contexts.appContext]) as TokenCommandsInfo[];
-    
-    return useMemo(() => {
-        return infos
-            .filter(info => info.isShow(tokenType, contexts))
-            .map(info => info.getCommandItems(tokenType, contexts))
-            .flat();
-    }, [infos, tokenType, contexts, infos]);
+    const ci = useMemo(() => {
+        return contexts.appContext.markdownCore.getCommandsMap();
+    }, [contexts.appContext.markdownCore]);
+
+    return ci.children?.filter(ci => !ci.command || ci.command.canExecute()) ?? [];
 }
 
+export const useInspectorActiveCommands = (context: ExtensionContexts) =>
+{
+    const rootCommandItem: ICommandItem =
+    {
+        name: 'inspector root',
+        label: 'inspector root',
+        command: undefined,
+        icon: undefined,
+        children: []
+    }
+
+    const ci = useMemo(() => {
+        return applyFilters('getInspectorCommands', rootCommandItem, context) as ICommandItem;
+    }, [context.appContext.markdownCore]);
+
+    return ci.children?.filter(ci => !ci.command || ci.command.canExecute()) ?? [];
+}
 
 export const TextTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 {

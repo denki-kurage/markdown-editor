@@ -14,9 +14,4 @@ export class MarkdownConfigureStorage implements IConfigureStorage
     {
         return this.config.get(name) as T;
     }
-
-    public async save(): Promise<boolean>
-    {
-        return true;
-    }
 }

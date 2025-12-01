@@ -8,6 +8,8 @@ import { useMarkdownContext } from "../context/markdown-context";
 import { AppContextGenerateParams } from '../context/markdown-app-context';
 import { MarkdownEditorProps } from './editor-wrapper';
 import { MonacoEditorContext } from '../classes/MonacoEditorContext';
+import { useSelect } from '@wordpress/data';
+import { store } from '../store';
 
 export const useMarkdownApp = (
         editor?: editor.IStandaloneCodeEditor,
@@ -35,6 +37,8 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
     const [monaco, setMonaco] = useState<Monaco|undefined>();
     const [editor, setEditor] = useState<ieditor.IStandaloneCodeEditor|undefined>();
     const { markdown, onMarkdownChanged: onValueChanged } = useMarkdownContext();
+    const settings = useSelect(select => select(store).getSettings(), []);
+
 
     const params = useMarkdownApp(editor, monaco);
     useEffect(() => initializedMarkdownCore(params), [params])
@@ -59,10 +63,15 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
 
     */
     useEffect(() => {
-        editor?.updateOptions({
-            fontFamily: 'BIZ UDゴシック'
-        })
-    }, [family])
+        if(settings && editor)
+        {
+            const { fontFamily, fontSize } = settings;
+            editor.updateOptions({
+                fontFamily,
+                fontSize
+            })
+        }
+    }, [settings])
 
     useEffect(() => {
 

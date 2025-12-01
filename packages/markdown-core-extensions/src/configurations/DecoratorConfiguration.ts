@@ -1,6 +1,6 @@
 import { BooleanConfigValue, IAppContext, IConfigureStorage } from "@mde/markdown-core";
-import { MarkdownTableContent } from "../MarkdownTableContent";
-import { TableDecorator } from "../TableDecorator";
+import { MarkdownTableContent } from "../tables";
+import { TableDecorator } from "../tables/TableDecorator";
 
 
 

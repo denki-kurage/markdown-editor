@@ -1,4 +1,5 @@
-import { IAppContext, MarkdownCommandBase } from "@mde/markdown-core";
+import { IAppContext, MarkdownCommandBase, MarkdownParser } from "@mde/markdown-core";
+import { createFilter, flatItem } from "./token-utils";
 
 export enum CheckBoxState
 {
@@ -55,15 +56,51 @@ export class CheckBoxEditCommand extends MarkdownCommandBase<any>
     {
         return text.replace(/^(\s*[-*+]\s+)\[[ xX]\]\s+/, '$1');
     }
+
+    
+    public getTargetTokens()
+    {
+        const parser = new MarkdownParser();
+        const model = this.appContext.getEditorModel();
+        const selections = model.getSelections().map(s => [model.positionToIndex(s.sPos), model.positionToIndex(s.ePos)] as [number, number]);
+        const rootToken = parser.parseTokenTree(model.getText(undefined));
+        const tokenTypes = ['listItem'];
+
+        const filter = createFilter({
+            tokenTypes,
+            selections,
+            selectionAllMode: false,
+            useSelections: true
+        });
+
+        return [...flatItem(rootToken, token => token.getChildren())].filter(filter);
+    }
     
     public execute(parameter?: any)
     {
-        const selections = this.appContext.getEditorModel().getSelections();
         const model = this.appContext.getEditorModel();
         const state = this.state;
+        const ts = this.appContext.getTextSource();
+        const selections = this.appContext.getEditorModel().getSelections().map(s => [
+            Math.min(s.sPos.docIndex, s.ePos.docIndex),
+            Math.max(s.sPos.docIndex, s.ePos.docIndex)
+        ]);
+        const range = (docIndex: number) => selections.some(([s, e]) => docIndex >= s && docIndex <= e);
 
-        const replaceItems = selections.map(selection => {
-            const text = model.getText(selection);
+        const replaceItems = this.getTargetTokens().map(token => {
+            const { start } = token.getPosition();
+            const { docIndex } = model.indexToPosition(start);
+
+            if(!range(docIndex))
+            {
+                return null;
+            }
+
+            const text = ts.lineAt(docIndex);
+            const selection = {
+                sPos: { docIndex, charIndex: 0 },
+                ePos: { docIndex, charIndex: text.length }
+            }
             let editText = text;
 
             if(state === CheckBoxState.Checked || state === CheckBoxState.Unchecked)
@@ -97,7 +134,7 @@ export class CheckBoxEditCommand extends MarkdownCommandBase<any>
                 text: editText
             };
             
-        })
+        }).filter(item => !!item);
 
         model.replaces(replaceItems);
     }

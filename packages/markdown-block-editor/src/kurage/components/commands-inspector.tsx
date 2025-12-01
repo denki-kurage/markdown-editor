@@ -1,17 +1,14 @@
 import { InspectorControls } from "@wordpress/block-editor";
 import { PanelBody } from "@wordpress/components";
-import { FlatCommandToolbar } from "./edit-toolbar";
-import { useTokenCommands } from "./inspector-hooks";
-import { useMarkdownTokenContext } from "../context/markdown-token-context";
 import { useExtensionContexts } from "./hooks";
+import { useInspectorActiveCommands, } from "./inspector-hooks";
+import { CommandToolbarGroup } from "./edit-toolbar";
 const iconDisabled = '.components-button[aria-disabled=true]{ opacity: 0.3; }';
 
 export const CommandsInspector = ({}) =>
 {
-    const { singleToken } = useMarkdownTokenContext();
     const contexts = useExtensionContexts();
-    const tokenType = singleToken?.getType() ?? '';
-    const commandItems = useTokenCommands(tokenType, contexts)
+    const activeCommandItems = useInspectorActiveCommands(contexts)
     
     return (
         <InspectorControls>
@@ -20,13 +17,21 @@ export const CommandsInspector = ({}) =>
 
                 <div>
                     {
-                        commandItems.map(ci => {
-                            const children = ci.children;
-                            return children && (
+                        activeCommandItems.map(ci => {
+                            return (
                                 <>
-                                    <p style={{marginBottom: ".1em"}}>{ci.label}</p>
+                                    <h2>{ci.label}</h2>
 
-                                    <FlatCommandToolbar root={ci} />
+                                    { ci.children?.map(c2 => {
+
+                                        return (
+                                            <>
+                                                <p style={{marginBottom: ".1em"}}>{c2.label}</p>
+
+                                                <CommandToolbarGroup groupRoot={c2} />
+                                            </>
+                                        )
+                                    })}
                                 </>
                             )
                         })

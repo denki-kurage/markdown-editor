@@ -25,6 +25,8 @@ add_action( 'after_setup_theme', function(){
 });
 
 
+
+
 add_action('init', function(){
 	$pluginPath = plugin_dir_url(__FILE__);
 	$cssPath = $pluginPath . 'markdown.css';
@@ -65,6 +67,63 @@ add_action('init', function(){
 	add_action('admin_head', fn() => $renderInlineCss($adminCss));
 	add_action('admin_head', fn() => $renderInlineCss($pluginPath . "prismjs/{$theme}/prism.css"));
 
+
+
+
+
+
+	$defaultOptions = [
+		'adminCss' => '',
+		'frontCss' => '',
+		'fontSize' => 12,
+		'fontFamily' => '',
+		'recentCodeLanguages' => ''
+	];
+
+	add_action('admin_enqueue_scripts', function() use($defaultOptions){
+		$data = get_option('markdown-block-editor-options', $defaultOptions);
+		$str = 'const MarkdownBlockEditorAdminScript = ' . json_encode($data);
+		wp_register_script('markdown-block-editor-admin-script', '');
+		wp_enqueue_script('markdown-block-editor-admin-script', null);
+		wp_add_inline_script('markdown-block-editor-admin-script', $str, 'after');
+	});
+	
+	add_action('rest_api_init', function() use($defaultOptions){
+
+		register_rest_route(
+			'markdown-block-editor/v1',
+			'/settings',
+			[
+				[
+					'methods' => WP_REST_Server::READABLE,
+					'callback' => function(WP_REST_Request $request) use($defaultOptions)
+					{
+						$data = get_option('markdown-block-editor-settings', $defaultOptions);
+						return rest_ensure_response($data);
+					},
+					'permission_callback' => fn() => current_user_can('manage_options')
+				],
+				[
+					'methods' => WP_REST_Server::CREATABLE,
+					'callback' => function(WP_REST_Request $request) use($defaultOptions)
+					{
+						$data = [];
+						foreach($defaultOptions as $k => $v)
+						{
+							$data[$k] = $request->get_param($k) ?? $v;
+						}
+
+						update_option('markdown-block-editor-settings', $data);
+						return rest_ensure_response($data);
+					},
+					'permission_callback' => fn() => current_user_can('manage_options'),
+					'args' => json_decode(file_get_contents('schema.json', true), true)['properties']
+				]
+			]
+
+		);
+	});
+
 });
 
 
@@ -92,6 +151,7 @@ add_action('rest_api_init', function(){
 			'get_callback' => fn() => (int)get_option('md-table-editor:editor-height', 500)
 		]
 	);
+
 
 	register_rest_route(
 		'md-table-editor/v1',

@@ -1,24 +1,66 @@
 import apiFetch from "@wordpress/api-fetch";
-import { Button, RangeControl, Spinner, TextControl } from "@wordpress/components";
+import { Button, RangeControl, SelectControl, Spinner, TextControl } from "@wordpress/components";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 
 import { store as noticeStore } from "@wordpress/notices";
 import React, { useCallback, useEffect, useState } from "react";
+import { ISettings } from "../../../ISettings";
+import { store } from "../store";
 
 
+const fontFamilies = ['BIZ UDゴシック', 'Consolas'].map(x => ({label: x, value: x}));
+const fontSizes = [...Array(20).keys()].map(x => (x + 4).toString()).map(x => ({label: x, value: x}))
+
+export const OptionSettings = ({}) =>
+{
+    const { settings, storeState } = useSelect(select => {
+        const s = select(store);
+        const settings = s.getSettings();
+        const storeState = s.getStoreState();
+        return { settings, storeState }
+    }, []);
+
+    const { updateSettings } = useDispatch(store);
+
+
+    console.log("===========================================")
+
+    return (
+        <>
+            <h2>SETTINGS</h2>
+            <p>fault: {storeState?.faultMessage}</p>
+            <p>settings: {JSON.stringify(settings)}</p>
+            <p>{storeState.isLoading ? "◎" : " - "}</p>
+
+            <SelectControl
+                label="Font Family"
+                options={fontFamilies}
+                onChange={fontFamily => updateSettings({ fontFamily })}
+                />
+            
+            <SelectControl
+                label="Font Size"
+                options={fontSizes}
+                onChange={e => updateSettings({ fontSize: parseInt(e) })} />
+            
+        </>
+    )
+}
+
+/*
 const useSettings = () =>
 {
-    const [settings, setSettings] = useState<any>(false);
+    const [settings, setSettings] = useState<ISettings|null>(null);
 
     const loadSettings = useCallback(async () => {
         
-        if(settings === false)
+        if(!settings)
         {
             setSettings(true);
 
             const result = await apiFetch({
-                path: '/md-table-editor/v1/settings',
+                path: '/md-table-editor/v1/options',
                 method: 'GET'
             });
 
@@ -131,3 +173,5 @@ export const SettingsForm = ({ settings, onCompleted }) =>
 }
 
 export default OptionSettings;
+
+*/
