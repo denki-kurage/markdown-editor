@@ -1,4 +1,4 @@
-declare module "components/image-upload-editor" {
+declare module "src/kurage/components/image-upload-editor" {
     import { MarkdownCore } from '@mde/markdown-core';
     import React from 'react';
     const ImageUploadEditor: ({ mc, onExecuted }: {
@@ -7,7 +7,7 @@ declare module "components/image-upload-editor" {
     }) => React.JSX.Element;
     export default ImageUploadEditor;
 }
-declare module "classes/OgpManager" {
+declare module "src/kurage/classes/OgpManager" {
     type OgpItem = {
         type: string;
         title: string;
@@ -23,7 +23,7 @@ declare module "classes/OgpManager" {
     }
     export const ogpGenerator: OgpGenerator;
 }
-declare module "components/blog-card-generator" {
+declare module "src/kurage/components/blog-card-generator" {
     import React from "react";
     import { MarkdownCore } from "@mde/markdown-core";
     const BlogCardGenerator: ({ mc, onExecuted }: {
@@ -32,32 +32,157 @@ declare module "components/blog-card-generator" {
     }) => React.JSX.Element;
     export default BlogCardGenerator;
 }
-declare module "classes/MarkdownConfigureStorage" {
-    import { IConfigureStorage } from "@mde/markdown-core";
-    export class MarkdownConfigureStorage implements IConfigureStorage {
-        private config;
-        setValue<T>(name: string, value: T): boolean;
-        getValue<T>(name: string): T;
-        save(): Promise<boolean>;
-    }
+declare module "ISettings" {
+    export type ISettings = {
+        adminCss: string;
+        frontCss: string;
+        fontSize: number;
+        fontFamily: string;
+        configurations: {
+            [key: string]: any;
+        };
+    };
 }
-declare module "context/markdown-app-context" {
-    import { IAppContext, MarkdownCore } from "@mde/markdown-core";
+declare module "src/kurage/store/type" {
+    import { ISettings } from "ISettings";
+    export interface IMarkdownBlockEditor {
+        editorStates: {
+            [key: string]: IMarkdownBlockEditorState;
+        };
+        info: IMarkdownBlockEditorInfo;
+        settings: ISettings;
+        storeState: IStoreState;
+    }
+    export interface IStoreState {
+        isLoading: boolean;
+        faultMessage: string;
+    }
+    export interface IMarkdownBlockEditorInfo {
+        version: string;
+    }
+    export interface IMarkdownBlockEditorState {
+        tokenTypes: string[];
+        selections: [number, number][];
+        enabledSelectionsFilter: boolean;
+        enabledSelectionsFilterFillMode: boolean;
+        maximized: boolean;
+        extensionsData: {
+            [key: string]: any;
+        };
+        settings: ISettings;
+    }
+    export type EditorState = {
+        [key: string]: IMarkdownBlockEditorState;
+    };
+    export const createInitData: () => IMarkdownBlockEditor;
+}
+declare module "src/kurage/store/selectors" {
+    import { IMarkdownBlockEditor } from "src/kurage/store/type";
+    export const getVersion: (state: IMarkdownBlockEditor) => string;
+    export const getTokenEnabledSelectionsFilter: (state: IMarkdownBlockEditor, id: string) => boolean;
+    export const getEditMaximized: (state: IMarkdownBlockEditor, id: string) => boolean;
+    export const getEditorState: (state: IMarkdownBlockEditor, id: string) => import("src/kurage/store/type").IMarkdownBlockEditorState | {
+        extensionsData: {};
+        enabledSelectionsFilter: false;
+        enabledSelectionsFilterFillMode: false;
+        selections: any[];
+        tokenTypes: any[];
+        maximized: false;
+    };
+    export const getStoreState: (state: IMarkdownBlockEditor) => import("src/kurage/store/type").IStoreState;
+    export const getSettings: (state: IMarkdownBlockEditor) => import("ISettings").ISettings;
+}
+declare module "src/kurage/store/actions" {
+    import { IMarkdownBlockEditorState, IStoreState } from "src/kurage/store/type";
+    import { ISettings } from "ISettings";
+    export const setInfoVersion: (version: string) => {
+        type: string;
+        version: string;
+    };
+    export const setEditorState: (id: string, editorState: Partial<IMarkdownBlockEditorState>) => {
+        type: string;
+        id: string;
+        editorState: Partial<IMarkdownBlockEditorState>;
+    };
+    export const deleteEditorState: (id: string) => {
+        type: string;
+        id: string;
+    };
+    export const setExtensionData: (id: string, extensionName: string, extensionData: any) => {
+        type: string;
+        id: string;
+        extensionName: string;
+        extensionData: any;
+    };
+    export const setStoreState: (storeState: IStoreState) => {
+        type: string;
+        value: IStoreState;
+    };
+    export const updateSettings: (settings: Partial<ISettings>) => (p: any) => Promise<void>;
+}
+declare module "src/kurage/store/resolvers" {
+    export const getSettings: () => (p: any) => Promise<void>;
+}
+declare module "src/kurage/store/reducer" {
+    import { EditorState, IMarkdownBlockEditorInfo, IStoreState } from "src/kurage/store/type";
+    import { ISettings } from "ISettings";
+    const _default: import("redux").Reducer<{
+        info: {
+            version: any;
+        };
+        editorStates: EditorState;
+        settings: any;
+        storeState: any;
+    }, any, Partial<{
+        info: IMarkdownBlockEditorInfo;
+        editorStates: EditorState;
+        settings: ISettings;
+        storeState: IStoreState;
+    }>>;
+    export default _default;
+}
+declare module "src/kurage/store/index" {
+    import * as selectors from "src/kurage/store/selectors";
+    import * as actions from "src/kurage/store/actions";
+    import * as resolvers from "src/kurage/store/resolvers";
+    export const storeConfig: {
+        reducer: import("redux").Reducer<{
+            info: {
+                version: any;
+            };
+            editorStates: import("src/kurage/store/type").EditorState;
+            settings: any;
+            storeState: any;
+        }, any, Partial<{
+            info: import("src/kurage/store/type").IMarkdownBlockEditorInfo;
+            editorStates: import("src/kurage/store/type").EditorState;
+            settings: import("ISettings").ISettings;
+            storeState: import("src/kurage/store/type").IStoreState;
+        }>>;
+        actions: typeof actions;
+        selectors: typeof selectors;
+        resolvers: typeof resolvers;
+    };
+    export const store: import("@wordpress/data/build-types/types").StoreDescriptor<import("@wordpress/data/build-types/types").ReduxStoreConfig<unknown, typeof actions, typeof selectors>>;
+}
+declare module "src/kurage/context/markdown-app-context" {
+    import { IAppContext, IConfigurationStorage, MarkdownCore } from "@mde/markdown-core";
     import { MarkdownEventCollection } from "@mde/markdown-core";
     export type AppContextGenerateParams = {
         appContext: IAppContext;
     };
-    export type AppContextProps = {
+    export type MarkdownAppContextProps = {
         appContext: IAppContext;
         eventCollection?: MarkdownEventCollection;
+        configurationStorage: IConfigurationStorage;
         markdownCore: MarkdownCore;
         updateAppContext: (params?: AppContextGenerateParams) => void;
     };
-    export const AppContextProvider: import("react").Provider<AppContextProps>;
-    export const useAppContext: () => AppContextProps;
+    export const AppContextProvider: import("react").Provider<MarkdownAppContextProps>;
+    export const useMarkdownAppContext: () => MarkdownAppContextProps;
     export const MarkdownAppContextWrapper: ({ children }: any) => import("react").JSX.Element;
 }
-declare module "components/MarkdownEditorSynchronizer" {
+declare module "src/kurage/components/MarkdownEditorSynchronizer" {
     export type LineMapType = {
         lineNumber: number;
         offsetTop: number;
@@ -70,14 +195,14 @@ declare module "components/MarkdownEditorSynchronizer" {
         getPositionFromLineNumber: (win: Window, lineNumber: number) => number;
     }
 }
-declare module "components/parser" {
+declare module "src/kurage/components/parser" {
     import { IDisposable } from "@mde/markdown-core";
     export const parseSaveMarkdown: (html: string) => string;
     export const parseEditMarkdown: (txt: string, breaks?: boolean) => string;
     export const registerMarkdownViewer: (document: HTMLDocument, documentLineNumberChanged: (lineNumber: number) => void) => IDisposable;
     export const scrollToLineNumber: (win: Window, lineNumber: number) => void;
 }
-declare module "context/markdown-context" {
+declare module "src/kurage/context/markdown-context" {
     export type MarkdownContextProps = {
         markdown: string;
         /**
@@ -96,7 +221,7 @@ declare module "context/markdown-context" {
     export const useMarkdownContext: () => MarkdownContextProps;
     export const MarkdownContextProviderWrapper: ({ children, attributes, setAttributes, standardizeReturnKey }: any) => import("react").JSX.Element;
 }
-declare module "context/markdown-token-context" {
+declare module "src/kurage/context/markdown-token-context" {
     import { IToken } from "@mde/markdown-core";
     export type TokenStates = {
         /**
@@ -134,91 +259,91 @@ declare module "context/markdown-token-context" {
     export const useMarkdownTokenContext: () => MarkdownTokenContextProps;
     export const MarkdownTokenContextProviderWrapper: ({ children }: any) => import("react").JSX.Element;
 }
-declare module "components/edit-toolbar" {
+declare module "src/kurage/components/edit-toolbar" {
     import { ICommandItem } from "@mde/markdown-core";
     export type CommandToolbarProps = {
-        root: ICommandItem;
+        groupRoot: ICommandItem;
     };
-    export const CommandToolbar: ({ root }: CommandToolbarProps) => import("react").JSX.Element;
-    export type FlatCommandToolbarProps = {
-        root: ICommandItem;
-    };
-    export const FlatCommandToolbar: ({ root }: FlatCommandToolbarProps) => import("react").JSX.Element;
+    export const CommandToolbarGroup: ({ groupRoot }: CommandToolbarProps) => import("react").JSX.Element;
     export const CommandControl: ({ item }: {
         item: ICommandItem;
     }) => import("react").JSX.Element;
 }
-declare module "store/type" {
-    export interface IMarkdownBlockEditor {
-        editorStates: {
-            [key: string]: IMarkdownBlockEditorState;
-        };
-        info: IMarkdownBlockEditorInfo;
-    }
-    export interface IMarkdownBlockEditorInfo {
-        version: string;
-    }
-    export interface IMarkdownBlockEditorState {
-        tokenTypes: string[];
-        selections: [number, number][];
-        enabledSelectionsFilter: boolean;
-        enabledSelectionsFilterFillMode: boolean;
-        maximized: boolean;
-        extensionsData: {
-            [key: string]: any;
-        };
-    }
-    export type EditorState = {
-        [key: string]: IMarkdownBlockEditorState;
+declare module "src/kurage/context/markdown-editor-context" {
+    import { IMarkdownBlockEditorState } from "src/kurage/store/type";
+    export type MarkdownEditorContextProps = {
+        blockEditorProps: any;
+        clientId: string;
+        editorState: IMarkdownBlockEditorState;
+        setEditorState: (editorState: Partial<IMarkdownBlockEditorState>) => void;
     };
-    export const createInitData: () => IMarkdownBlockEditor;
+    export const MarkdownEditorProvider: import("react").Provider<MarkdownEditorContextProps>;
+    export const useMarkdownEditorContext: () => MarkdownEditorContextProps;
+    export const MarkdownEditorContextProviderWrapper: ({ children, clientId, ...blockEditorProps }: any) => import("react").JSX.Element;
 }
-declare module "store/selectors" {
-    import { IMarkdownBlockEditor } from "store/type";
-    export const getVersion: (state: IMarkdownBlockEditor) => string;
-    export const getTokenEnabledSelectionsFilter: (state: IMarkdownBlockEditor, id: string) => boolean;
-    export const getEditMaximized: (state: IMarkdownBlockEditor, id: string) => boolean;
-    export const getEditorState: (state: IMarkdownBlockEditor, id: string) => import("store/type").IMarkdownBlockEditorState;
-}
-declare module "store/actions" {
-    import { IMarkdownBlockEditorState } from "store/type";
-    export const setInfoVersion: (version: string) => {
-        type: string;
-        version: string;
-    };
-    export const setEditorState: (id: string, editorState: Partial<IMarkdownBlockEditorState>) => {
-        type: string;
-        id: string;
-        editorState: Partial<IMarkdownBlockEditorState>;
-    };
-    export const deleteEditorState: (id: string) => {
-        type: string;
-        id: string;
-    };
-    export const setExtensionData: (id: string, extensionName: string, extensionData: any) => {
-        type: string;
-        id: string;
-        extensionName: string;
+declare module "src/kurage/context/markdown-extension-context" {
+    export type MarkdownExtensionContextProps = {
         extensionData: any;
+        setExtensionData: (clientId: string, extensionName: string, extensionData: any) => void;
+    };
+    export const ExtensionContextProvider: import("react").Provider<any>;
+    export const useExtensionContext: () => any;
+    export const MarkdownExtensionContextWrapper: ({ children, extensionName }: any) => import("react").JSX.Element;
+}
+declare module "src/kurage/components/hooks" {
+    import { MarkdownContextProps } from "src/kurage/context/markdown-context";
+    import { MarkdownEditorContextProps } from "src/kurage/context/markdown-editor-context";
+    import { MarkdownExtensionContextProps } from "src/kurage/context/markdown-extension-context";
+    import { MarkdownTokenContextProps } from "src/kurage/context/markdown-token-context";
+    import { MarkdownAppContextProps } from "src/kurage/context/markdown-app-context";
+    import { IAppContext, SelectCommand } from "@mde/markdown-core";
+    export type ExtensionContexts = {
+        appContext: MarkdownAppContextProps;
+        tokenContext: MarkdownTokenContextProps;
+        markdownContext: MarkdownContextProps;
+        extensionContext: MarkdownExtensionContextProps;
+        editorContext: MarkdownEditorContextProps;
+    };
+    export const useExtensionContexts: () => {
+        tokenContext: MarkdownTokenContextProps;
+        markdownContext: MarkdownContextProps;
+        extensionContext: any;
+        editorContext: MarkdownEditorContextProps;
+        appContext: MarkdownAppContextProps;
+    };
+    export const useInternalCommandItems: (appContext: IAppContext) => {
+        name: string;
+        command: any;
+        icon: any;
+        label: string;
+        children: {
+            name: string;
+            label: string;
+            icon: string;
+            command: SelectCommand;
+        }[];
     };
 }
-declare module "store/reducer" {
-    import { EditorState, IMarkdownBlockEditorInfo } from "store/type";
-    const _default: import("redux").Reducer<{
-        info: {
-            version: any;
-        };
-        editorStates: EditorState;
-    }, any, Partial<{
-        info: IMarkdownBlockEditorInfo;
-        editorStates: EditorState;
-    }>>;
-    export default _default;
+declare module "src/kurage/classes/CodeLanguages" {
+    export const codeLanguages: {
+        name: string;
+        label: string;
+    }[];
+    export const codeLanguagesMap: Map<string, string>;
+    export const sortedCodeLanguages: (recentCodeLanguages: string[]) => {
+        name: string;
+        label: string;
+    }[];
 }
-declare module "components/token-editor" {
-    import { IToken } from "@mde/markdown-core";
-    import { ExtensionContexts } from "components/token-inspectors";
-    import React from "react";
+declare module "src/kurage/components/token-editor-forms/token-editors" {
+    import { TokenEditorProps } from "src/kurage/components/inspector-hooks";
+    export const TableTokenEditor: ({ token, contexts }: TokenEditorProps) => import("react").JSX.Element;
+    export const HeadingTokenEditor: ({ token, contexts }: TokenEditorProps) => import("react").JSX.Element;
+    export const CodeEditor: ({ token, contexts }: TokenEditorProps) => import("react").JSX.Element;
+}
+declare module "src/kurage/components/inspector-hooks" {
+    import { ICommandItem, IToken } from "@mde/markdown-core";
+    import { ExtensionContexts } from "src/kurage/components/hooks";
     export type TokenEditorProps = {
         token: IToken;
         contexts: ExtensionContexts;
@@ -228,15 +353,33 @@ declare module "components/token-editor" {
         label: string;
         component: (props: TokenEditorProps) => JSX.Element;
     };
+    export type ExtensionEditorProps = {
+        contexts: ExtensionContexts;
+    };
     export type ExtensionComponentInfo = {
         label: string;
-        component: (props: ExtensionContexts) => JSX.Element;
+        component: (props: ExtensionEditorProps) => JSX.Element;
+    };
+    export type TokenCommandsInfo = {
+        isShow(type: string, contexts: ExtensionContexts): boolean;
+        /**
+         *
+         * 極力キャッシュするようにしてください。
+         */
+        getCommandItems(type: string, contexts: ExtensionContexts): ICommandItem[];
     };
     export const useTokenEditorComponents: (type: string) => TokenEditorComponentInfo[];
     export const useExtensionComponents: () => ExtensionComponentInfo[];
-    export const TextTokenEditor: ({ token, contexts }: TokenEditorProps) => React.JSX.Element;
+    export const useToolbarActiveCommands: (contexts: ExtensionContexts) => ICommandItem[];
+    export const useInspectorActiveCommands: (context: ExtensionContexts) => ICommandItem[];
+    export const TextTokenEditor: ({ token, contexts }: TokenEditorProps) => import("react").JSX.Element;
 }
-declare module "components/loading" {
+declare module "src/kurage/components/app-toolbars" {
+    import React from "react";
+    const AppToolbars: () => React.JSX.Element;
+    export default AppToolbars;
+}
+declare module "src/kurage/components/loading" {
     import React from "react";
     export const Loading: ({ isLoading }: any) => React.JSX.Element;
     export const LoadingPanel: React.MemoExoticComponent<({ isLoading, children }: {
@@ -244,94 +387,11 @@ declare module "components/loading" {
         children: any;
     }) => React.JSX.Element>;
 }
-declare module "context/markdown-extension-context" {
-    export type MarkdownExtensionContextProps = {
-        extensionData: any;
-        setExtensionData: (clientId: string, extensionName: string, extensionData: any) => void;
-    };
-    export const ExtensionContextProvider: import("react").Provider<any>;
-    export const useExtensionContext: () => any;
-    export const MarkdownExtensionContextWrapper: ({ children, extensionName }: any) => import("react").JSX.Element;
-}
-declare module "components/hooks" {
-    export const useExtensionContexts: () => {
-        tokenContext: import("context/markdown-token-context").MarkdownTokenContextProps;
-        markdownContext: import("context/markdown-context").MarkdownContextProps;
-        extensionContext: any;
-        editorContext: import("context/markdown-editor-context").MarkdownEditorContextProps;
-    };
-}
-declare module "components/token-inspectors" {
-    import { MarkdownContextProps } from "context/markdown-context";
-    import { MarkdownTokenContextProps } from "context/markdown-token-context";
-    import { MarkdownExtensionContextProps } from "context/markdown-extension-context";
-    import { MarkdownEditorContextProps } from "context/markdown-editor-context";
-    export type ExtensionContexts = {
-        tokenContext: MarkdownTokenContextProps;
-        markdownContext: MarkdownContextProps;
-        extensionContext: MarkdownExtensionContextProps;
-        editorContext: MarkdownEditorContextProps;
-    };
+declare module "src/kurage/components/token-inspectors" {
     export const TokenInspectors: () => import("react").JSX.Element;
     export default TokenInspectors;
 }
-declare module "store/index" {
-    import * as selectors from "store/selectors";
-    import * as actions from "store/actions";
-    export { ExtensionContexts } from "components/token-inspectors";
-    export const storeConfig: {
-        reducer: import("redux").Reducer<{
-            info: {
-                version: any;
-            };
-            editorStates: import("store/type").EditorState;
-        }, any, Partial<{
-            info: import("store/type").IMarkdownBlockEditorInfo;
-            editorStates: import("store/type").EditorState;
-        }>>;
-        actions: typeof actions;
-        selectors: typeof selectors;
-    };
-    export const store: import("@wordpress/data/build-types/types").StoreDescriptor<import("@wordpress/data/build-types/types").ReduxStoreConfig<unknown, typeof actions, typeof selectors>>;
-}
-declare module "context/markdown-editor-context" {
-    import { ICommandItem } from "@mde/markdown-core";
-    import { IMarkdownBlockEditorState } from "store/type";
-    export type MarkdownEditorContextProps = {
-        blockEditorProps: any;
-        clientId: string;
-        editorState: IMarkdownBlockEditorState;
-        setEditorState: (editorState: Partial<IMarkdownBlockEditorState>) => void;
-        commandItems: ICommandItem[];
-    };
-    export const MarkdownEditorProvider: import("react").Provider<MarkdownEditorContextProps>;
-    export const useMarkdownEditorContext: () => MarkdownEditorContextProps;
-    export const MarkdownEditorContextProviderWrapper: ({ children, clientId, ...blockEditorProps }: any) => import("react").JSX.Element;
-}
-declare module "components/app-toolbars" {
-    import React from "react";
-    const AppToolbars: () => React.JSX.Element;
-    export default AppToolbars;
-}
-declare module "components/option-settings" {
-    import React from "react";
-    export const OptionSettings: ({ onCompleted }: {
-        onCompleted: any;
-    }) => React.JSX.Element;
-    export const SettingsForm: ({ settings, onCompleted }: {
-        settings: any;
-        onCompleted: any;
-    }) => React.JSX.Element;
-    export default OptionSettings;
-}
-declare module "components/basic-inspectors" {
-    type BasicInspectorsProps = {
-        editHeight: number | undefined;
-        onEditHeightChanged: (h: number | undefined) => void;
-    };
-    export const BasicInspectors: ({ editHeight, onEditHeightChanged }: BasicInspectorsProps) => import("react").JSX.Element;
-}
-declare module "classes/MonacoDecorator" {
+declare module "src/kurage/classes/MonacoDecorator" {
     import { IEditorDecorateSelection } from "@mde/markdown-core";
     import { editor, IDisposable } from "monaco-editor";
     export class MonacoDecorator implements IDisposable {
@@ -344,26 +404,25 @@ declare module "classes/MonacoDecorator" {
         dispose(): void;
     }
 }
-declare module "classes/MonacoEditorContext" {
+declare module "src/kurage/classes/MonacoEditorContext" {
     import { Monaco } from "@monaco-editor/react";
     import { editor } from 'monaco-editor';
-    import { IAppContext, IDisposable, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IScrollSynchronizer, IStringCounter, ITextSource } from "@mde/markdown-core";
-    export class MonacoEventsInitializer implements IEventsInitializer<IMarkdownEvents> {
+    import { IAppContext, IDisposable, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IScrollSynchronizer, IStringCounter, ITextSource, IConfigurationStorage } from "@mde/markdown-core";
+    export class MonacoEditorContext implements IAppContext, IDisposable, IEventsInitializer<IMarkdownEvents> {
         private readonly monaco;
         private readonly model;
         private readonly editor;
-        constructor(monaco: Monaco, model: editor.ITextModel, editor: editor.IStandaloneCodeEditor);
-        initializeEvents(events: IMarkdownEvents): IDisposable;
-    }
-    export class MonacoEditorContext implements IAppContext {
-        private readonly monaco;
-        private readonly model;
-        private readonly editor;
+        private readonly configurationStorage;
         private decorator;
-        constructor(monaco: Monaco, model: editor.ITextModel, editor: editor.IStandaloneCodeEditor);
+        private monacoEventsDisposables;
+        private configurationHelper;
+        constructor(monaco: Monaco, model: editor.ITextModel, editor: editor.IStandaloneCodeEditor, configurationStorage: IConfigurationStorage);
+        private initInternalRegister;
+        initializeEvents(events: IMarkdownEvents): IDisposable;
+        dispose(): void;
         getEventsInitializer(): IEventsInitializer<IMarkdownEvents>;
         getEditorName(): string;
-        getTextSource(): ITextSource | undefined;
+        getTextSource(): ITextSource;
         getStringCounter(): IStringCounter;
         getAppConfig(): {};
         returnKey(): string;
@@ -375,16 +434,17 @@ declare module "classes/MonacoEditorContext" {
         getEditorModel(): IEditorModel;
     }
 }
-declare module "components/monaco-editor" {
+declare module "src/kurage/components/monaco-editor" {
     import { Monaco } from '@monaco-editor/react';
     import { editor } from 'monaco-editor';
-    import { AppContextGenerateParams } from "context/markdown-app-context";
-    import { MarkdownEditorProps } from "components/editor-wrapper";
-    export const useMarkdownApp: (editor?: editor.IStandaloneCodeEditor, monaco?: Monaco) => AppContextGenerateParams;
+    import { AppContextGenerateParams } from "src/kurage/context/markdown-app-context";
+    import { MarkdownEditorProps } from "src/kurage/components/editor-wrapper";
+    import { IConfigurationStorage } from '@mde/markdown-core';
+    export const useMarkdownApp: (configurationStorage: IConfigurationStorage, editor?: editor.IStandaloneCodeEditor, monaco?: Monaco) => AppContextGenerateParams;
     export const MonacoEditor: ({ initializedMarkdownCore }: MarkdownEditorProps) => import("react").JSX.Element;
 }
-declare module "components/editor-wrapper" {
-    import { AppContextGenerateParams } from "context/markdown-app-context";
+declare module "src/kurage/components/editor-wrapper" {
+    import { AppContextGenerateParams } from "src/kurage/context/markdown-app-context";
     export const EditorGeneratorCollection: EditorGenerator[];
     export type MarkdownEditorProps = {
         initializedMarkdownCore: (markdownCore?: AppContextGenerateParams) => void;
@@ -395,7 +455,7 @@ declare module "components/editor-wrapper" {
     };
     export function useMarkdownEditorGenerator(name: string): EditorGenerator;
 }
-declare module "useEditorInterlocking" {
+declare module "src/kurage/useEditorInterlocking" {
     import { IAppContext } from '@mde/markdown-core';
     export const useEditorInterlocking: (appContext: IAppContext, win: Window) => {
         dispose: () => void;
@@ -415,10 +475,10 @@ declare module "useEditorInterlocking" {
         isBlocking(): boolean;
     }
 }
-declare module "components/commands-inspector" {
+declare module "src/kurage/components/commands-inspector" {
     export const CommandsInspector: ({}: {}) => import("react").JSX.Element;
 }
-declare module "context/markdown-config-context" {
+declare module "src/kurage/context/markdown-config-context" {
     export type MarkdownConfigContextProps = {
         configValue: Map<string, any>;
     };
@@ -426,7 +486,7 @@ declare module "context/markdown-config-context" {
     export const useConfigContext: () => MarkdownConfigContextProps;
     export const MarkdownConfigContextWrapper: ({ children }: any) => import("react").JSX.Element;
 }
-declare module "components/withRegistryProvider" {
+declare module "src/kurage/components/withRegistryProvider" {
     export type withRegistryProviderProps = {
         storeName: string;
         storeConfig: any;
@@ -435,17 +495,25 @@ declare module "components/withRegistryProvider" {
     export const withEditorRegistryProvider: (Inner: import("react").ComponentType<any>) => ({ children, ...props }: any) => import("react").JSX.Element;
     export const withEditorRegistryComponent: (...args: unknown[]) => unknown;
 }
-declare module "edit" {
+declare module "src/kurage/components/OtherSettings" {
+    import React from "react";
+    export const OthreSettings: ({}: {}) => React.JSX.Element;
+}
+declare module "src/kurage/components/ControlPanel" {
+    export const ControlPanel: ({}: {}) => import("react").JSX.Element;
+    export const EditorSettings: ({}: {}) => import("react").JSX.Element;
+}
+declare module "src/kurage/edit" {
     import React from 'react';
     import './editor.scss';
     import './components/token-viewer.scss';
     const EditMemo: React.MemoExoticComponent<({ attributes, setAttributes, ...props }: any) => React.JSX.Element>;
     export default EditMemo;
 }
-declare module "index" {
+declare module "src/kurage/index" {
     import './style.scss';
 }
-declare module "line-number-context" {
+declare module "src/kurage/line-number-context" {
     export type LineNumberContextType = {
         lineNumber: number;
         updateLineNumber: (line: number) => void;
@@ -453,7 +521,7 @@ declare module "line-number-context" {
     export const LineNumberContextProvider: import("react").Provider<LineNumberContextType>;
     export const useLineNumberContext: () => LineNumberContextType;
 }
-declare module "classes/BrowserAppHelper" {
+declare module "src/kurage/classes/BrowserAppHelper" {
     export class BrowserAppHelper {
         static toPosition(text: string, charIndex: number): number[];
         static toIndex(text: string, docIndex: number, charIndex: number): number;
@@ -462,8 +530,16 @@ declare module "classes/BrowserAppHelper" {
         static textLinesCount(text: string): number;
     }
 }
-declare module "classes/BrowserAppMain" { }
-declare module "classes/sanitizer" {
+declare module "src/kurage/classes/BrowserAppMain" { }
+declare module "src/kurage/classes/MarkdownConfigureStorage" {
+    import { IConfigureStorage } from "@mde/markdown-core";
+    export class MarkdownConfigureStorage implements IConfigureStorage {
+        private config;
+        setValue<T>(name: string, value: T): boolean;
+        getValue<T>(name: string): T;
+    }
+}
+declare module "src/kurage/classes/sanitizer" {
     export const sanitize: (str: string) => string;
 }
-declare module "components/token-editor-forms/table-inspectors" { }
+declare module "src/kurage/components/token-editor-forms/table-inspectors" { }

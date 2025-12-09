@@ -1,6 +1,5 @@
-import { IAppContext, IConfigureStorage, IEditorModel, IEventsInitializer, IMarkdownEvents, MarkdownCore } from "@mde/markdown-core"
+import { IAppContext, IConfigurationStorage, IEditorModel, IEventsInitializer, IMarkdownEvents, MarkdownCore } from "@mde/markdown-core"
 import { createContext, useContext, useMemo, useRef, useState } from "react";
-import { MarkdownConfigureStorage } from "../classes/MarkdownConfigureStorage";
 import { MarkdownEventCollection } from "@mde/markdown-core";
 import { applyFilters } from '@wordpress/hooks'
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -15,6 +14,7 @@ export type MarkdownAppContextProps =
 {
     appContext: IAppContext;
     eventCollection?: MarkdownEventCollection;
+    configurationStorage: IConfigurationStorage,
     markdownCore: MarkdownCore;
     updateAppContext: (params?: AppContextGenerateParams) => void;
 }
@@ -67,6 +67,16 @@ const appContext: IAppContext =
         lineAt: (line: number) => '',
         hasLine: (line: number) => false
     }),
+    getEditControl: () =>
+    {
+        return {
+            undo: () => {},
+            redo: () => {},
+            openSuggest: () => {},
+            openFindDialog: () =>{},
+            openReplaceDialog: () => {}
+        }
+    },
     returnKey: () => 'none'
 }
 
@@ -82,7 +92,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
     const settingsRef = useRef<ISettings>(null as any);
     settingsRef.current = useSelect(select => select(store).getSettings(), []);
 
-    const configStorage = useMemo<IConfigureStorage>(() => {
+    const configStorage = useMemo<IConfigurationStorage>(() => {
 
         return {
             getValue: <T,>(name: string) =>
@@ -105,7 +115,12 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
 
     const generateAppContext = (params?: AppContextGenerateParams) =>
     {
-        // markdownCore.dispose();
+
+        // TODO: 調査
+        if(markdownCore !== defaultMarkdownCore)
+        {
+            markdownCore?.dispose();
+        }
         
         if(params)
         {
@@ -132,6 +147,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
             appContext: markdownCore.appContext,
             eventCollection: markdownCore.eventCollection,
             markdownCore,
+            configurationStorage: configStorage,
             updateAppContext: generateAppContext
         }
     }, [markdownCore])

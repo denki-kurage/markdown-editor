@@ -1,31 +1,87 @@
-import { SelectControl } from "@wordpress/components"
-import { codeLanguages } from "../../classes/CodeLanguages"
+import { Button, SelectControl } from "@wordpress/components"
+import { sortedCodeLanguages } from "../../classes/CodeLanguages"
 import { TokenEditorProps } from "../inspector-hooks"
 import { useState } from "react"
+import { IToken, MarkdownParser } from "@mde/markdown-core"
 
+
+const getTable = (token?: IToken) =>
+{
+    let current = token;
+    do
+    {
+        if(current?.getType() === 'table')
+        {
+            return current;
+        }
+    }
+    while(current = current?.getParent()!);
+}
 export const TableTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 {
+    const { tokenContext, appContext } = contexts;
+    const { onEdits } = tokenContext;
+
+    const formatTable = () =>
+    {
+        const table = getTable(tokenContext.singleToken);
+        if(table)
+        {
+            const { start, end } = table.getPosition();
+            const tableText = appContext.appContext.getEditorModel().getText(undefined).substring(start, end);
+            const fmt = MarkdownParser.formatTable(tableText, contexts.appContext.appContext.getStringCounter());
+            onEdits([[fmt, start, end]]);
+        }
+    }
+
     return (
-        <div>TABLE EDITOR</div>
+        <>
+            <Button onClick={formatTable} variant="primary">テーブルをフォーマット</Button>
+        </>
     )
 }
 
-export const HeadingTokenEditor = ({}: TokenEditorProps) =>
+
+const headingItems = [...Array(7).keys()].map(v => v + 1).map(v => ({ value: '#'.repeat(v), label: `${'#'.repeat(v)} ${v}` }))
+export const HeadingTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 {
+    const { tokenContext, appContext } = contexts;
+    const { onEdits } = tokenContext;
+    const text = tokenContext.getSingleText() || '';
+    const [, head, headText] = text.match(/^(#+)(.*)/) ?? [, '', '']
+    const { start, end } = token.getPosition();
+
+    const changed = (e: string) =>
+    {
+        onEdits([[`${e}${headText}`, start, end]])
+    }
+
     return (
-        <div>HEADING EDITOR</div>
+        <>
+            <SelectControl
+                label="Deps"
+                options={headingItems}
+                value={head}
+                onChange={changed} />
+        </>
     )
 }
 
 
 export const CodeEditor = ({ token, contexts }: TokenEditorProps) =>
 {
-    const { tokenContext } = contexts;
+    const { tokenContext, appContext } = contexts;
+    const { markdownCore } = appContext;
     const { onEdits } = tokenContext;
-    const languages = codeLanguages;
     const text = tokenContext.getSingleText() || '';
     const [lang, setLang] = useState(/^\s*\`\`\`(\S*)/.exec(text)?.[1] || '');
     const { start, end } = token.getPosition();
+    const languages = sortedCodeLanguages(markdownCore.getConfigurationHelper().getRecentCodeLanguages());
+    
+    const updateRecentCodeLanguage = (lang: string) =>
+    {
+        markdownCore.getConfigurationHelper().updateRecentCodeLanguage(lang);
+    }
 
     return (
         <div>
@@ -38,6 +94,7 @@ export const CodeEditor = ({ token, contexts }: TokenEditorProps) =>
                 ]}
                 onChange={(value) => {
                     setLang(value);
+                    updateRecentCodeLanguage(value);
                     const lines = text.split('\n');
                     if(lines.length > 0)
                     {

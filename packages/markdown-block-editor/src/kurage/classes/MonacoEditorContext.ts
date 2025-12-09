@@ -1,9 +1,8 @@
 import { Monaco } from "@monaco-editor/react";
 import { editor, IRange, ISelection as IMonacoSelection, languages, Position, Selection } from 'monaco-editor';
-import { IAppContext, IDisposable, IDocumentPosition, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, ISelection as IMdeSelection, IStringCounter, ITextSource } from "@mde/markdown-core"
+import { IAppContext, IDisposable, IDocumentPosition, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, ISelection as IMdeSelection, IStringCounter, ITextSource, IConfigurationStorage, ConfigurationHelper, IEditControl } from "@mde/markdown-core"
 import { MonacoDecorator } from "./MonacoDecorator";
-import { codeLanguages } from "./CodeLanguages";
-
+import { codeLanguages, sortedCodeLanguages } from "./CodeLanguages";
 
 
 class Utils
@@ -63,64 +62,26 @@ class Utils
 }
 
 
-export class MonacoEventsInitializer implements IEventsInitializer<IMarkdownEvents>
-{
-    public constructor(
-        private readonly monaco: Monaco,
-        private readonly model: editor.ITextModel,
-        private readonly editor: editor.IStandaloneCodeEditor)
-    {
-        
-    }
 
-
-    public initializeEvents(events: IMarkdownEvents): IDisposable
-    {
-        
-        const disposables = [
-
-        this.editor.getModel()?.onDidChangeContent(e => {
-            const { startColumn, startLineNumber } = e.changes[0].range;
-            events.textChanged({ startPosition: { docIndex: startLineNumber - 1, charIndex: startColumn - 1 } });
-        }),
-
-        this.editor.onDidChangeCursorSelection(e => {
-            const { startColumn, startLineNumber } = e.selection;
-            events.selectChanged({ startPosition: { docIndex: startLineNumber - 1, charIndex: startColumn - 1 } });
-        }),
-
-        this.editor.onDidChangeCursorPosition(e => {
-            const pos = e.position;
-            events.cursorChanged(this.model.getOffsetAt(pos));
-        }),
-
-
-
-        ]
-
-        return { dispose: () => disposables.forEach(d => d?.dispose())}
-
-    }
-
-}
-
-
-
-export class MonacoEditorContext implements IAppContext, IDisposable
+export class MonacoEditorContext implements IAppContext, IDisposable, IEventsInitializer<IMarkdownEvents>
 {
     private decorator: MonacoDecorator;
     private monacoEventsDisposables: IDisposable[] = [];
+    private configurationHelper: ConfigurationHelper;
 
     public constructor(
         private readonly monaco: Monaco,
         private readonly model: editor.ITextModel,
-        private readonly editor: editor.IStandaloneCodeEditor)
+        private readonly editor: editor.IStandaloneCodeEditor,
+        private readonly configurationStorage: IConfigurationStorage)
     {
         this.decorator = new MonacoDecorator(editor);
-        this.monacoEventsDisposables = this.registerMonacoEvents();
+        this.configurationHelper = new ConfigurationHelper(configurationStorage);
+        this.monacoEventsDisposables.push(...this.initInternalRegister());
     }
 
-    private registerMonacoEvents()
+
+    private initInternalRegister()
     {
         return [
             this.monaco.languages.registerCompletionItemProvider(
@@ -176,19 +137,27 @@ export class MonacoEditorContext implements IAppContext, IDisposable
                 'markdown',
                 {
                     triggerCharacters: ['`'],
-                    provideCompletionItems: (model, pos, content, token) =>
+                    provideCompletionItems: (model, pos, context, token) =>
                     {
                         const line = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
 
                         // TODO: バグってる？
                         if(line.endsWith('```'))
                         {
-                            const items = codeLanguages.map(lang => {
+                            // ツールバーやCtrl+Spaceで呼び出された場合は改行追加させない。
+                            // 文字でサジェストが呼び出された場合のみ追加時に改行を加える。
+                            const breaks = context.triggerCharacter ? "\n$0\n\`\`\`\n" : '';
+                            
+                            const languages = sortedCodeLanguages(this.configurationHelper.getRecentCodeLanguages());
+                            const items = languages.map((lang, index) => {
                                 return <languages.CompletionItem>{
-                                    label: `${lang.name} (${lang.label})`,
+                                    sortText: index.toString().padStart(3, '0'),
+                                    label: { label: lang.name, detail: ` (${lang.label})`},
                                     kind: this.monaco.languages.CompletionItemKind.Snippet,
                                     detail: `Insert code block for ${lang.label}.`,
-                                    insertText: `${lang.name}\n\n\`\`\`\n`,
+                                    insertText: `${lang.name}${breaks}`,
+                                    insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                    command: { id: 'markdown.code.changed', arguments: [lang.name] },
                                     documentation: `\`\`\`${lang.name}\nYour code here...\n\`\`\``,
                                 };
                             });
@@ -198,6 +167,15 @@ export class MonacoEditorContext implements IAppContext, IDisposable
                     }
                 }
             ),
+
+            this.monaco.editor.addEditorAction({
+                id: 'markdown.code.changed',
+                label: 'RECENT CODE',
+                run: (editor, ...args) =>
+                {
+                    this.configurationHelper.updateRecentCodeLanguage(args[0]);
+                }
+            }),
 
             this.monaco.languages.registerCompletionItemProvider(
                 'markdown',
@@ -255,8 +233,32 @@ export class MonacoEditorContext implements IAppContext, IDisposable
                     },
                     
                 }
-            )            
+            )
         ]
+    }
+
+    public initializeEvents(events: IMarkdownEvents): IDisposable
+    {
+        const disposable = [
+
+            this.editor.getModel()?.onDidChangeContent(e => {
+                const { startColumn, startLineNumber } = e.changes[0].range;
+                events.textChanged({ startPosition: { docIndex: startLineNumber - 1, charIndex: startColumn - 1 } });
+            }),
+
+            this.editor.onDidChangeCursorSelection(e => {
+                const { startColumn, startLineNumber } = e.selection;
+                events.selectChanged({ startPosition: { docIndex: startLineNumber - 1, charIndex: startColumn - 1 } });
+            }),
+
+            this.editor.onDidChangeCursorPosition(e => {
+                const pos = e.position;
+                events.cursorChanged(this.model.getOffsetAt(pos));
+            }),
+
+        ];
+
+        return { dispose: () => disposable.forEach(d => d?.dispose())}
     }
 
     public dispose(): void
@@ -266,7 +268,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable
     
     public getEventsInitializer(): IEventsInitializer<IMarkdownEvents>
     {
-        return new MonacoEventsInitializer(this.monaco, this.model, this.editor)
+        return this;
     }
 
     public getEditorName(): string
@@ -461,6 +463,18 @@ export class MonacoEditorContext implements IAppContext, IDisposable
                 this.editor.revealLine(docIndex + 1, editor.ScrollType.Smooth);
             }
         }
+    }
+
+    public getEditControl(): IEditControl
+    {
+        const editor = this.editor;
+        return ({
+            undo: () => editor.trigger('markdown-block-editor', 'undo', null),
+            redo: () => editor.trigger('markdown-block-editor', 'redo', null),
+            openSuggest: () => editor.trigger('markdown-block-editor', 'editor.action.triggerSuggest', null),
+            openFindDialog: () => editor?.getAction('actions.find')?.run(),
+            openReplaceDialog: () => editor?.getAction('editor.action.startFindReplaceAction')?.run()
+        })
     }
 }
 

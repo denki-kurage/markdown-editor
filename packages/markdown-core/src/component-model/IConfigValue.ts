@@ -1,4 +1,4 @@
-import { IConfigureStorage } from "./IConfigureStorage";
+import { IConfigurationStorage } from "./IConfigureStorage";
 
 export interface IConfigValue<T>
 {
@@ -11,7 +11,7 @@ export abstract class ConfigValue<T> implements IConfigValue<T>
     public constructor(
         public readonly name: string,
         public readonly defaultValue: T,
-        private readonly storage: IConfigureStorage
+        private readonly storage: IConfigurationStorage
     )
     {
 

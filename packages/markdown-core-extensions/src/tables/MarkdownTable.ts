@@ -7,7 +7,7 @@ import { IFormatterContext } from "./IFormatterContext";
 import { MarkdownTableRenderMode } from "./MarkdownTableConverter";
 import { TableCacheManager } from "./TableCacheManager";
 import { TableObserver } from "./TableObserver";
-import { EventListeners, IAppContext, ICommand, ICommandItem, ICommandsMapRoot, IConfigureStorage, MarkdownEventCollection } from "@mde/markdown-core";
+import { EventListeners, IAppContext, ICommand, ICommandItem, ICommandsMapRoot, IConfigurationStorage, MarkdownEventCollection } from "@mde/markdown-core";
 import { MarkdownTableContent } from "./MarkdownTableContent";
 import { createDefaultCommandItem } from "./createDefaultCommandItem";
 import { MarkdownConfigurations } from "../configurations/MarkdownConfigurations";
@@ -40,7 +40,7 @@ export class MarkdownTable implements ICommandsMapRoot
 	public constructor(
 		public readonly editorContext: IAppContext,
 		public readonly eventCollection: MarkdownEventCollection,
-		public readonly storage: IConfigureStorage)
+		public readonly storage: IConfigurationStorage)
 	{
 		this.appHelper = new AppHelper(this.editorContext);
 		this.cache = new TableCacheManager(() => this.appHelper.getTable());
@@ -80,7 +80,7 @@ export class MarkdownTable implements ICommandsMapRoot
 	}
 
 
-	protected createSwitcher(eventCollection: MarkdownEventCollection, storage: IConfigureStorage, editorContext: IAppContext)
+	protected createSwitcher(eventCollection: MarkdownEventCollection, storage: IConfigurationStorage, editorContext: IAppContext)
 	{
 		return new MarkdownConfigurations(eventCollection, storage, editorContext);
 	}

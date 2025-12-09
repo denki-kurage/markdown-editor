@@ -1,5 +1,6 @@
-import { BlockControls } from "@wordpress/block-editor";
-import { Modal, ToolbarButton, ToolbarGroup } from "@wordpress/components";
+// @ts-ignore
+import { BlockControls, LinkControl } from "@wordpress/block-editor";
+import { Button, Modal, ToolbarButton, ToolbarGroup } from "@wordpress/components";
 import React, { useMemo, useState } from "react";
 import ImageUploadEditor from "./image-upload-editor";
 import BlogCardGenerator from "./blog-card-generator";
@@ -13,21 +14,21 @@ import { useExtensionContexts } from "./hooks";
 const AppToolbars = () =>
 {
     const { markdownCore } = useMarkdownAppContext();
-    const { singleToken } = useMarkdownTokenContext();
     const contexts = useExtensionContexts();
 
     const [imageOpen, setImageOpen] = useState(false);
+    const [cardOpen, setCardOpen] = useState(false);
     const [linkOpen, setLinkOpen] = useState(false);
+
     const activeCommandItems = useToolbarActiveCommands(contexts);
-    const commandCollection = markdownCore?.createCommandCollection();
 
     return (
         <>
             <BlockControls>
                 <ToolbarGroup>
                     <ToolbarButton icon="media-default" label={__('Add Image', 'mdtableeditor')} onClick={() => setImageOpen(true)} />
-                    <ToolbarButton icon="archive" label={__('Add Blog Card', 'mdtableeditor')} onClick={() => setLinkOpen(true)} />
-                    <ToolbarButton icon="editor-bold" label={__('Bold', 'mdtableeditor')} onClick={() => commandCollection?.execute('markdown:bold', null)} />
+                    <ToolbarButton icon="archive" label={__('Add Blog Card', 'mdtableeditor')} onClick={() => setCardOpen(true)} />
+                    <ToolbarButton icon="admin-links" label={__('リンク追加', 'mdtableeditor')} onClick={() => setLinkOpen(true)} />
                 </ToolbarGroup>
             </BlockControls>
 
@@ -35,8 +36,12 @@ const AppToolbars = () =>
                 <ImageUploadEditor mc={markdownCore} onExecuted={() => setImageOpen(false)} />
             </ToolbarButtonModal>
 
-            <ToolbarButtonModal title={__('Add Blog Card', 'mdtableeditor')} isOpen={linkOpen} openChanged={setLinkOpen}>
-                <BlogCardGenerator mc={markdownCore} onExecuted={() => setLinkOpen(false)} />
+            <ToolbarButtonModal title={__('Add Blog Card', 'mdtableeditor')} isOpen={cardOpen} openChanged={setCardOpen}>
+                <BlogCardGenerator mc={markdownCore} onExecuted={() => setCardOpen(false)} />
+            </ToolbarButtonModal>
+
+            <ToolbarButtonModal title={__('Add Link', 'mdtableeditor')} isOpen={linkOpen} openChanged={setLinkOpen}>
+                <LinkEditor onExecuted={() => setLinkOpen(false)} />
             </ToolbarButtonModal>
 
             {
@@ -47,6 +52,26 @@ const AppToolbars = () =>
         </>
     );
     
+}
+
+
+export const LinkEditor = ({ onExecuted }: any) =>
+{
+    const [url, setUrl] = useState('');
+
+    const accept = () =>
+    {
+        console.log(url);
+        onExecuted();
+    }
+
+    return (
+        <>
+            <LinkControl onChange={setUrl} />
+
+            <Button variant="primary" onClick={accept}>決定</Button>
+        </>
+    )
 }
 
 const ToolbarButtonModal = ({children, isOpen, title, openChanged}: any) =>

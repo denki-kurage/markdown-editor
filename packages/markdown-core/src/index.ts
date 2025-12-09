@@ -31,8 +31,8 @@ export { MarkdownEventCollection } from './MarkdownEventCollection';
 export { IEditorDecorator, IEditorDecorateSelection } from './IEditorDecorator'
 export { CommandCollection } from './CommandCollection';
 export { IToken } from './IToken';
-    
-
+export { ConfigurationHelper } from './ConfigurationHelper';    
+export { IEditControl } from './IEditControl'
 
 export * from './component-model';
 export * from './commands';

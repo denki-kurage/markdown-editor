@@ -253,3 +253,11 @@ export const codeLanguages = [
   { name: "yml", label: "YAML" },
   { name: "zig", label: "Zig" }
 ]
+
+export const codeLanguagesMap = new Map(codeLanguages.map(c => [c.name, c.label]));
+
+export const sortedCodeLanguages = (recentCodeLanguages: string[]) =>
+{
+    const keys = [...recentCodeLanguages, ...codeLanguagesMap.keys()];
+    return [...new Set(keys).values()].map(k => ({ name: k, label: codeLanguagesMap.get(k) ?? k}));
+}

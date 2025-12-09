@@ -15,11 +15,19 @@
         "fontFamily": {
             "type": "string"
         },
-        "recentCodeLanguages": {
-            "type": "array"
-        },
         "configurations": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": {
+                "anyOf": [
+                    { "type": "string" },
+                    { "type": "number" },
+                    { "type": "boolean" },
+                    { "type": "array", "items": { "anyOf": [
+                        { "type": "string" },
+                        { "type": "number" }
+                    ] } }
+                ]
+            }
         }
     }
 }

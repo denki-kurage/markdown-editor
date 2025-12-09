@@ -1,4 +1,4 @@
-import { IAppContext, ICommandItem, IConfigureStorage, IEventsInitializer, IMarkdownEvents, MarkdownCore, MarkdownEventCollection } from "@mde/markdown-core";
+import { IAppContext, ICommandItem, IConfigurationStorage, IEventsInitializer, IMarkdownEvents, MarkdownCore, MarkdownEventCollection } from "@mde/markdown-core";
 import { MarkdownTable } from "./tables/MarkdownTable";
 import { MarkdownTableContent } from "./tables";
 import { createExtensionMarkdownCommandItem } from "./commands/createCommands";
@@ -17,7 +17,7 @@ export class ExMarkdownCore extends MarkdownCore
     
     public constructor(
         appContext: IAppContext,
-        configStorage: IConfigureStorage
+        configStorage: IConfigurationStorage
     )
     {
         super(appContext, configStorage);
@@ -30,7 +30,7 @@ export class ExMarkdownCore extends MarkdownCore
         this.init();
     }
 
-    protected override createCommands(appContext: IAppContext, eventCollection: MarkdownEventCollection, configStorage: IConfigureStorage): ICommandItem
+    protected override createCommands(appContext: IAppContext, eventCollection: MarkdownEventCollection, configStorage: IConfigurationStorage): ICommandItem
     {
         const baseCommands = super.createCommands(appContext, eventCollection, configStorage);
         const commands = createExtensionMarkdownCommandItem(appContext);

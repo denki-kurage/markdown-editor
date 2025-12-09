@@ -5,13 +5,16 @@ import root from 'react-shadow';
 // @ts-ignore
 import css2 from './table.dscss';
 import { useMarkdownContext } from "../context/markdown-context";
-import { AppContextGenerateParams } from '../context/markdown-app-context';
+import { AppContextGenerateParams, useMarkdownAppContext } from '../context/markdown-app-context';
 import { MarkdownEditorProps } from './editor-wrapper';
 import { MonacoEditorContext } from '../classes/MonacoEditorContext';
 import { useSelect } from '@wordpress/data';
 import { store } from '../store';
+import { IConfigurationStorage } from '@mde/markdown-core';
+import { Button, TextControl } from '@wordpress/components';
 
 export const useMarkdownApp = (
+        configurationStorage: IConfigurationStorage,
         editor?: editor.IStandaloneCodeEditor,
         monaco?: Monaco
     ) =>
@@ -26,8 +29,9 @@ export const useMarkdownApp = (
             // LFにしないと、文字列数が正確にカウントできないなどいろいろ不都合なので
             model.setEOL(monaco.editor.EndOfLineSequence.LF)
 
-            const appContext = new MonacoEditorContext(monaco, model, editor);
-            return { appContext } as AppContextGenerateParams
+            const appContext = new MonacoEditorContext(monaco, model, editor, configurationStorage);
+            const x:  AppContextGenerateParams = { appContext };
+            return x;
         }
     }, [editor, monaco]);
 }
@@ -36,16 +40,14 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
 {
     const [monaco, setMonaco] = useState<Monaco|undefined>();
     const [editor, setEditor] = useState<ieditor.IStandaloneCodeEditor|undefined>();
+    const { configurationStorage } = useMarkdownAppContext();
     const { markdown, onMarkdownChanged: onValueChanged } = useMarkdownContext();
     const settings = useSelect(select => select(store).getSettings(), []);
 
 
-    const params = useMarkdownApp(editor, monaco);
+    const params = useMarkdownApp(configurationStorage, editor, monaco);
     useEffect(() => initializedMarkdownCore(params), [params])
 
-    
-
-    
     
     const family = editor?.getOption(ieditor.EditorOption.fontFamily);
 

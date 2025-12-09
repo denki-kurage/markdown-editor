@@ -7,7 +7,7 @@ export { EventCollection } from './EventCollection';
 export { EventListeners} from './EventListeners';
 export { IDisposable } from './IDisposable';
 export { IEventsInitializer } from './IEventsInitializer';
-export { IConfigureStorage } from './IConfigureStorage';
+export { IConfigurationStorage } from './IConfigurationStorage';
 export { ICommand } from './ICommand';
 export { ICommandsMapRoot } from './ICommandsMap'
 export { EventUpdateManager } from './EventUpdateManager'

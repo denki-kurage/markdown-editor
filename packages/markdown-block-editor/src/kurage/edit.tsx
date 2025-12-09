@@ -7,7 +7,6 @@ import { Button, PanelBody, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import AppToolbars from './components/app-toolbars';
-import { BasicInspectors } from './components/basic-inspectors';
 import TokenInspectors from './components/token-inspectors';
 import { MarkdownContextProviderWrapper, useMarkdownContext } from './context/markdown-context';
 import { useMarkdownEditorGenerator } from './components/editor-wrapper';
@@ -24,6 +23,7 @@ import { Loading } from './components/loading';
 import { ExtensionContextProvider, MarkdownExtensionContextWrapper } from './context/markdown-extension-context';
 import { MarkdownConfigContextWrapper } from './context/markdown-config-context';
 import { withEditorRegistryComponent } from './components/withRegistryProvider';
+import { ControlPanel } from './components/ControlPanel';
 //import Prism from 'prismjs'
 
 const str = `
@@ -35,7 +35,6 @@ const str = `
 | melon  | 2000  | green  | 51 |
 `;
 
-type EditMode = "code"|"view"|"both";
 const standardizeReturnKey = (str: string) => str.replace(/\r\n|\n/g, "\n");
 
 
@@ -91,14 +90,6 @@ const EditorPanel = () =>
 			
 			<TokenInspectors />
 			
-			<InspectorControls>
-
-				<BasicInspectors 
-					editHeight={editHeight}
-					onEditHeightChanged={editHeight => setAttributes({editHeight: editHeight || null})}
-				/>
-
-			</InspectorControls>
 		</>
 	)
 }
@@ -140,27 +131,10 @@ const MainEditor = ({ editorName }: any) =>
 
 const ControlPanelInspector = () =>
 {
-	const { editorState, setEditorState } = useMarkdownEditorContext();
-
-	const { viewMode, setAttributes } = useMarkdownContext();
-	const onPanelChange = (viewMode: EditMode) =>
-	{
-		setAttributes({viewMode});
-	}
-
-
 	return (
 		<InspectorControls>
 			<PanelBody title="操作パネル">
-				<div className="button-group" >
-					<Button variant="primary" disabled={viewMode === "code"} onClick={() => onPanelChange("code")}>{ __('Code', 'mdtableeditor') }</Button>
-					<Button variant="primary" disabled={viewMode === "view"} onClick={() => onPanelChange("view")}>{ __('View', 'mdtableeditor') }</Button>
-					<Button variant="primary" disabled={viewMode === "both"} onClick={() => onPanelChange("both")}>{ __('Both', 'mdtableeditor') }</Button>
-				</div>
-
-				<Button variant="primary" onClick={() => setEditorState({ maximized: !editorState.maximized})}>
-					{ editorState.maximized ? '元に戻す' : '最大化' }
-				</Button>
+				<ControlPanel />
 			</PanelBody>
 		</InspectorControls>
 	)

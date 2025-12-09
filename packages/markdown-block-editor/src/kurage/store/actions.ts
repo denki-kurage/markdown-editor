@@ -60,6 +60,8 @@ export const updateSettings = (settings: Partial<ISettings>) => async (p: any) =
                 data: current
             });
             
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            console.log(result)
             await sleep(3000);
 
             preSettings = current;

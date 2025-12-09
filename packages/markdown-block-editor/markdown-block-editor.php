@@ -77,7 +77,7 @@ add_action('init', function(){
 		'frontCss' => '',
 		'fontSize' => 12,
 		'fontFamily' => '',
-		'recentCodeLanguages' => ''
+		'configurations' => new stdClass
 	];
 
 	add_action('admin_enqueue_scripts', function() use($defaultOptions){

@@ -46,7 +46,13 @@ export class HoldTextCommand extends MarkdownCommandBase<HoldTextParams>
         if(replaceItems.length)
         {
             model.replaces(replaceItems, (text, newSelection) => this.reselect(text, newSelection));
+            this.onReplaced(replaceItems)
         }
+    }
+
+    protected onReplaced(replaceItems: { area: ISelection, text: string }[] ): void
+    {
+
     }
 
     protected reselect(text: string, newSelection: ISelection): ISelection
@@ -82,6 +88,12 @@ export class CodeHoldTextCommand extends HoldTextCommand
                 text.indexOf("\n") === 0 ? '' : "\n",
                 text.lastIndexOf("\n") === text.length - 1 && !!text.length ? '' : "\n"
             ]);
+    }
+
+    protected override onReplaced(replaceItems: { area: ISelection; text: string; }[]): void
+    {
+        console.log("wwwwwwwwwxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        this.appContext.getEditControl().openSuggest();
     }
 
     protected override reselect(text: string, newSelection: ISelection): ISelection

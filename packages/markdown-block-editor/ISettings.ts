@@ -4,6 +4,5 @@ export type ISettings =
     frontCss: string;
     fontSize: number;
     fontFamily: string;
-    recentCodeLanguages: string[];
     configurations: {[key: string]: any}
 }

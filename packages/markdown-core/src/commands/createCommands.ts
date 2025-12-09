@@ -62,7 +62,9 @@ export function createDefaultMarkdownCommandItem(appContext: IAppContext, mode: 
             { name: 'markdown:add-under-tag', label: 'Underline Tag', icon: icons['under'], command: new HoldTextCommand(appContext, '<u>', '</u>') },
             { name: 'markdown:add-inline-code', label: 'Inline Code', icon: icons['inlineCode'], command: new HoldTextCommand(appContext, '`', '`') },
             { name: 'markdown:add-code', label: 'Code', icon: icons['code'], command: new CodeHoldTextCommand(appContext) },
-            //{ name: 'markdown:add-link', label: 'Link', icon: icons['link'], command: undefined },
+
+            
+            { name: 'markdown:add-link', label: 'Link', icon: icons['link'], command: undefined },
             { name: 'markdown:select', label: undefined, icon: undefined, command: new SelectCommand(appContext) },
         ]
     }

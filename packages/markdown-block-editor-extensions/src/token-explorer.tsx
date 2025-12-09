@@ -12,7 +12,8 @@ import { ExtensionContexts } from "../../markdown-block-editor/src/kurage/compon
 
 
 const TokenTypeOptions = [...TokenTypes.entries()].map(t => {
-    const [value, label] = t;
+    const [value, labels] = t;
+    const label = `${labels[0]} : ${labels[1]}`;
     return ({ label, value })
 })
 
@@ -210,11 +211,15 @@ export default TokenExplorer;
 
 const TokenSelectButton = React.memo(({ tokenSet }: { tokenSet: TokenSet }) =>
 {
-    const { tokenContext } = useContext(Context);
+    const { tokenContext, markdownContext } = useContext(Context);
+    const { markdown } = markdownContext;
     const { setSelectionsAndToken } = tokenContext;
     const isActive = !tokenSet.children.length;
     const { token } = tokenSet;
     const { start, end } = token.getPosition();
+    const txt = markdown.slice(start, end).slice(0, 10);
+
+    const abb = TokenTypes.get(token.getType())?.[1] ?? '???';
 
     const selectText = useCallback(() =>
     {
@@ -222,13 +227,12 @@ const TokenSelectButton = React.memo(({ tokenSet }: { tokenSet: TokenSet }) =>
     }, [token, start, end, setSelectionsAndToken]);
 
 
+    // { isActive ? '●' : '△' }
+
     return (
-        <Button
-            variant="link"
-            onClick={selectText}>
-                { isActive ? '●' : '△' }
-                {token.getType()}({start}, {end})
-        </Button>
+        <div onClick={selectText}>
+                <span>{abb}</span> : {txt}
+        </div>
     )
 
 })
