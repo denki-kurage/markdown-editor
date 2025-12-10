@@ -1,8 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Button, CheckboxControl, Modal, SelectControl, ToggleControl } from "@wordpress/components";
 
-import { IToken } from "@mde/markdown-core";
-import { createFilter, filterTokenTreeFromBottom, flatLeafTokenSet, getAncestorsByToken, TokenSet, TokenTypes } from "@mde/markdown-core-extensions";
+import { IToken, Utils } from "@mde/markdown-core";
+import { createFilter, filterTokenTreeFromBottom, flatItem, flatLeafTokenSet, getAncestorsByToken, TokenSet, TokenTypes } from "@mde/markdown-core-extensions";
 import './token-viewer.scss';
 import { TokenCheckerModal } from "./token-checker-modal";
 import { ExtensionContexts } from "../../markdown-block-editor/src/kurage/components/hooks";
@@ -13,7 +13,7 @@ import { ExtensionContexts } from "../../markdown-block-editor/src/kurage/compon
 
 const TokenTypeOptions = [...TokenTypes.entries()].map(t => {
     const [value, labels] = t;
-    const label = `${labels[0]} : ${labels[1]}`;
+    const label = labels[0];
     return ({ label, value })
 })
 
@@ -187,7 +187,6 @@ export const TokenExplorer = React.memo(({ contexts }: { contexts: ExtensionCont
     }, [rootToken, tokenTypes, selections, enabledSelectionsFilter, enabledSelectionsFilterFillMode])
 
     const { filteredTokenTree } = componentContext;
-    const ts = useMemo(() => filteredTokenTree ? [filteredTokenTree] : [], [filteredTokenTree]);
     const ancestors = useMemo(() => (singleToken && filteredTokenTree) ? getAncestorsByToken(singleToken, filteredTokenTree) : [], [singleToken, filteredTokenTree]);
 
     return (
@@ -196,7 +195,7 @@ export const TokenExplorer = React.memo(({ contexts }: { contexts: ExtensionCont
                 <TokenFilter tokenTypes={tokenTypes} tokenTypesChanged={setTokenTypes} />
                 
                 <div className="token-viewer">
-                    <TokenTree tokens={ts} depsTokenSets={ancestors} />
+                    { filteredTokenTree && <TokenTree token={filteredTokenTree} depsTokenSets={ancestors} /> }
                 </div>
 
                 { singleToken && <TokenDeps depsTokenSets={ancestors} /> }
@@ -209,33 +208,6 @@ export const TokenExplorer = React.memo(({ contexts }: { contexts: ExtensionCont
 });
 export default TokenExplorer;
 
-const TokenSelectButton = React.memo(({ tokenSet }: { tokenSet: TokenSet }) =>
-{
-    const { tokenContext, markdownContext } = useContext(Context);
-    const { markdown } = markdownContext;
-    const { setSelectionsAndToken } = tokenContext;
-    const isActive = !tokenSet.children.length;
-    const { token } = tokenSet;
-    const { start, end } = token.getPosition();
-    const txt = markdown.slice(start, end).slice(0, 10);
-
-    const abb = TokenTypes.get(token.getType())?.[1] ?? '???';
-
-    const selectText = useCallback(() =>
-    {
-        setSelectionsAndToken?.([[start, end]], token);
-    }, [token, start, end, setSelectionsAndToken]);
-
-
-    // { isActive ? '●' : '△' }
-
-    return (
-        <div onClick={selectText}>
-                <span>{abb}</span> : {txt}
-        </div>
-    )
-
-})
 const TokenDeps = ({ depsTokenSets }: { depsTokenSets: TokenSet[] }) =>
 {
     
@@ -244,7 +216,7 @@ const TokenDeps = ({ depsTokenSets }: { depsTokenSets: TokenSet[] }) =>
         {
             [...depsTokenSets].reverse().map((t, i) => (
                 <li key={i} className={`left-${i}`}>
-                    <TokenSelectButton tokenSet={t} />
+                    
                 </li>
             ))
         }
@@ -252,26 +224,38 @@ const TokenDeps = ({ depsTokenSets }: { depsTokenSets: TokenSet[] }) =>
     )
 }
 
-const TokenTree = React.memo(({ tokens, depsTokenSets }: { tokens: TokenSet[], depsTokenSets: TokenSet[] }) =>
+
+const TokenTree = React.memo(({ token, depsTokenSets }: { token: TokenSet, depsTokenSets: TokenSet[] }) =>
 {
+    const tokenSets = [...flatItem(token, t => t.children)];
+    const tokenList = tokenSets.map((ts, index) => <TokenView tokenSet={ts} key={index} depsTokens={depsTokenSets} />);
     return (
-        <ul>
-        {
-            tokens.map((token, i) => <TokenView tokenSet={token} key={i} depsTokens={depsTokenSets} />)
-        }
-        </ul>
+        <div className="token-deps">
+            { tokenList }
+        </div>
     )
-})
+});
+
+
 
 const TokenView = React.memo(({ tokenSet, depsTokens }: { tokenSet: TokenSet, depsTokens: TokenSet[] }) =>
 {
-    const { token, children } = tokenSet;
+    const { tokenContext, markdownContext } = useContext(Context);
+    const { token, children, deps } = tokenSet;
+    const { markdown } = markdownContext;
+    const { setSelectionsAndToken } = tokenContext;
+    const isActive = !children.length;
+    const { start, end } = token.getPosition();
+    const txt = markdown.slice(start, end).slice(0, 20);
+
+    const abb = TokenTypes.get(token.getType())?.[0] ?? ''
     const targetRef = useRef<HTMLDivElement>(null);
-    const { tokenContext } = useContext(Context);
     const { singleToken } = tokenContext;
     const isCurrent = singleToken === token;
     const isAncestors = depsTokens.includes(tokenSet);
 
+    const alt = `(${start}, ${end})`;
+    const { docIndex } = Utils.indexToPosition(markdown, start);
 
     console.log("--- Token View ---")
 
@@ -286,17 +270,24 @@ const TokenView = React.memo(({ tokenSet, depsTokens }: { tokenSet: TokenSet, de
 
     }, [singleToken])
 
+    const selectText = useCallback(() =>
+    {
+        setSelectionsAndToken?.([[start, end]], token);
+    }, [token, start, end, setSelectionsAndToken]);
+
+
+    const classNames: string[] = [];
+    classNames.push(isCurrent ? 'token-explorer-current' : (isAncestors ? 'token-explorer-ancestor' : ''));
+    classNames.push(isActive ? 'token-leaf' : 'token-branch');
+    classNames.push(`left-${Math.min(15, deps)}`);
+
+
     return (
-        <li className={isCurrent ? 'token-explorer-current' : (isAncestors ? 'token-explorer-ancestor' : undefined)}>
-            <div ref={targetRef}>
-                <TokenSelectButton tokenSet={tokenSet} />
-            </div>
-            { children?.length !== 0 && <TokenTree tokens={children} depsTokenSets={depsTokens} /> }
-        </li>
+        <div ref={targetRef} className={classNames.join(' ')} onClick={selectText}>
+            <em>{abb}</em> {txt} <span>{docIndex + 1}</span>
+        </div>
     )
 });
-
-
 
 
 

@@ -2,21 +2,22 @@ import { IToken } from "@mde/markdown-core"
 
 
 
-export type TokenSet = { token: IToken, children: TokenSet[] }
-export type tokenFilterFunc = (current: IToken, predicate: (token: IToken) => boolean) => TokenSet | null;
+export type TokenSet = { deps: number, token: IToken, children: TokenSet[] }
+export type tokenFilterFunc = (current: IToken, predicate: (token: IToken) => boolean, deps?: number) => TokenSet | null;
 /**
  * 子から走査、つまり末端からフィルタリングして切り離されていきます。
  * 末端(リーフ)からチェックされますが、上位の階層(枝)はフィルタリングされません。
  * リーフが発見された時点でその上位ノードも無条件に追加されることに注意してください。
  */
-export const filterTokenTreeFromBottom: tokenFilterFunc = (current, predicate) =>
+export const filterTokenTreeFromBottom: tokenFilterFunc = (current, predicate, deps = 0) =>
 {
     const matched = predicate(current);
-    const children = current.getChildren().map(c => filterTokenTreeFromBottom(c, predicate)).filter(f => !!f)
+    const children = current.getChildren().map(c => filterTokenTreeFromBottom(c, predicate, deps + 1)).filter(f => !!f)
 
+    // 自身、または子孫が一つでもマッチしたらセーフ。
     if(children.length || matched)
     {
-        return { token: current, children }
+        return { deps, token: current, children }
     }
 
     return null;

@@ -29,23 +29,6 @@ $left: .5em;
     ul li ul li ul li ul li ul li ul li ul li ul li div { padding-left: $left * 7; }
 
 
-    .token-explorer-current
-    {
-        > div
-        {
-            background-color: #e0ffe0;
-            border: 1px solid green;
-        }
-    }
-
-    .token-explorer-ancestor
-    {
-        > div
-        {
-            border: 1px solid green;
-        }
-    }
-
     button
     {
         font-size: 1.2em;
@@ -76,6 +59,54 @@ $left: .5em;
     .left-13 { padding-left: $left * 13; }
     .left-14 { padding-left: $left * 14; }
     .left-15 { padding-left: $left * 15; }
+
+    div
+    {
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+        margin: .1em 0;
+        
+
+
+        &.token-explorer-current
+        {
+            background-color: #e0ffe0;
+            border: 1px solid green;
+        }
+
+        &.token-explorer-ancestor
+        {
+            border: 1px solid green;
+        }
+
+        &.token-leaf > em
+        {
+            background-color: #67bd67;
+        }
+
+        > em
+        {
+            border-radius: .2em;
+            padding: .2em;
+            font-size: .8em;
+            background-color: rgb(141, 141, 141);
+            color: white;
+        }
+
+        > span
+        {
+            position: absolute;
+            padding: 0em .5em;
+            right: 0;
+            background-color: rgb(230, 68, 68);
+            border-radius: .6em;
+            opacity: 0.8;
+            font-size: .9em;
+            color: white;
+        }
+
+    }
 
     table
     {
