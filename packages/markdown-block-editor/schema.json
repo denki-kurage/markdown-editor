@@ -15,6 +15,12 @@
         "fontFamily": {
             "type": "string"
         },
+        "prismTheme": {
+            "enum": ["coy", "dark", "default", "funkey", "okaidia", "solarized", "tommorow", "twilight"]
+        },
+        "monacoTheme": {
+            "enum": ["vs", "vs-dark", "hc-black", "hc-light"]
+        },
         "configurations": {
             "type": "object",
             "additionalProperties": {

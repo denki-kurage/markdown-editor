@@ -1,0 +1,105 @@
+.token-viewer {
+  height: 25em;
+  width: 100%;
+  overflow: scroll;
+}
+.token-viewer ul {
+  margin: 0;
+}
+.token-viewer ul li {
+  list-style: none;
+  padding: 2px 0px 0px 0px;
+  margin: 0;
+}
+.token-viewer ul li div {
+  padding-left: 0em;
+}
+.token-viewer ul li ul li div {
+  padding-left: 1.2em;
+}
+.token-viewer ul li ul li ul li div {
+  padding-left: 2.4em;
+}
+.token-viewer ul li ul li ul li ul li div {
+  padding-left: 3.6em;
+}
+.token-viewer ul li ul li ul li ul li ul li div {
+  padding-left: 4.8em;
+}
+.token-viewer ul li ul li ul li ul li ul li ul li div {
+  padding-left: 6em;
+}
+.token-viewer ul li ul li ul li ul li ul li ul li ul li div {
+  padding-left: 7.2em;
+}
+.token-viewer ul li ul li ul li ul li ul li ul li ul li ul li div {
+  padding-left: 8.4em;
+}
+.token-viewer .token-explorer-current > div {
+  background-color: #e0ffe0;
+  border: 1px solid green;
+}
+.token-viewer .token-explorer-ancestor > div {
+  border: 1px solid green;
+}
+.token-viewer button {
+  font-size: 1.2em;
+  width: 100%;
+}
+
+.token-deps .left-0 {
+  padding-left: 0em;
+}
+.token-deps .left-1 {
+  padding-left: 1.2em;
+}
+.token-deps .left-2 {
+  padding-left: 2.4em;
+}
+.token-deps .left-3 {
+  padding-left: 3.6em;
+}
+.token-deps .left-4 {
+  padding-left: 4.8em;
+}
+.token-deps .left-5 {
+  padding-left: 6em;
+}
+.token-deps .left-6 {
+  padding-left: 7.2em;
+}
+.token-deps .left-7 {
+  padding-left: 8.4em;
+}
+.token-deps .left-8 {
+  padding-left: 9.6em;
+}
+.token-deps .left-9 {
+  padding-left: 10.8em;
+}
+.token-deps .left-10 {
+  padding-left: 12em;
+}
+.token-deps .left-11 {
+  padding-left: 13.2em;
+}
+.token-deps .left-12 {
+  padding-left: 14.4em;
+}
+.token-deps .left-13 {
+  padding-left: 15.6em;
+}
+.token-deps .left-14 {
+  padding-left: 16.8em;
+}
+.token-deps .left-15 {
+  padding-left: 18em;
+}
+
+body {
+  background-color: red;
+}
+
+div {
+  font-size: 3em;
+}/*# sourceMappingURL=token-viewer.css.map */

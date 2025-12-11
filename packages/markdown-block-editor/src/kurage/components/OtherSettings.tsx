@@ -7,7 +7,16 @@ import { store as noticeStore } from "@wordpress/notices";
 import React, { useCallback, useEffect, useState } from "react";
 import { ISettings } from "../../../ISettings";
 import { store } from "../store";
+import { useMarkdownAppContext } from "../context/markdown-app-context";
 
+import json from '../../../schema.json';
+
+
+const monacoThemes = json.properties.monacoTheme.enum as string[];
+const monacoThemeOptions = monacoThemes.map(x => ({label: x, value: x}));
+
+const prismThemes = json.properties.prismTheme.enum as string[];
+const prismThemeOptions = prismThemes.map(x => ({label: x, value: x}));
 
 export const OthreSettings = ({}) =>
 {
@@ -25,9 +34,12 @@ export const OthreSettings = ({}) =>
 
 const OtherSettingsDialog = ({settings}: { settings: ISettings }) =>
 {
-    const { adminCss, frontCss } = settings;
+    const { adminCss, frontCss, monacoTheme, prismTheme } = settings;
     const { createSuccessNotice, createErrorNotice } = useDispatch(noticeStore);
     const { updateSettings } = useDispatch(store);
+    const { markdownCore } = useMarkdownAppContext();
+    const recentCodeLanguages = markdownCore.getConfigurationHelper().getRecentCodeLanguages();
+
 
     const changed = () =>
     {
@@ -36,6 +48,22 @@ const OtherSettingsDialog = ({settings}: { settings: ISettings }) =>
 
     return (
         <div>
+            
+            <p>{recentCodeLanguages.join(', ')}</p>
+
+            <SelectControl
+                label={__('Monaco Editor Theme', 'mdtableeditor')}
+                options={monacoThemeOptions}
+                value={monacoTheme}
+                onChange={value => updateSettings({ monacoTheme: value })}
+            />
+
+            <SelectControl
+                label={__('Prism Theme', 'mdtableeditor')}
+                options={prismThemeOptions}
+                value={prismTheme}
+                onChange={value => updateSettings({ prismTheme: value })}
+            />
 
             <TextControl value={frontCss} onChange={changed} label="front css" />
             <TextControl value={adminCss} onChange={changed} label="admin css" />

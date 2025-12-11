@@ -15,18 +15,16 @@ export const CommandsInspector = ({}) =>
             <PanelBody title="Commands">
                 <style type="text/css">{iconDisabled}</style>
 
-                <div>
+                <div className="command-inspector">
                     {
                         activeCommandItems.map(ci => {
                             return (
                                 <>
-                                    <h2>{ci.label}</h2>
-
                                     { ci.children?.map(c2 => {
 
                                         return (
                                             <>
-                                                <p style={{marginBottom: ".1em"}}>{c2.label}</p>
+                                                <p style={{marginBottom: ".1em"}}>{c2.label} ({ci.label})</p>
 
                                                 <CommandToolbarGroup groupRoot={c2} />
                                             </>

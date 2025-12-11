@@ -3,8 +3,15 @@
  *
  * Replace them with your own styles or remove the file completely.
  */
-.wp-block-create-block-kurage {
-  border: 1px dotted #f00;
+.wp-block-kurage-worker-md-table-editor {
+  border: 1px solid #3773f9;
+}
+
+.wp-block-kurage-worker-md-table-editor-label {
+  padding: 0.1em;
+  background-color: #3371ff;
+  color: white;
+  font-size: 0.8em;
 }
 
 .scroll-commands-panel {
@@ -36,10 +43,45 @@
   width: 100%;
 }
 
-.button-group {
+.markdown-block-editor-button-group {
   width: 100%;
-  justify-items: stretch;
+  display: flex;
+  justify-content: space-evenly;
 }
-.button-group > button {
+.markdown-block-editor-button-group > button {
+  flex: 1;
   margin: 0.1rem;
+  text-align: center;
+}
+
+.markdown-block-editor-margin-vertical {
+  margin: 0.3em 0;
+}
+
+.components-toolbar button.components-button {
+  min-width: 24px !important;
+}
+
+.block-editor-maximizer {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  z-index: 100 !important;
+  background-color: white;
+}
+
+.markdown-block-editor-button-vertical {
+  margin: 0.3em 0;
+  width: 100%;
+}
+
+.command-inspector {
+  max-height: 40em;
+  overflow: auto;
+}
+.command-inspector .components-toolbar {
+  margin-bottom: 0.6em !important;
 }/*# sourceMappingURL=editor.css.map */

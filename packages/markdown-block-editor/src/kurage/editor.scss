@@ -61,16 +61,24 @@
 	}
 }
 
-.button-group
+.markdown-block-editor-button-group
 {
 	width: 100%;
-	justify-items: stretch;
+	display: flex;
+	justify-content: space-evenly;
+
 	> button
 	{
+		flex: 1;
 		margin: .1rem;
+		text-align: center;
 	}
 }
 
+.markdown-block-editor-margin-vertical
+{
+	margin: .3em 0;
+}
 
 .components-toolbar button.components-button
 {
@@ -97,4 +105,15 @@
 {
 	margin: .3em 0;
 	width: 100%;
+}
+
+.command-inspector
+{
+	max-height: 40em;
+	overflow: auto;
+	
+	.components-toolbar
+	{
+		margin-bottom: .6em !important;
+	}
 }

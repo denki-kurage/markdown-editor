@@ -30,7 +30,12 @@ export const getAncestorsByToken = (token: IToken, tokenSet: TokenSet) =>
     return tokenStack.map(token => tokenSetList.get(token)).filter(s => !!s);
 }
 
-export function *getAncestors(token: IToken)
+export function getAncestors(token: IToken)
+{
+    return [...getAncestorsInternal(token)].reverse();
+}
+
+function *getAncestorsInternal(token: IToken)
 {
     let current = token;
     do

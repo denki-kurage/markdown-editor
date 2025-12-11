@@ -28,24 +28,35 @@ add_action( 'after_setup_theme', function(){
 
 
 add_action('init', function(){
+
+	$defaultOptions = [
+		'adminCss' => '',
+		'frontCss' => '',
+		'fontSize' => 12,
+		'fontFamily' => '',
+		'prismTheme' => 'tommorow',
+		'monacoTheme' => 'vs-dark',
+		'configurations' => new stdClass
+	];
+
+	$settings = get_option('markdown-block-editor-settings', $defaultOptions);
+
 	$pluginPath = plugin_dir_url(__FILE__);
-	$cssPath = $pluginPath . 'markdown.css';
-	$adminCss = get_option('md-table-editor:admin', '');
-	$frontCss = get_option('md-table-editor:front', '');
+	$cssPath = $pluginPath . 'front-themes/default.css';
+	$adminCss = $settings['adminCss'] ?? '';
+	$frontCss = $settings['frontCss'] ?? '';
+	$prismTheme = $settings['prismTheme'] ?? $defaultOptions['prismTheme'];
+
 
 	$adminCss = $adminCss ? $adminCss : $cssPath;
 	$frontCss = $frontCss ? $frontCss : $cssPath;
 
-	$themes = ['coy', 'dark', 'default', 'funkey', 'okaidia', 'solarized', 'tommorow', 'twilight'];
-	$rand = wp_rand(0, count($themes) - 1);
-	$theme = 'tommorow';
-
 	$styles = [
-		['md-table-editor-prism-tommorow', $pluginPath . "prismjs/{$theme}/prism.css"],
+		['md-table-editor-prism-tommorow', $pluginPath . "prismjs/{$prismTheme}/prism.css"],
 	];
 
 	$scripts = [
-		['md-table-editor-prism-core', $pluginPath . "prismjs/{$theme}/prism.js"],
+		['md-table-editor-prism-core', $pluginPath . "prismjs/{$prismTheme}/prism.js"],
 	];
 
 	$enqueue = function($styles, $scripts)
@@ -65,20 +76,13 @@ add_action('init', function(){
 
 	add_action('admin_enqueue_scripts', fn() => $enqueue($styles, $scripts));
 	add_action('admin_head', fn() => $renderInlineCss($adminCss));
-	add_action('admin_head', fn() => $renderInlineCss($pluginPath . "prismjs/{$theme}/prism.css"));
+	add_action('admin_head', fn() => $renderInlineCss($pluginPath . "prismjs/{$prismTheme}/prism.css"));
 
 
 
 
 
 
-	$defaultOptions = [
-		'adminCss' => '',
-		'frontCss' => '',
-		'fontSize' => 12,
-		'fontFamily' => '',
-		'configurations' => new stdClass
-	];
 
 	add_action('admin_enqueue_scripts', function() use($defaultOptions){
 		$data = get_option('markdown-block-editor-options', $defaultOptions);

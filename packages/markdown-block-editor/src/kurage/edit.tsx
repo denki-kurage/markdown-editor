@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import './editor.scss';
-import { Button, PanelBody, Spinner } from '@wordpress/components';
+import { PanelBody } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
@@ -17,14 +16,16 @@ import { EventUpdateManager, IToken } from '@mde/markdown-core';
 import { parseEditMarkdown } from './components/parser';
 import { applyFilters, doAction } from '@wordpress/hooks';
 import { MarkdownEditorContextProviderWrapper, useMarkdownEditorContext } from './context/markdown-editor-context';
-import './components/token-viewer.scss'
 import { CommandsInspector } from './components/commands-inspector';
 import { Loading } from './components/loading';
-import { ExtensionContextProvider, MarkdownExtensionContextWrapper } from './context/markdown-extension-context';
 import { MarkdownConfigContextWrapper } from './context/markdown-config-context';
-import { withEditorRegistryComponent } from './components/withRegistryProvider';
 import { ControlPanel } from './components/ControlPanel';
 //import Prism from 'prismjs'
+
+import './editor.scss';
+import './components/token-viewer.scss'
+import { EditorSettings } from './components/EditorSettings';
+
 
 const str = `
 | fruits | price | color  | pr |
@@ -135,6 +136,9 @@ const ControlPanelInspector = () =>
 		<InspectorControls>
 			<PanelBody title="操作パネル">
 				<ControlPanel />
+			</PanelBody>
+			<PanelBody title="設定パネル">
+				<EditorSettings />
 			</PanelBody>
 		</InspectorControls>
 	)

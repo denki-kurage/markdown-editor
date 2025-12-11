@@ -12,8 +12,9 @@ registerBlockType( metadata.name, {
 */
 
 import './style.scss';
+import './token-viewer.scss';
 
-import { IAppContext, ICommandItem, IConfigureStorage, IToken, MarkdownCore } from '@mde/markdown-core'
+import { IAppContext, ICommandItem, IConfigurationStorage, IToken, MarkdownCore } from '@mde/markdown-core'
 
 import { ExMarkdownCore } from '@mde/markdown-core-extensions'
 import { addAction, addFilter } from '@wordpress/hooks';
@@ -26,7 +27,7 @@ import { ListItemEditor } from './token-editors';
 addFilter(
 	'extensionAppContext',
 	'kurage/markdown-block-editor',
-	(markdownCore: MarkdownCore, appContext: IAppContext, storage: IConfigureStorage) =>
+	(markdownCore: MarkdownCore, appContext: IAppContext, storage: IConfigurationStorage) =>
 	{
 
 		if (appContext && storage)

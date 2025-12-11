@@ -56,7 +56,7 @@ export const TokenCheckerModal = ({ markdown, tokenSet, isOpened, closed, onChec
 
     return (
         <Modal onRequestClose={e => closed()}>
-            <div className="token-deps">
+            <div className="token-checker">
                 <Button variant="primary" onClick={() => onCheckedTokens(enables)}>選択する</Button>
                 <table>
                     <thead>

@@ -4,5 +4,7 @@ export type ISettings =
     frontCss: string;
     fontSize: number;
     fontFamily: string;
+    prismTheme: string;
+    monacoTheme: string;
     configurations: {[key: string]: any}
 }

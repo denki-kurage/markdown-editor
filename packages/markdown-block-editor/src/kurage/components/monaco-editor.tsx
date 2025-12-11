@@ -67,11 +67,14 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
     useEffect(() => {
         if(settings && editor)
         {
-            const { fontFamily, fontSize } = settings;
+            const { fontFamily, fontSize, monacoTheme } = settings;
             editor.updateOptions({
                 fontFamily,
-                fontSize
-            })
+                fontSize,
+                theme: monacoTheme
+            });
+
+            
         }
     }, [settings])
 

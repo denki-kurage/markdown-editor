@@ -111,7 +111,7 @@ export const TextTokenEditor = ({ token, contexts }: TokenEditorProps) =>
                 label={token.getType()}
                 value={value}
                 onChange={setValue}
-                rows={6}
+                rows={2}
             />
             <Button value={value} onClick={edit} variant="primary">Text Update</Button>
         </div>

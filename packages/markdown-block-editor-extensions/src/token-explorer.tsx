@@ -52,6 +52,7 @@ const TokenFilter = ({ tokenTypes, tokenTypesChanged }: any) =>
             <SelectControl
                 multiple
                 label="Token Types"
+                style={{height: '10em'}}
                 options={TokenTypeOptions}
                 value={tokenTypes}
                 onChange={tokenTypesChanged}
@@ -137,10 +138,9 @@ const TokenChecker = () =>
                     disabled={!isActive}
                     className="markdown-block-editor-button-vertical"
                     variant="primary"
-                    text="Checker"
+                    text="よりトークンを絞る"
                     onClick={openChecker} />
 
-                <p>よりトークンを絞る</p>
 
                 { filteredTokenTree && <TokenCheckerModal
                     markdown={markdown}
@@ -194,11 +194,8 @@ export const TokenExplorer = React.memo(({ contexts }: { contexts: ExtensionCont
             <ComponentContext.Provider value={componentContext}>
                 <TokenFilter tokenTypes={tokenTypes} tokenTypesChanged={setTokenTypes} />
                 
-                <div className="token-viewer">
-                    { filteredTokenTree && <TokenTree token={filteredTokenTree} depsTokenSets={ancestors} /> }
-                </div>
-
-                { singleToken && <TokenDeps depsTokenSets={ancestors} /> }
+                <TokenTree token={filteredTokenTree} depsTokenSets={ancestors} />
+                <TokenDeps depsTokenSets={ancestors} />
 
                 <TokenChecker />
             </ComponentContext.Provider>
@@ -210,35 +207,36 @@ export default TokenExplorer;
 
 const TokenDeps = ({ depsTokenSets }: { depsTokenSets: TokenSet[] }) =>
 {
-    
+    const tokenList = depsTokenSets.map((ts, index) => <TokenView tokenSet={ts} key={index} depsTokens={depsTokenSets} />);
+
     return (
-        <ul className="token-deps">
-        {
-            [...depsTokenSets].reverse().map((t, i) => (
-                <li key={i} className={`left-${i}`}>
-                    
-                </li>
-            ))
-        }
-        </ul>
+        <div className="token-tree-view navigation-bar">
+            <div className="navigation-bar-label">ナビゲーション</div>
+            { tokenList }
+        </div>
     )
 }
 
 
-const TokenTree = React.memo(({ token, depsTokenSets }: { token: TokenSet, depsTokenSets: TokenSet[] }) =>
+const TokenTree = React.memo(({ token, depsTokenSets }: { token: TokenSet|null, depsTokenSets: TokenSet[] }) =>
 {
-    const tokenSets = [...flatItem(token, t => t.children)];
-    const tokenList = tokenSets.map((ts, index) => <TokenView tokenSet={ts} key={index} depsTokens={depsTokenSets} />);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const tokenSets = token ? [...flatItem(token, t => t.children)] : [];
+    const tokenList = tokenSets.map((ts, index) => <TokenView tokenSet={ts} key={index} depsTokens={depsTokenSets} container={containerRef} />);
+
     return (
-        <div className="token-deps">
-            { tokenList }
+        <div className="token-tree-view navigation-bar">
+            <div className="navigation-bar-label">トークンツリー</div>
+            <div className="token-scrollbar" ref={containerRef}>
+                { tokenList }
+            </div>
         </div>
     )
 });
 
 
 
-const TokenView = React.memo(({ tokenSet, depsTokens }: { tokenSet: TokenSet, depsTokens: TokenSet[] }) =>
+const TokenView = React.memo(({ tokenSet, depsTokens, container }: { tokenSet: TokenSet, depsTokens: TokenSet[], container?: React.RefObject<HTMLDivElement> }) =>
 {
     const { tokenContext, markdownContext } = useContext(Context);
     const { token, children, deps } = tokenSet;
@@ -264,7 +262,8 @@ const TokenView = React.memo(({ tokenSet, depsTokens }: { tokenSet: TokenSet, de
         {
             if(targetRef.current)
             {
-                targetRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                //targetRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                container?.current?.scrollTo({ top: targetRef.current.offsetTop, behavior: 'smooth' })
             }            
         }
 
