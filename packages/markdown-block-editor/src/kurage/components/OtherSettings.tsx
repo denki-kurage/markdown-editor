@@ -4,52 +4,63 @@ import { useDispatch, useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 
 import { store as noticeStore } from "@wordpress/notices";
-import React, { useCallback, useEffect, useState } from "react";
-import { ISettings } from "../../../ISettings";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { store } from "../store";
 import { useMarkdownAppContext } from "../context/markdown-app-context";
 
-import json from '../../../schema.json';
+import { ISettings } from "../store/ISettings";
 
 
-const monacoThemes = json.properties.monacoTheme.enum as string[];
-const monacoThemeOptions = monacoThemes.map(x => ({label: x, value: x}));
-
-const prismThemes = json.properties.prismTheme.enum as string[];
-const prismThemeOptions = prismThemes.map(x => ({label: x, value: x}));
 
 export const OthreSettings = ({}) =>
 {
     const [isOpen, setIsOpen] = useState(false);
-    const settings = useSelect(select => select(store).getSettings(), []);
-    const storeState = useSelect(select => select(store).getStoreState(), []);
 
     return (
         <>
             <Button variant="primary" style={{width: '100%'}} onClick={() => setIsOpen(true)}>ほかの設定を開く</Button>
-            { isOpen && <Modal onRequestClose={e => setIsOpen(false)}><OtherSettingsDialog settings={settings} /></Modal>}
+            { isOpen && <Modal onRequestClose={e => setIsOpen(false)}><OtherSettingsDialog /></Modal>}
         </>
     )
 }
 
-const OtherSettingsDialog = ({settings}: { settings: ISettings }) =>
+const OtherSettingsDialog = ({}) =>
 {
-    const { adminCss, frontCss, monacoTheme, prismTheme } = settings;
+    const { settings, settingOptions } = useMarkdownAppContext();
+    const { monacoTheme, prismTheme, frontTheme, adminTheme } = settings;
+    const { frontThemes, adminThemes, prismThemes, monacoThemes } = settingOptions;
+
     const { createSuccessNotice, createErrorNotice } = useDispatch(noticeStore);
     const { updateSettings } = useDispatch(store);
     const { markdownCore } = useMarkdownAppContext();
     const recentCodeLanguages = markdownCore.getConfigurationHelper().getRecentCodeLanguages();
 
-
-    const changed = () =>
-    {
-        updateSettings({ adminCss, frontCss })
-    }
+    const { frontThemeOptions, adminThemeOptions, prismThemeOptions, monacoThemeOptions } = useMemo(() => {
+        const frontThemeOptions = frontThemes.map(t => ({ value: t.key, label: t.name }));
+        const adminThemeOptions = adminThemes.map(t => ({ value: t.key, label: t.name }));
+        const prismThemeOptions = prismThemes.map(t => ({ value: t.key, label: t.name }));
+        const monacoThemeOptions = monacoThemes.map(t => ({ value: t.key, label: t.name }));
+        return { frontThemeOptions, adminThemeOptions, prismThemeOptions, monacoThemeOptions };
+    }, [settingOptions]);
 
     return (
         <div>
             
             <p>{recentCodeLanguages.join(', ')}</p>
+
+            <SelectControl
+                label={__('Front Theme', 'mdtableeditor')}
+                options={frontThemeOptions}
+                value={frontTheme}
+                onChange={value => updateSettings({ frontTheme: value })}
+            />
+
+            <SelectControl
+                label={__('Admin Theme', 'mdtableeditor')}
+                options={adminThemeOptions}
+                value={adminTheme}
+                onChange={value => updateSettings({ adminTheme: value })}
+            />
 
             <SelectControl
                 label={__('Monaco Editor Theme', 'mdtableeditor')}
@@ -64,9 +75,6 @@ const OtherSettingsDialog = ({settings}: { settings: ISettings }) =>
                 value={prismTheme}
                 onChange={value => updateSettings({ prismTheme: value })}
             />
-
-            <TextControl value={frontCss} onChange={changed} label="front css" />
-            <TextControl value={adminCss} onChange={changed} label="admin css" />
 
             <p>{ __('This will update the options used globally, but you will need to reload the page for the changes to take effect.', 'mdtableeditor') }</p>
 

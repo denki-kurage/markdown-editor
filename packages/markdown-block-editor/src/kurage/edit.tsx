@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
@@ -10,21 +10,18 @@ import TokenInspectors from './components/token-inspectors';
 import { MarkdownContextProviderWrapper, useMarkdownContext } from './context/markdown-context';
 import { useMarkdownEditorGenerator } from './components/editor-wrapper';
 import { useEditorInterlocking } from './useEditorInterlocking';
-import { MarkdownTokenContextProviderWrapper, useMarkdownTokenContext } from './context/markdown-token-context';
+import { MarkdownTokenContextProviderWrapper } from './context/markdown-token-context';
 import { MarkdownAppContextWrapper, useMarkdownAppContext } from './context/markdown-app-context';
-import { EventUpdateManager, IToken } from '@mde/markdown-core';
-import { parseEditMarkdown } from './components/parser';
-import { applyFilters, doAction } from '@wordpress/hooks';
+
 import { MarkdownEditorContextProviderWrapper, useMarkdownEditorContext } from './context/markdown-editor-context';
 import { CommandsInspector } from './components/commands-inspector';
-import { Loading } from './components/loading';
-import { MarkdownConfigContextWrapper } from './context/markdown-config-context';
 import { ControlPanel } from './components/ControlPanel';
 //import Prism from 'prismjs'
 
 import './editor.scss';
 import './components/token-viewer.scss'
 import { EditorSettings } from './components/EditorSettings';
+import { MarkdownViewer } from './components/MarkdownViewer';
 
 
 const str = `
@@ -47,9 +44,7 @@ const Edit = ({ attributes, setAttributes, ...props }: any) =>
 			<MarkdownAppContextWrapper>
 				<MarkdownEditorContextProviderWrapper clientId={clientId} {...props}>
 					<MarkdownTokenContextProviderWrapper>
-						<MarkdownConfigContextWrapper>
-							<InternalBlockEditor />
-						</MarkdownConfigContextWrapper>
+						<InternalBlockEditor />
 					</MarkdownTokenContextProviderWrapper>
 				</MarkdownEditorContextProviderWrapper>
 			</MarkdownAppContextWrapper>
@@ -144,124 +139,6 @@ const ControlPanelInspector = () =>
 	)
 }
 
-
-const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWindow: (win: Window) => void }) =>
-{
-	const tokenContext = useMarkdownTokenContext();
-	const { singleToken } = tokenContext;
-	const { isEditing, setIsEditing } = useMarkdownContext();
-
-	const frameRef = useRef(null);
-	const docRef = useRef<Document|undefined>(undefined);
-
-	const [updateManager, setUpdateManager] = useState<EventUpdateManager|undefined>(undefined);
-
-
-	const renderHtmlRef = useRef<any>(null);
-	renderHtmlRef.current = useCallback(() => {
-			const parsedCode = parseEditMarkdown(markdown, true);
-			const html = `<div class="markdown-content-style">${parsedCode}</div>`;
-
-			const iframe = frameRef.current;
-			// @ts-ignore
-			const doc = (iframe?.contentDocument ?? iframe?.contentWindow.document);
-
-			// docを更新
-			docRef.current = doc;
-
-			if(doc)
-			{
-				doc.body.innerHTML = html;
-
-				doAction('extensionDomChanged', doc, markdown, () => tokenContext);
-
-				// @ts-ignore
-				window.Prism.highlightAllUnder(doc);
-
-				// 
-				if(!doc.head.hasChildNodes())
-				{
-					const createLink = (link: string) =>
-					{
-						const elm = document.createElement("link");
-						Object.entries({ rel: 'stylesheet', type: "text/css", href: link }).map(p => elm.setAttribute(...p))
-						return elm;
-					}
-					const fragment = doc.createDocumentFragment();
-					const metas = [...window.document.querySelectorAll('meta[property="is-markdown-content-style"], meta[content^=http]')];
-					// @ts-ignore
-					metas.map(meta => fragment.appendChild(createLink(meta.content)));
-
-					doc.head.appendChild(fragment);
-
-					doAction('extensionHeaderInitalize', doc);
-				}
-
-			}
-			
-			setIsEditing(false);
-
-
-	}, [markdown, tokenContext, setIsEditing]);
-
-	useEffect(() => {
-		updateManager?.lazyUpdate();
-		setIsEditing(true);
-	}, [markdown]);
-
-	useEffect(() => {
-		// @ts-ignore
-		const win = frameRef?.current.contentWindow;
-		setWindow(win);
-
-	}, [frameRef.current])
-
-
-	// 選択トークンの位置までスクロールとハイライト
-	useEffect(() => {
-		if(!docRef.current || !singleToken)
-		{
-			return;
-		}
-		const execute = applyFilters(
-			'extensionSingleTokenChanged',
-			(token: IToken, doc: Document) => () => {}
-		) as any;
-
-		const dispose = execute(singleToken, docRef.current);
-
-		return () => dispose();
-
-
-
-	}, [singleToken]);
-
-
-	useEffect(() => console.log("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★"), [])
-
-
-	useEffect(() => {
-		const updater = new EventUpdateManager(5000);
-		updater.updated.push(() =>
-		{
-			renderHtmlRef.current();
-		});
-
-		updater.lazyUpdate();
-		setUpdateManager(updater);
-
-		return () => updater.dispose();
-	}, []);
-
-
-	
-	return (
-		<div>
-			<iframe className='width-panel' ref={frameRef}></iframe>
-			<Loading isLoading={isEditing} />
-		</div>
-	)
-}
 
 
 const SplitPanel = ({children, height}: any) =>

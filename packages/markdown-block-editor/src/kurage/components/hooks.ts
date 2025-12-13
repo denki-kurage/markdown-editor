@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { MarkdownContextProps, useMarkdownContext } from "../context/markdown-context";
 import { MarkdownEditorContextProps, useMarkdownEditorContext } from "../context/markdown-editor-context";
-import { MarkdownExtensionContextProps, useExtensionContext } from "../context/markdown-extension-context";
 import { MarkdownTokenContextProps, useMarkdownTokenContext } from "../context/markdown-token-context";
 import { MarkdownAppContextProps, useMarkdownAppContext } from "../context/markdown-app-context";
 import { IAppContext, SelectCommand } from "@mde/markdown-core";
@@ -11,7 +10,6 @@ export type ExtensionContexts =
     appContext: MarkdownAppContextProps,
     tokenContext: MarkdownTokenContextProps,
     markdownContext: MarkdownContextProps,
-    extensionContext: MarkdownExtensionContextProps;
     editorContext: MarkdownEditorContextProps;
 }
 
@@ -20,12 +18,11 @@ export const useExtensionContexts = () =>
     const appContext = useMarkdownAppContext();
     const tokenContext = useMarkdownTokenContext();
     const markdownContext = useMarkdownContext();
-    const extensionContext = useExtensionContext();
     const editorContext = useMarkdownEditorContext();
 
     return useMemo(() => {
-        return { tokenContext, markdownContext, extensionContext, editorContext, appContext };
-    }, [tokenContext, markdownContext, extensionContext, editorContext, appContext]);
+        return { tokenContext, markdownContext, editorContext, appContext };
+    }, [tokenContext, markdownContext, editorContext, appContext]);
 }
 
 export const useInternalCommandItems = (appContext: IAppContext) =>

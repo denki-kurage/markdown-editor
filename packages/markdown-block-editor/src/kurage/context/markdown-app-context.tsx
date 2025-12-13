@@ -1,10 +1,12 @@
 import { IAppContext, IConfigurationStorage, IEditorModel, IEventsInitializer, IMarkdownEvents, MarkdownCore } from "@mde/markdown-core"
-import { createContext, useContext, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import { MarkdownEventCollection } from "@mde/markdown-core";
 import { applyFilters } from '@wordpress/hooks'
 import { useDispatch, useSelect } from "@wordpress/data";
 import { store } from "../store";
-import { ISettings } from "../../../ISettings";
+import { ISettings } from "../store/ISettings";
+import { ISettingOptions } from "../store/ISettingOptions";
+import { Spinner } from "@wordpress/components";
 
 export type AppContextGenerateParams =
 {
@@ -15,6 +17,8 @@ export type MarkdownAppContextProps =
     appContext: IAppContext;
     eventCollection?: MarkdownEventCollection;
     configurationStorage: IConfigurationStorage,
+    settings: ISettings;
+    settingOptions: ISettingOptions;
     markdownCore: MarkdownCore;
     updateAppContext: (params?: AppContextGenerateParams) => void;
 }
@@ -89,31 +93,33 @@ export const useMarkdownAppContext = () => useContext(Context);
 export const MarkdownAppContextWrapper = ({ children }: any) =>
 {
     const { updateSettings } = useDispatch(store);
-    const settingsRef = useRef<ISettings>(null as any);
-    settingsRef.current = useSelect(select => select(store).getSettings(), []);
+    const { settings, settingOptions } = useSelect(select => {
+        const s = select(store);
+        return { settings: s.getSettings(), settingOptions: s.getSettingOptions() };
+    }, []);
 
     const configStorage = useMemo<IConfigurationStorage>(() => {
 
         return {
             getValue: <T,>(name: string) =>
             {
-                return settingsRef.current?.configurations?.[name] as T;
+                return settings?.configurations?.[name] as T;
             },
             setValue: <T,>(name: string, value: T) =>
             {
-                if(settingsRef.current)
+                if(settings)
                 {
-                    const configurations = { ...settingsRef.current.configurations, [name]: value };
+                    const configurations = { ...settings.configurations, [name]: value };
                     updateSettings({ configurations });
                 }
             }
         }
-    }, []);
+    }, [settings]);
 
     const defaultMarkdownCore = useMemo(() => new MarkdownCore(appContext, configStorage), []);
     const [markdownCore, setMarkdownCore] = useState<MarkdownCore>(defaultMarkdownCore);
 
-    const generateAppContext = (params?: AppContextGenerateParams) =>
+    const generateAppContext = useCallback((params?: AppContextGenerateParams) =>
     {
 
         // TODO: 調査
@@ -139,7 +145,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
         {
             setMarkdownCore(defaultMarkdownCore);
         }
-    }
+    }, [configStorage, defaultMarkdownCore, markdownCore]);
 
     const ctx = useMemo<MarkdownAppContextProps>(() =>
     {
@@ -147,15 +153,21 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
             appContext: markdownCore.appContext,
             eventCollection: markdownCore.eventCollection,
             markdownCore,
+            settings,
+            settingOptions,
             configurationStorage: configStorage,
             updateAppContext: generateAppContext
         }
-    }, [markdownCore])
+    }, [markdownCore, settings, settingOptions, configStorage]);
 
     return (
-        <AppContextProvider value={ctx}>
-            { children }
-        </AppContextProvider>
+        <>
+        { settings && settingOptions ? (
+            <AppContextProvider value={ctx}>
+                { children }
+            </AppContextProvider>
+        ) : <div><Spinner />設定情報を読み込み中...</div> }
+        </>
     )
 }
 

@@ -1,7 +1,7 @@
 import apiFetch from "@wordpress/api-fetch"
-import { IMarkdownBlockEditorState, IStoreState } from "./type"
-import { ISettings } from "../../../ISettings"
+import { IMarkdownBlockEditorState, IStoreState } from "./type";
 import { store } from "."
+import { ISettings } from "./ISettings";
 
 export const setInfoVersion = (version: string) =>
 {

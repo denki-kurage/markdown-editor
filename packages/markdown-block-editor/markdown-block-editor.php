@@ -24,73 +24,92 @@ add_action( 'after_setup_theme', function(){
 	add_theme_support('align-wide');
 });
 
+/*
+        "prismTheme": {
+            "enum": ["coy", "dark", "default", "funkey", "okaidia", "solarized", "tommorow", "twilight"]
+        },
+        "monacoTheme": {
+            "enum": ["vs", "vs-dark", "hc-black", "hc-light"]
+        },
+*/
+
+add_filter('markdownBlcokEditorFrontThemes', function($themes){
+	$pluginPath = plugin_dir_url(__FILE__);
+	$themes['default'] = ['デフォルト', $pluginPath . "front-themes/default.css"];
+	$themes['dark'] = ['ダーク', $pluginPath . "front-themes/dark.css"];
+	return $themes;
+});
+
+add_filter('markdownBlcokEditorAdminThemes', function($themes){
+	$pluginPath = plugin_dir_url(__FILE__);
+	$themes['default'] = ['デフォルト', $pluginPath . "front-themes/default.css"];
+	$themes['dark'] = ['ダーク', $pluginPath . "front-themes/dark.css"];
+	return $themes;
+});
+
+
+add_filter('markdownBlcokEditorPrismThemes', function($themes){
+	$pluginPath = plugin_dir_url(__FILE__);
+	$themes['coy'] = ['Coy', $pluginPath . "prismjs/coy/prism"];
+	$themes['dark'] = ['Dark', $pluginPath . "prismjs/dark/prism"];
+	$themes['default'] = ['Default', $pluginPath . "prismjs/default/prism"];
+	$themes['funkey'] = ['Funkey', $pluginPath . "prismjs/funkey/prism"];
+	$themes['okaidia'] = ['Okaidia', $pluginPath . "prismjs/okaidia/prism"];
+	$themes['solarized'] = ['Solarized', $pluginPath . "prismjs/solarized/prism"];
+	$themes['tommorow'] = ['Tommorow', $pluginPath . "prismjs/tommorow/prism"];
+	$themes['twilight'] = ['Twilight', $pluginPath . "prismjs/twilight/prism"];
+	return $themes;
+});
+
+add_filter('markdownBlcokEditorMonacoEditorThemes', function($themes){
+	$themes['vs'] = 'VS Light';
+	$themes['vs-dark'] = 'VS Dark';
+	$themes['hc-black'] = 'High Contrast Black';
+	$themes['hc-light'] = 'High Contrast Light';
+	return $themes;
+});
 
 
 
 add_action('init', function(){
 
 	$defaultOptions = [
-		'adminCss' => '',
-		'frontCss' => '',
 		'fontSize' => 12,
 		'fontFamily' => '',
 		'prismTheme' => 'tommorow',
 		'monacoTheme' => 'vs-dark',
+		'frontTheme' => 'default',
+		'adminTheme' => 'default',
 		'configurations' => new stdClass
 	];
+	$pluginPath = plugin_dir_url(__FILE__);
 
 	$settings = get_option('markdown-block-editor-settings', $defaultOptions);
 
-	$pluginPath = plugin_dir_url(__FILE__);
-	$cssPath = $pluginPath . 'front-themes/default.css';
-	$adminCss = $settings['adminCss'] ?? '';
-	$frontCss = $settings['frontCss'] ?? '';
+	$frontTheme = $settings['frontTheme'] ?? $defaultOptions['frontTheme'];
 	$prismTheme = $settings['prismTheme'] ?? $defaultOptions['prismTheme'];
 
+	$frontMap = apply_filters('markdownBlcokEditorFrontThemes', []);
+	$adminMap = apply_filters('markdownBlcokEditorAdminThemes', []);
 
-	$adminCss = $adminCss ? $adminCss : $cssPath;
-	$frontCss = $frontCss ? $frontCss : $cssPath;
+	$frontCss = $frontMap[$frontTheme] ?? ['', ''];
+	$adminCss = $adminMap[$frontTheme] ?? ['', ''];
 
-	$styles = [
-		['md-table-editor-prism-tommorow', $pluginPath . "prismjs/{$prismTheme}/prism.css"],
-	];
-
-	$scripts = [
-		['md-table-editor-prism-core', $pluginPath . "prismjs/{$prismTheme}/prism.js"],
-	];
-
-	$enqueue = function($styles, $scripts)
-	{
-		foreach($styles as $style) wp_enqueue_style(...$style);
-		foreach($scripts as $script) wp_enqueue_script(...$script);
-	};
-
-	$renderInlineCss = function($url)
-	{
-		// インラインフレーム内で使用するものなので
-		printf('<meta property="is-markdown-content-style" content="%s" />', esc_attr($url));
-	};
-	
-	add_action('wp_enqueue_scripts', fn() => $enqueue($styles, $scripts));
-	add_action('wp_enqueue_scripts', fn() => wp_enqueue_style('md-table-editor-front-css', $frontCss));
-
-	add_action('admin_enqueue_scripts', fn() => $enqueue($styles, $scripts));
-	add_action('admin_head', fn() => $renderInlineCss($adminCss));
-	add_action('admin_head', fn() => $renderInlineCss($pluginPath . "prismjs/{$prismTheme}/prism.css"));
-
-
-
-
-
-
-
-	add_action('admin_enqueue_scripts', function() use($defaultOptions){
-		$data = get_option('markdown-block-editor-options', $defaultOptions);
-		$str = 'const MarkdownBlockEditorAdminScript = ' . json_encode($data);
-		wp_register_script('markdown-block-editor-admin-script', '');
-		wp_enqueue_script('markdown-block-editor-admin-script', null);
-		wp_add_inline_script('markdown-block-editor-admin-script', $str, 'after');
+	add_action('wp_enqueue_scripts', function() use($frontCss, $pluginPath, $prismTheme){
+		$frontCss = $frontCss[1] ?? '';
+		if($frontCss)
+		{
+			wp_enqueue_style('md-table-editor-front-css', $frontCss);
+		}
+		wp_enqueue_style('md-table-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.css");
+		wp_enqueue_script('md-table-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.js");
 	});
+
+	//add_action('admin_enqueue_scripts', function() use($adminCss, $pluginPath, $prismTheme){
+		//wp_enqueue_style('md-table-editor-admin-css', $adminCss);
+		//wp_enqueue_style('md-table-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.css");
+		//wp_enqueue_script('md-table-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.js");
+	//});
 	
 	add_action('rest_api_init', function() use($defaultOptions){
 
@@ -124,8 +143,45 @@ add_action('init', function(){
 					'args' => json_decode(file_get_contents('schema.json', true), true)['properties']
 				]
 			]
-
 		);
+
+		register_rest_route(
+			'markdown-block-editor/v1',
+			'/setting-options',
+			[
+				[
+					'methods' => WP_REST_Server::READABLE,
+					'callback' => function(WP_REST_Request $request) use($defaultOptions)
+					{
+						$frontThemes = apply_filters('markdownBlcokEditorFrontThemes', []);
+						$adminThemes = apply_filters('markdownBlcokEditorAdminThemes', []);
+						$prismThemes = apply_filters('markdownBlcokEditorPrismThemes', []);
+						$monacoThemes = apply_filters('markdownBlcokEditorMonacoEditorThemes', []);
+
+						$frontThemes = array_map(fn($v, $k) => ['key' => $k, 'name' => $v[0], 'url' => $v[1]], $frontThemes, array_keys($frontThemes));
+						$adminThemes = array_map(fn($v, $k) => ['key' => $k, 'name' => $v[0], 'url' => $v[1]], $adminThemes, array_keys($adminThemes));
+						$prismThemes = array_map(fn($v, $k) => ['key' => $k, 'name' => $v[0], 'url' => $v[1]], $prismThemes, array_keys($prismThemes));
+						$monacoThemes = array_map(fn($v, $k) => ['key' => $k, 'name' => $v], $monacoThemes, array_keys($monacoThemes));
+
+
+						$data = [
+							'frontThemes' => $frontThemes,
+							'adminThemes' => $adminThemes,
+							'prismThemes' => $prismThemes,
+							'monacoThemes' => $monacoThemes
+						];
+
+						return rest_ensure_response($data);
+					},
+					'permission_callback' => fn() => current_user_can('manage_options')
+				]
+			]
+		);
+
+
+
+
+
 	});
 
 });
@@ -142,91 +198,5 @@ add_action('admin_enqueue_scripts', fn() => wp_enqueue_script('markdown-block-ed
 #
 #
 #
-
-
-
-add_action('rest_api_init', function(){
-
-	// グローバル設定のデータを受け取る(getCurrentPost()から取得)
-	register_rest_field(
-		'post',
-		'md_table_editor_height',
-		[
-			'get_callback' => fn() => (int)get_option('md-table-editor:editor-height', 500)
-		]
-	);
-
-
-	register_rest_route(
-		'md-table-editor/v1',
-		'/settings',
-		[
-			[
-				'methods' => WP_REST_Server::READABLE,
-				'callback' => function(WP_REST_Request $request)
-				{
-					$admin = get_option('md-table-editor:admin', '');
-					$front = get_option('md-table-editor:front', '');
-					$height = (int)get_option('md-table-editor:editor-height', 500);
-
-					return rest_ensure_response([
-						'admin' => $admin,
-						'front' => $front,
-						'editorHeight' => $height
-					]);
-				},
-				'permission_callback' => fn() => current_user_can('manage_options'),
-			],
-			[
-				'methods' => WP_REST_Server::CREATABLE,
-				'callback' => function(WP_REST_Request $request)
-				{
-					$admin = $request->get_param('admin');
-					$front = $request->get_param('front');
-					$height = (int)$request->get_param('editorHeight');
-
-					update_option('md-table-editor:admin', esc_url($admin));
-					update_option('md-table-editor:front', esc_url($front));
-					update_option('md-table-editor:editor-height', $height);
-
-					return rest_ensure_response([
-						'admin' => $admin,
-						'front' => $front,
-						'editorHeight' => $height
-					]);
-				},
-				'permission_callback' => fn() => current_user_can('manage_options'),
-				'validate_callback' => function($request)
-				{
-					$admin = $request->get_param('admin');
-					$front = $request->get_param('front');
-					$pa = wp_parse_url($admin, PHP_URL_SCHEME);
-					$fa = wp_parse_url($front, PHP_URL_SCHEME);
-
-					$height = (int)$request->get_param('editorHeight');
-
-					$errors = new WP_Error();
-
-					if(!($admin === '' || $pa === 'http' || $pa === 'https'))
-					{
-						$errors->add('md_table_editor_admin_error', 'admin url is parsed error!');
-					}
-
-					if(!($front === '' || $fa === 'http' || $fa === 'https'))
-					{
-						$errors->add('md_table_editor_front_error', 'front url is parsed error!');
-					}
-
-					if($height < 100 || $height > 2000)
-					{
-						$errors->add('md_table_editor_editorheight_error', 'Editor height is overflow');
-					}
-					
-					return $errors->has_errors() ? $errors : true;
-				}
-			],
-		]);
-});
-
 
 

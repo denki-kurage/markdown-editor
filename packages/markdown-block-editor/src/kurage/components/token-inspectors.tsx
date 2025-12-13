@@ -3,16 +3,16 @@ import { __ } from "@wordpress/i18n";
 import { useExtensionComponents, useTokenEditorComponents } from "./inspector-hooks";
 import { InspectorControls } from "@wordpress/block-editor";
 import { useMemo, useRef } from "react";
-import { LoadingPanel } from './loading'
+import { LoadingPanel } from './Loading'
 import { useExtensionContexts } from "./hooks";
 
 
 export const TokenInspectors = () =>
 {
     const contexts = useExtensionContexts();
-    const { markdownContext, tokenContext } = contexts;
+    const { editorContext, tokenContext } = contexts;
     const { singleToken } = tokenContext;
-    const { isEditing } = markdownContext;
+    const { isEditing } = editorContext;
 
 
     /**

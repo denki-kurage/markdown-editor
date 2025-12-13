@@ -36,3 +36,8 @@ export const getSettings = (state: IMarkdownBlockEditor) =>
 {
     return state.settings;
 }
+
+export const getSettingOptions = (state: IMarkdownBlockEditor) =>
+{
+    return state.settingOptions;
+}

@@ -21,6 +21,9 @@
         "monacoTheme": {
             "enum": ["vs", "vs-dark", "hc-black", "hc-light"]
         },
+        "frontTheme": {
+            "enum": ["default", "dark"]
+        },
         "configurations": {
             "type": "object",
             "additionalProperties": {

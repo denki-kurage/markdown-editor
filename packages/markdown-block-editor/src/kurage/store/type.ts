@@ -1,10 +1,12 @@
-import { ISettings } from "../../../ISettings";
+import { ISettingOptions } from "./ISettingOptions";
+import { ISettings } from "./ISettings";
 
 export interface IMarkdownBlockEditor
 {
     editorStates: {[key: string]: IMarkdownBlockEditorState};
     info: IMarkdownBlockEditorInfo;
     settings: ISettings;
+    settingOptions: ISettingOptions;
     storeState: IStoreState;
 }
 
@@ -30,27 +32,4 @@ export interface IMarkdownBlockEditorState
 }
 
 export type EditorState = {[key: string]: IMarkdownBlockEditorState};
-
-export const createInitData = () =>
-{
-    return {
-        info: {
-            version: "0.1"
-        },
-        editorStates: {},
-        storeState:
-        {
-            isLoading: false,
-            faultMessage: ''
-        },
-        settings: {
-            adminCss: '',
-            frontCss: '',
-            fontFamily: '',
-            fontSize: 12,
-            recentCodeLanguages: [],
-            configurations: {}
-        }
-    } as IMarkdownBlockEditor;
-}
 

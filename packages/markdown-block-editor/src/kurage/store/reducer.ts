@@ -1,6 +1,7 @@
 import { combineReducers } from "@wordpress/data";
 import { EditorState, IMarkdownBlockEditorInfo, IMarkdownBlockEditorState, IStoreState } from "./type";
-import { ISettings } from "../../../ISettings";
+import { ISettings } from "./ISettings";
+import { ISettingOptions } from "./ISettingOptions";
 
 
 const info = (state: IMarkdownBlockEditorInfo = { version: '0.1' }, action: any) =>
@@ -43,6 +44,18 @@ const settings = (state: ISettings, action: any) =>
 
     return state;
 }
+
+const settingOptions = (state: ISettingOptions, action: any) =>
+{
+    switch(action.type)
+    {
+        case 'SET_SETTING_OPTIONS':
+            return { ...state, ...action.value }
+    }
+
+    return state;
+}
+
 const storeState = (state: IStoreState = { isLoading: false, faultMessage: '' }, action: any) =>
 {
     switch(action.type)
@@ -58,5 +71,6 @@ export default combineReducers({
     info,
     editorStates,
     settings,
+    settingOptions,
     storeState
 })

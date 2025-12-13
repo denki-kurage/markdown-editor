@@ -1,5 +1,6 @@
 .markdown-content-style {
-  color: red;
+  color: white;
+  background-color: black;
 }
 .markdown-content-style > * {
   margin: 1.2em 0em;
@@ -55,4 +56,4 @@
   height: 120px;
   -o-object-fit: cover;
      object-fit: cover;
-}/*# sourceMappingURL=default.css.map */
+}/*# sourceMappingURL=dark.css.map */

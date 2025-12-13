@@ -4,16 +4,6 @@ import { parseSaveMarkdown } from "../components/parser";
 export type MarkdownContextProps =
 {
     markdown: string;
-    
-    /**
-     * エディタの入力中、常にビューのレンダリングやトークンの解析を行うには負担がかかりすぎます。
-     * 実際の入力とは同期せず、これらの処理を遅延させることで負荷を軽減します。
-     * 入力中は真となり、ビューのレンダリングやトークンエクスプローラをロックするために使用します。
-     */
-    isEditing: boolean;
-
-    setIsEditing: (isEditing: boolean) => void;
-
     editHeight: number,
     viewMode: "code" | "view" | "both";
     setAttributes: (value: any) => void,
@@ -24,8 +14,6 @@ const Context = createContext<MarkdownContextProps>({
     markdown: '',
     editHeight: 500,
     viewMode: "both",
-    isEditing: false,
-    setIsEditing: isEditing => {},
     setAttributes: v => {},
     onMarkdownChanged: () => {},
 });
@@ -37,15 +25,12 @@ export const useMarkdownContext = () => useContext(Context);
 export const MarkdownContextProviderWrapper = ({ children, attributes, setAttributes, standardizeReturnKey }: any) =>
 {
 	const { viewMode, splitSize, editHeight, markdown } = attributes;
-    const [isEditing, setIsEditing] = useState(false);
 
     
 	const markdownContextValue = useMemo<MarkdownContextProps>(() => {
 
 		return {
             markdown: standardizeReturnKey(markdown),
-            isEditing,
-            setIsEditing,
             viewMode,
             editHeight,
             setAttributes,
@@ -56,7 +41,7 @@ export const MarkdownContextProviderWrapper = ({ children, attributes, setAttrib
 				setAttributes({ markdown: m, html })
 			},
 		}
-	}, [setAttributes, viewMode, editHeight, markdown, isEditing]);
+	}, [setAttributes, viewMode, editHeight, markdown]);
 
     return (
         <MarkdownContextProvider value={markdownContextValue}>

@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { useMarkdownContext } from "./markdown-context";
 import { useMarkdownAppContext } from "./markdown-app-context";
 import { IAppContext, IReplaceText, IToken, MarkdownCore, MarkdownParser, Utils } from "@mde/markdown-core";
+import { useMarkdownEditorContext } from "./markdown-editor-context";
 
 
 export type TokenStates =
@@ -144,7 +145,8 @@ type ContextPropertyRef =
 
 export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
 {
-    const { markdown, isEditing } = useMarkdownContext();
+    const { markdown } = useMarkdownContext();
+    const { isEditing } = useMarkdownEditorContext();
     const { markdownCore, appContext } = useMarkdownAppContext();
     
     const [tokenStates, setTokenStates] = useState<TokenStates>({
