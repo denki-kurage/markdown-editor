@@ -1,4 +1,4 @@
-import { BooleanConfigValue, IAppContext, IConfigureStorage } from "@mde/markdown-core";
+import { BooleanConfigValue, IAppContext, IConfigurationStorage } from "@mde/markdown-core";
 import { MarkdownTableContent } from "../tables";
 import { TableDecorator } from "../tables/TableDecorator";
 
@@ -6,7 +6,7 @@ import { TableDecorator } from "../tables/TableDecorator";
 
 export class DecoratorConfiguration extends BooleanConfigValue
 {
-	public constructor(private readonly editorContext: IAppContext, storage: IConfigureStorage) {
+	public constructor(private readonly editorContext: IAppContext, storage: IConfigurationStorage) {
 		super('markdown:decorator', true, storage);
 	}
 

@@ -5,7 +5,7 @@ import { PanelBody } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
-import AppToolbars from './components/app-toolbars';
+import AppToolbars from './components/AppToolbars';
 import TokenInspectors from './components/token-inspectors';
 import { MarkdownContextProviderWrapper, useMarkdownContext } from './context/markdown-context';
 import { useMarkdownEditorGenerator } from './components/editor-wrapper';
@@ -14,7 +14,7 @@ import { MarkdownTokenContextProviderWrapper } from './context/markdown-token-co
 import { MarkdownAppContextWrapper, useMarkdownAppContext } from './context/markdown-app-context';
 
 import { MarkdownEditorContextProviderWrapper, useMarkdownEditorContext } from './context/markdown-editor-context';
-import { CommandsInspector } from './components/commands-inspector';
+import { CommandsInspector } from './components/CommandsInspector';
 import { ControlPanel } from './components/ControlPanel';
 //import Prism from 'prismjs'
 

@@ -1,5 +1,5 @@
-﻿import { TableCellCommandBase } from "./TableCellCommandBase";
-import { MarkdownTableContent, TableCell, TableCellInfo } from "../MarkdownTableContent";
+﻿import { MarkdownTableContent, TableCell, TableCellInfo } from "../tables/MarkdownTableContent";
+import { TableCellCommandBase } from "./TableCellCommandBase";
 import { IFormattableParameter, IInsertCellWord } from "@mde/markdown-core";
 
 

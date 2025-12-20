@@ -1,10 +1,10 @@
-import { BooleanConfigValue, EventCollection, IConfigureStorage, IMarkdownEvents } from "@mde/markdown-core";
+import { BooleanConfigValue, EventCollection, IConfigurationStorage, IMarkdownEvents } from "@mde/markdown-core";
 
 
 export class AutoFormatterConfiguration extends BooleanConfigValue {
 	public constructor(
 		private readonly events: EventCollection<IMarkdownEvents>,
-		storage: IConfigureStorage) {
+		storage: IConfigurationStorage) {
 		super('markdown:format', true, storage);
 	}
 

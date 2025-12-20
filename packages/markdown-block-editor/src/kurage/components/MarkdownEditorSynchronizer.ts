@@ -93,20 +93,23 @@ export class MarkdownEditorSynchronizer
     {
         const lineMap = this.getLineMap(win.document);
         const numbers = lineMap.map(l => l.lineNumber);
-        const minNumner = Math.max(...numbers.filter(n => n <= lineNumber));
-        const maxNumber = Math.min(...numbers.filter(n => n >= lineNumber));
+        
 
-        const minPos = Math.max(...lineMap.filter(m => m.lineNumber === minNumner).map(m => m.offsetTop));
-        const maxPos = Math.min(...lineMap.filter(m => m.lineNumber === maxNumber).map(m => m.offsetTop));
+        const minNumners = numbers.filter(n => n <= lineNumber);
+        const maxNumbers = numbers.filter(n => n >= lineNumber);
 
-        if(numbers.length === 0)
+        if(lineMap.length === 0 || maxNumbers.length === 0 || minNumners.length === 0)
         {
-            return 0;
+            return undefined;
         }
 
-        const b = (lineNumber - minNumner + 1)  / (maxNumber - minNumner + 1) 
-        const diff = (maxPos - minPos) * b + minPos;
-        return diff;
+        const min = Math.max(...minNumners);
+        const max = Math.min(...maxNumbers);
+        const minPos = Math.max(...lineMap.filter(m => m.lineNumber === min).map(m => m.offsetTop));
+        const maxPos = Math.min(...lineMap.filter(m => m.lineNumber === max).map(m => m.offsetTop));
+
+        const diff = (lineNumber - min + 1)  / (max - min + 1)
+        return (maxPos - minPos) * diff + minPos;
     }
 
 }

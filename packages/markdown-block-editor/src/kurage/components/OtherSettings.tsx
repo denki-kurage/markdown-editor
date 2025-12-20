@@ -1,5 +1,5 @@
 import apiFetch from "@wordpress/api-fetch";
-import { Button, Modal, RangeControl, SelectControl, Spinner, TextControl } from "@wordpress/components";
+import { Button, CheckboxControl, Modal, RangeControl, SelectControl, Spinner, TextControl } from "@wordpress/components";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 

@@ -1,7 +1,7 @@
 ﻿import { CellInfoHelper } from "./TableCellCommandBase";
-import { TableCellInfo, TableCell } from "../MarkdownTableContent";
 import { MoveCommandBase } from "./CommandBaseClasses";
 import { IFormattableParameter, MovableArray } from "@mde/markdown-core";
+import { TableCell, TableCellInfo } from "../tables/MarkdownTableContent";
 
 
 

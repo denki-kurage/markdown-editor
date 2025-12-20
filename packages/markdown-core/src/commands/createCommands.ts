@@ -24,6 +24,9 @@ import inlineCodeDark from '../../icons/dark/inline-code.svg';
 
 import linkLight from '../../icons/light/link.svg';
 import linkDark from '../../icons/dark/link.svg';
+import { AddImageCommand } from './AddImageCommand';
+import { AddLinkCommand } from './AddLinkCommand';
+import { AddBlogCardCommand } from './AddBlogCardCommand';
 
 
 const darkIcons = {
@@ -63,8 +66,9 @@ export function createDefaultMarkdownCommandItem(appContext: IAppContext, mode: 
             { name: 'markdown:add-inline-code', label: 'Inline Code', icon: icons['inlineCode'], command: new HoldTextCommand(appContext, '`', '`') },
             { name: 'markdown:add-code', label: 'Code', icon: icons['code'], command: new CodeHoldTextCommand(appContext) },
 
-            
-            { name: 'markdown:add-link', label: 'Link', icon: icons['link'], command: undefined },
+            { name: 'markdown:add-image', label: 'Image', icon: undefined, command: new AddImageCommand(appContext) },
+            { name: 'markdown:add-blog-card', label: 'Blog Card', icon: undefined, command: new AddBlogCardCommand(appContext) },
+            { name: 'markdown:add-link', label: 'Link', icon: undefined, command: new AddLinkCommand(appContext) },
             { name: 'markdown:select', label: undefined, icon: undefined, command: new SelectCommand(appContext) },
         ]
     }

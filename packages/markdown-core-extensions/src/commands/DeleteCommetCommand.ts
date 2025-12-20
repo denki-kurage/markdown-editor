@@ -1,5 +1,5 @@
-﻿import { TableCellCommandBase } from "./TableCellCommandBase";
-import { TableCellInfo, MarkdownTableRows } from "../MarkdownTableContent";
+﻿import { MarkdownTableRows, TableCellInfo } from "../tables/MarkdownTableContent";
+import { TableCellCommandBase } from "./TableCellCommandBase";
 import { IFormattableParameter } from "@mde/markdown-core";
 
 export class DeleteCommentCommand extends TableCellCommandBase<void> {

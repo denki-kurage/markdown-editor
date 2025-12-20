@@ -1,7 +1,7 @@
 ﻿import { ISelection, MarkdownRange } from "@mde/markdown-core";
-import { ICommandContext } from "../ICommandContext";
-import { MarkdownTableContent } from "../MarkdownTableContent";
 import { TableCommandBase } from "./TableCommandBase";
+import { ICommandContext } from "../tables/ICommandContext";
+import { MarkdownTableContent } from "../tables";
 
 
 /**

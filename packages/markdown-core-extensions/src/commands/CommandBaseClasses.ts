@@ -3,10 +3,10 @@
  * 
  */
 
+import { Direction } from "../tables/Direction";
+import { ICommandContext } from "../tables/ICommandContext";
+import { MarkdownAlignments } from "../tables/MarkdownAlignments";
 import { TableCellCommandBase } from "./TableCellCommandBase";
-import { MarkdownAlignments } from "../MarkdownAlignments";
-import { Direction } from "../Direction";
-import { ICommandContext } from "../ICommandContext";
 
 
 

@@ -1,5 +1,6 @@
 import { MarkdownRange } from "../MarkdownRange";
 import { MarkdownCommandBase } from "./MarkdownCommandBase";
+import { MarkdownEscapeHelper } from "./MarkdownEscapeHelper";
 import { sanitize } from "./sanitizer";
 
 export type AddBlogCardParams = 
@@ -20,10 +21,10 @@ export class AddBlogCardCommand extends MarkdownCommandBase<AddBlogCardParams>
             const { url, title, image } = parameter;
             const host = new URL(url).host;
             
-            const u = sanitize(url);
-            const t = sanitize(title);
-            const i = sanitize(image);
-            const h = sanitize(host);
+            const u = MarkdownEscapeHelper.escapeHtmlAttributeText(url);
+            const t = MarkdownEscapeHelper.escapeHtmlText(title);
+            const i = MarkdownEscapeHelper.escapeHtmlAttributeText(image);
+            const h = MarkdownEscapeHelper.escapeHtmlText(host);
 
             const blogCard = [
                 '<div class="blog-card">',

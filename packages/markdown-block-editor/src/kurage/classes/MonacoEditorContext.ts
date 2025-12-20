@@ -136,17 +136,18 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
             this.monaco.languages.registerCompletionItemProvider(
                 'markdown',
                 {
-                    triggerCharacters: ['`'],
+                    triggerCharacters: ['`', '~'],
                     provideCompletionItems: (model, pos, context, token) =>
                     {
-                        const line = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
+                        const line: string = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
 
-                        // TODO: バグってる？
-                        if(line.endsWith('```'))
+                        if(line.indexOf('```') === 0 || line.indexOf('~~~') === 0)
                         {
                             // ツールバーやCtrl+Spaceで呼び出された場合は改行追加させない。
                             // 文字でサジェストが呼び出された場合のみ追加時に改行を加える。
-                            const breaks = context.triggerCharacter ? "\n$0\n\`\`\`\n" : '';
+                            const chr = context.triggerCharacter;
+                            const triple = chr ? chr.repeat(3) : '```';
+                            const breaks = chr ? `\n$0\n${triple}\n` : '';
                             
                             const languages = sortedCodeLanguages(this.configurationHelper.getRecentCodeLanguages());
                             const items = languages.map((lang, index) => {
@@ -158,7 +159,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                                     insertText: `${lang.name}${breaks}`,
                                     insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                                     command: { id: 'markdown.code.changed', arguments: [lang.name] },
-                                    documentation: `\`\`\`${lang.name}\nYour code here...\n\`\`\``,
+                                    documentation: `${triple}${lang.name}\nYour code here...\n${triple}`,
                                 };
                             });
 

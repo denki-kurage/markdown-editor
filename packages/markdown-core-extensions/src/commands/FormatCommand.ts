@@ -1,6 +1,6 @@
 ﻿import { IFormattableParameter } from "@mde/markdown-core";
-import { TableCellInfo } from "../MarkdownTableContent";
 import { FormatCommandBase } from "./CommandBaseClasses";
+import { TableCellInfo } from "../tables/MarkdownTableContent";
 
 
 export class FormatCommand extends FormatCommandBase

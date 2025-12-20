@@ -1,6 +1,6 @@
 ﻿import { IFormattableParameter, MovableArray } from "@mde/markdown-core";
-import { TableCellInfo, MarkdownTableRows } from "../MarkdownTableContent";
 import { MoveCommandBase } from "./CommandBaseClasses";
+import { MarkdownTableRows, TableCellInfo } from "../tables/MarkdownTableContent";
 
 export class MoveRowCommand extends MoveCommandBase
 {

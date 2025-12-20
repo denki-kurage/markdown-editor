@@ -1,8 +1,8 @@
 import { IFormattableParameter } from "@mde/markdown-core";
-import { ICommandContext } from "../ICommandContext";
-import { TableCellInfo } from "../MarkdownTableContent";
-import { TablePosition } from "../TablePosition";
 import { TableCellCommandBase } from "./TableCellCommandBase";
+import { ICommandContext } from "../tables/ICommandContext";
+import { TableCellInfo } from "../tables/MarkdownTableContent";
+import { TablePosition } from "../tables/TablePosition";
 
 export enum SelectType
 {

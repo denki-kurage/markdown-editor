@@ -24,26 +24,20 @@ add_action( 'after_setup_theme', function(){
 	add_theme_support('align-wide');
 });
 
-/*
-        "prismTheme": {
-            "enum": ["coy", "dark", "default", "funkey", "okaidia", "solarized", "tommorow", "twilight"]
-        },
-        "monacoTheme": {
-            "enum": ["vs", "vs-dark", "hc-black", "hc-light"]
-        },
-*/
+
+
 
 add_filter('markdownBlcokEditorFrontThemes', function($themes){
 	$pluginPath = plugin_dir_url(__FILE__);
+	$themes['none'] = ['なし', ''];
 	$themes['default'] = ['デフォルト', $pluginPath . "front-themes/default.css"];
-	$themes['dark'] = ['ダーク', $pluginPath . "front-themes/dark.css"];
 	return $themes;
 });
 
 add_filter('markdownBlcokEditorAdminThemes', function($themes){
 	$pluginPath = plugin_dir_url(__FILE__);
+	$themes['none'] = ['なし', ''];
 	$themes['default'] = ['デフォルト', $pluginPath . "front-themes/default.css"];
-	$themes['dark'] = ['ダーク', $pluginPath . "front-themes/dark.css"];
 	return $themes;
 });
 
@@ -157,6 +151,7 @@ add_action('init', function(){
 						$adminThemes = apply_filters('markdownBlcokEditorAdminThemes', []);
 						$prismThemes = apply_filters('markdownBlcokEditorPrismThemes', []);
 						$monacoThemes = apply_filters('markdownBlcokEditorMonacoEditorThemes', []);
+						$themeUrl = get_template_directory_uri();
 
 						$frontThemes = array_map(fn($v, $k) => ['key' => $k, 'name' => $v[0], 'url' => $v[1]], $frontThemes, array_keys($frontThemes));
 						$adminThemes = array_map(fn($v, $k) => ['key' => $k, 'name' => $v[0], 'url' => $v[1]], $adminThemes, array_keys($adminThemes));
@@ -168,7 +163,8 @@ add_action('init', function(){
 							'frontThemes' => $frontThemes,
 							'adminThemes' => $adminThemes,
 							'prismThemes' => $prismThemes,
-							'monacoThemes' => $monacoThemes
+							'monacoThemes' => $monacoThemes,
+							'themeUrl' => $themeUrl
 						];
 
 						return rest_ensure_response($data);
@@ -194,7 +190,7 @@ add_action('init', function(){
 #
 #
 #
-add_action('admin_enqueue_scripts', fn() => wp_enqueue_script('markdown-block-editor-extensions', plugin_dir_url(__FILE__) . 'extensions.js'));
+//add_action('admin_enqueue_scripts', fn() => wp_enqueue_script('markdown-block-editor-extensions', plugin_dir_url(__FILE__) . 'extensions.js'));
 #
 #
 #

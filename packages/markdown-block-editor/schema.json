@@ -3,16 +3,16 @@
     "title": "settings",
     "type": "object",
     "properties": {
-        "adminCss": {
-            "type": "string"
-        },
-        "frontCss": {
-            "type": "string"
-        },
         "fontSize": {
             "type": "integer"
         },
         "fontFamily": {
+            "type": "string"
+        },
+        "frontTheme": {
+            "type": "string"
+        },
+        "adminTheme": {
             "type": "string"
         },
         "prismTheme": {
@@ -20,9 +20,6 @@
         },
         "monacoTheme": {
             "enum": ["vs", "vs-dark", "hc-black", "hc-light"]
-        },
-        "frontTheme": {
-            "enum": ["default", "dark"]
         },
         "configurations": {
             "type": "object",

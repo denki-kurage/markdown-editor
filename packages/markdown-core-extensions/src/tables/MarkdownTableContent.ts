@@ -524,7 +524,8 @@ export class TableCellInfo
 	public getForcus(): ISelection
 	{
 		return {
-			sPos: this.docPosition
+			sPos: this.docPosition,
+			ePos: this.docPosition
 		};
 	}
 

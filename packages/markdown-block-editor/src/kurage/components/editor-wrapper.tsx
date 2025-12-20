@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { AppContextGenerateParams, useMarkdownAppContext } from "../context/markdown-app-context";
-import { MonacoEditor } from "./monaco-editor";
+import { MonacoEditor } from "./MonacoEditor";
 
 export const EditorGeneratorCollection: EditorGenerator[] = [];
 

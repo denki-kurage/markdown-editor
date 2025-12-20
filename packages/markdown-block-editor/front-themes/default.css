@@ -1,58 +1,189 @@
+/* =========================
+   Base
+========================= */
 .markdown-content-style {
-  color: red;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #24292f;          /* GitHub text */
+  background-color: #ffffff;
 }
-.markdown-content-style > * {
-  margin: 1.2em 0em;
+
+/* =========================
+   Headings
+========================= */
+.markdown-content-style h1,
+.markdown-content-style h2,
+.markdown-content-style h3,
+.markdown-content-style h4 {
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 1.6em 0 0.6em;
 }
-.markdown-content-style TABLE {
+
+.markdown-content-style h1 {
+  font-size: 1.8em;
+  border-bottom: 1px solid #d0d7de;
+  padding-bottom: 0.3em;
+}
+
+.markdown-content-style h2 {
+  font-size: 1.4em;
+  border-bottom: 1px solid #eaeef2;
+  padding-bottom: 0.25em;
+}
+
+.markdown-content-style h3 {
+  font-size: 1.15em;
+}
+
+/* =========================
+   Paragraph / Inline
+========================= */
+.markdown-content-style p {
+  margin: 0.8em 0;
+}
+
+.markdown-content-style strong {
+  font-weight: 600;
+}
+
+.markdown-content-style em {
+  font-style: italic;
+}
+
+.markdown-content-style del {
+  color: #6e7781;
+}
+
+/* =========================
+   Link
+========================= */
+.markdown-content-style a {
+  color: #5154f0; /* GitHub green */
+  text-decoration: none;
+}
+
+.markdown-content-style a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   Table
+========================= */
+.markdown-content-style table {
   width: 100%;
-}
-.markdown-content-style TABLE, .markdown-content-style TH, .markdown-content-style TD {
-  border: 1px solid rgb(210, 210, 210);
   border-collapse: collapse;
-  padding: 0.3em 0em;
+  margin: 1em 0;
+  font-size: 0.95em;
 }
-.markdown-content-style TH {
-  background-color: rgb(227, 227, 227);
-}
-.markdown-content-style TH:not([align]) {
+
+.markdown-content-style th,
+.markdown-content-style td {
+  padding: 0.6em 0.8em;
+  border: 1px solid #d0d7de;
   text-align: left;
 }
-.markdown-content-style TD {
-  background-color: rgb(246, 246, 246);
+
+.markdown-content-style th {
+  background: linear-gradient(135deg, #f6f8fa, #ffffff);
+  font-weight: 600;
 }
-.markdown-content-style pre {
-  max-height: 500px;
-  overflow: auto;
+
+.markdown-content-style tbody tr:nth-child(even) {
+  background-color: #f6f8fa;
 }
-.markdown-content-style .blog-card {
-  width: 100%;
-  border: 1px solid rgb(182, 182, 182);
-  border-radius: 1em;
-  overflow: hidden;
+
+/* =========================
+   List
+========================= */
+.markdown-content-style ul,
+.markdown-content-style ol {
+  padding-left: 1.5em;
+  margin: 0.8em 0;
 }
-.markdown-content-style .blog-card > a {
-  text-decoration: none;
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
+
+.markdown-content-style li {
+  margin: 0.4em 0;
 }
-.markdown-content-style .blog-card > a > div {
-  padding: 1.2em;
+
+/* =========================
+   Checkbox (Gradient Green)
+   Structure-agnostic
+========================= */
+.markdown-content-style input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 1.35em;
+  height: 1.35em;
+
+  border-radius: 6px;
+  border: 2px solid #22c55e;
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+
+  display: inline-grid;
+  place-content: center;
+
+  vertical-align: middle;
+  margin-right: 0.4em;
+
+  cursor: default;
 }
-.markdown-content-style .blog-card > a > div > div {
-  font-size: 1em;
+
+/* チェックマーク */
+.markdown-content-style input[type="checkbox"]::before {
+  content: "";
+  width: 0.4em;
+  height: 0.75em;
+  border-right: 2.5px solid #166534;
+  border-bottom: 2.5px solid #166534;
+  transform: rotate(45deg);
+  opacity: 0;
 }
-.markdown-content-style .blog-card > a > div > span {
-  font-size: 0.7em;
+
+/* checked */
+.markdown-content-style input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+  border-color: #16a34a;
 }
-.markdown-content-style .blog-card > a > div > * {
-  color: #111;
-  overflow: hidden;
+
+.markdown-content-style input[type="checkbox"]:checked::before {
+  opacity: 1;
 }
-.markdown-content-style .blog-card > a > img {
-  width: 160px;
-  height: 120px;
-  -o-object-fit: cover;
-     object-fit: cover;
-}/*# sourceMappingURL=default.css.map */
+/* =========================
+   Blockquote (up to 3 levels)
+========================= */
+
+/* level 1 */
+.markdown-content-style blockquote {
+  margin: 1em 0;
+  padding: 0.8em 1em;
+  background-color: #f6f8fa;
+  border-left: 4px solid #d0d7de;
+  color: #57606a;
+}
+
+/* level 2 */
+.markdown-content-style blockquote blockquote {
+  margin-top: 0.8em;
+  background-color: #ffffff;
+  border-left-color: #22c55e; /* green accent */
+  color: #374151;
+}
+
+/* level 3 */
+.markdown-content-style blockquote blockquote blockquote {
+  background-color: #f0fdf4;  /* very light green */
+  border-left-color: #16a34a; /* deeper green */
+  color: #065f46;
+}
+/* =========================
+   Horizontal Rule
+========================= */
+.markdown-content-style hr {
+  border: none;
+  border-top: 1px solid #d0d7de;
+  margin: 2em 0;
+}

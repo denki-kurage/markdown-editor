@@ -29,12 +29,7 @@ export const scrollToLineNumber = (win: Window, lineNumber: number) =>
 {
     if(win)
     {
-        const pos = mp.getPositionFromLineNumber(win, lineNumber);
+        const pos = mp.getPositionFromLineNumber(win, lineNumber) ?? win.scrollY;
         win.scrollTo({ top: pos, behavior: 'auto' });
     }
 }
-
-// 以降はmarkedを使っていた時のもの。
-// 現在は使用していない。
-
-

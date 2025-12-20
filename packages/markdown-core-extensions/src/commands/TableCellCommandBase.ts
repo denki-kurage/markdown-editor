@@ -1,10 +1,13 @@
-﻿import { MarkdownTableContent, TableCellInfo, TableCell, TableRowBase, TablePositionDirections } from "../MarkdownTableContent";
-import { MarkdownTableRenderMode } from "../MarkdownTableConverter";
-import { TablePosition } from "../TablePosition";
+﻿
+import { MarkdownTableContent } from "../tables";
+import { ICommandContext } from "../tables/ICommandContext";
+import { IFormatterContext } from "../tables/IFormatterContext";
+import { TableCell, TableCellInfo, TablePositionDirections, TableRowBase } from "../tables/MarkdownTableContent";
+import { MarkdownTableRenderMode } from "../tables/MarkdownTableConverter";
+import { TablePosition } from "../tables/TablePosition";
 import { TableCommandBase } from "./TableCommandBase";
-import { IFormatterContext } from "../IFormatterContext";
 import { IFormattableParameter, ISelection, ITextReplacer, MarkdownRange, TextReplacer } from "@mde/markdown-core";
-import { ICommandContext } from "../ICommandContext";
+
 
 
 class FormattableParameter implements IFormattableParameter

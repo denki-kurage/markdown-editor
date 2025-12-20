@@ -5,15 +5,17 @@ import { ogpGenerator } from "../classes/OgpManager";
 import { store as noticesStore } from "@wordpress/notices";
 import { useDispatch } from "@wordpress/data";
 import { AddBlogCardParams, MarkdownCore } from "@mde/markdown-core";
+import { useMarkdownAppContext } from "../context/markdown-app-context";
 
 
 
-const BlogCardGenerator = ({ mc, onExecuted }: { mc?: MarkdownCore, onExecuted: () => void}) =>
+const BlogCardGenerator = ({ onExecuted }: { onExecuted: () => void}) =>
 {
     const [url, setUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const { createErrorNotice } = useDispatch(noticesStore);
+    const { markdownCore } = useMarkdownAppContext();
 
 
     const updateState = (url: string) =>
@@ -42,7 +44,7 @@ const BlogCardGenerator = ({ mc, onExecuted }: { mc?: MarkdownCore, onExecuted: 
                 }
 
                 const p: AddBlogCardParams = { url, title, image };
-                mc?.createCommandCollection().execute('markdown:add-blog-card', p);
+                markdownCore?.createCommandCollection().execute('markdown:add-blog-card', p);
                 onExecuted();
             }
         }

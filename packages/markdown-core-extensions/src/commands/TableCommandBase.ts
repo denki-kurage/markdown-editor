@@ -1,7 +1,7 @@
-﻿import { CommandBaseGeneric } from "./CommandBaseGeneric";
-import { AppHelper } from "../AppHelper";
+﻿import { AppHelper } from "../tables/AppHelper";
+import { ICommandContext } from "../tables/ICommandContext";
+import { CommandBaseGeneric } from "./CommandBaseGeneric";
 import { IAppContext } from "@mde/markdown-core";
-import { ICommandContext } from "../ICommandContext";
 
 export abstract class TableCommandBase<T> extends CommandBaseGeneric<T>
 {

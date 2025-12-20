@@ -246,7 +246,8 @@ const TokenView = React.memo(({ tokenSet, depsTokens, container }: { tokenSet: T
     const { start, end } = token.getPosition();
     const txt = markdown.slice(start, end).slice(0, 20);
 
-    const abb = TokenTypes.get(token.getType())?.[0] ?? ''
+    const type = token.getType();
+    const abb = TokenTypes.get(type)?.[0] ?? ''
     const targetRef = useRef<HTMLDivElement>(null);
     const { singleToken } = tokenContext;
     const isCurrent = singleToken === token;
@@ -258,7 +259,7 @@ const TokenView = React.memo(({ tokenSet, depsTokens, container }: { tokenSet: T
     console.log("--- Token View ---")
 
     useEffect(() => {
-        if(isCurrent)
+        if(isCurrent && type !== 'root')
         {
             if(targetRef.current)
             {

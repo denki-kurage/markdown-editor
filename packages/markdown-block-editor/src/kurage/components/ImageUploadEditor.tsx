@@ -3,6 +3,7 @@ import { MediaPlaceholder } from '@wordpress/block-editor';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import React, { useState } from 'react';
+import { useMarkdownAppContext } from '../context/markdown-app-context';
 
 
 const ImagePreview = ({ url, thu }: any) =>
@@ -26,15 +27,18 @@ const getDetails = (details: any, sizeType: string) =>
         fileSize: st.filesize
     } : undefined;
 }
-const ImageUploadEditor = ({ mc, onExecuted }: { mc?: MarkdownCore, onExecuted: () => void}) =>
+const ImageUploadEditor = ({ onExecuted }: { onExecuted: () => void}) =>
 {
     const [imageId, setImageId] = useState<number|undefined>(undefined);
+    const { markdownCore } = useMarkdownAppContext();
     
     // @ts-ignore
-    const img = useSelect(select => select('core').getMedia(imageId), [imageId]);
+    const img = useSelect(select => select('core').getEntityRecord('postType', 'attachment', imageId), [imageId]);
     const de = img?.media_details;
 
+    console.log(img)
 
+    
     /**
      * TODO: ここは設定可能にするかどうかは未定義。
      */
@@ -47,9 +51,16 @@ const ImageUploadEditor = ({ mc, onExecuted }: { mc?: MarkdownCore, onExecuted: 
 
 
 
-    const addImage = () =>
+    const acceptImage = (img: any) =>
     {
-        mc?.createCommandCollection().execute('markdown:add-image', {imageUrl: originFile, thumbnailUrl: file, width, height });
+        console.log(img);
+        setImageId(img.id);
+    }
+
+    const addImage = (addMode: 'figure' | 'markdown') =>
+    {
+        const thumbnail = [file, width, height];
+        markdownCore?.createCommandCollection().execute('markdown:add-image', {imageUrl: originFile, thumbnail, addMode});
         onExecuted();
     }
 
@@ -63,13 +74,19 @@ const ImageUploadEditor = ({ mc, onExecuted }: { mc?: MarkdownCore, onExecuted: 
     return (
         <div>
             <MediaPlaceholder
-                onSelect={e => setImageId(e.id)}
+                onSelect={acceptImage}
                 mediaPreview={prv}
                 />
 
-            <Button disabled={imageId === undefined} variant="primary" onClick={() => addImage()}>
-                追加する
-            </Button>
+            <div style={{ marginTop: '1em', padding: '.5em 0' }}>
+                <Button className="markdown-block-editor-button-vertical" disabled={imageId === undefined} variant="primary" onClick={() => addImage('figure')}>
+                    WordPress方式で追加する
+                </Button>
+                <Button className="markdown-block-editor-button-vertical" disabled={imageId === undefined} variant="primary" onClick={() => addImage('markdown')}>
+                    Markdown方式で追加する
+                </Button>
+            </div>
+
         </div>
     )
 }

@@ -1,6 +1,6 @@
 import { Editor, Monaco,  } from '@monaco-editor/react';
 import { editor, editor as ieditor } from 'monaco-editor';
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import root from 'react-shadow';
 // @ts-ignore
 import css2 from './table.dscss';
@@ -11,7 +11,6 @@ import { MonacoEditorContext } from '../classes/MonacoEditorContext';
 import { useSelect } from '@wordpress/data';
 import { store } from '../store';
 import { IConfigurationStorage } from '@mde/markdown-core';
-import { Button, TextControl } from '@wordpress/components';
 
 export const useMarkdownApp = (
         configurationStorage: IConfigurationStorage,
@@ -24,6 +23,7 @@ export const useMarkdownApp = (
 
         if(editor && model && monaco)
         {
+
             // Monaco Editor は初期値に改行コードが含まれる場合はその改行コードが適用、
             // 無い場合はおそらくシステム依存。
             // LFにしないと、文字列数が正確にカウントできないなどいろいろ不都合なので
@@ -44,6 +44,7 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
     const { markdown, onMarkdownChanged: onValueChanged } = useMarkdownContext();
     const settings = useSelect(select => select(store).getSettings(), []);
 
+    const domRef = useRef<HTMLDivElement>(null);
 
     const params = useMarkdownApp(configurationStorage, editor, monaco);
     useEffect(() => initializedMarkdownCore(params), [params])
@@ -76,12 +77,25 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
 
             
         }
-    }, [settings])
+    }, [settings, editor]);
 
+
+    /**
+     * TODO: IMEの座標がズレる問題。DIVをInput要素にしている部分を取得しているが、ブラウザの実装依存のため対策が見つからない。
+     * 
     useEffect(() => {
+        const handle = setInterval(() => {
+            const shadow = domRef?.current?.ownerDocument?.getElementsByClassName('monaco-shadow-dom')[0]?.shadowRoot;
+            const active = shadow?.activeElement;
+            const contentEditable = active?.getAttribute('contenteditable');
 
-    }, [editor?.getModel()?.getEndOfLineSequence()])
+            console.log(shadow, active, contentEditable);            
+        }, 8000);
 
+        return () => clearInterval(handle);
+    }, [domRef.current]);
+
+    */
 
     return (
         <>
@@ -97,6 +111,7 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
                     href="https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs/editor/editor.main.css"
                     />
 
+                {/* <div ref={domRef} className="mark-editor-container" style={{position: 'absolute', bottom: 0}}>abcdefg</div> */}
 
                 <Editor
                     width="100%"
@@ -105,7 +120,6 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
                     theme="vs-dark"
                     value={markdown}
                     onChange={e => {
-                        //if(app && reciever) app.createRecieverWrapper().replace();
                         onValueChanged(e ?? '')
                     }}
                     

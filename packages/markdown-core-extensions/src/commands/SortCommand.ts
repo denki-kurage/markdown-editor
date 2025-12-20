@@ -1,6 +1,6 @@
 ﻿import { IFormattableParameter } from "@mde/markdown-core";
-import { TableCellInfo, MarkdownTableRows } from "../MarkdownTableContent";
 import { SortCommandBase } from "./CommandBaseClasses";
+import { MarkdownTableRows, TableCellInfo } from "../tables/MarkdownTableContent";
 
 
 export class SortCommand extends SortCommandBase

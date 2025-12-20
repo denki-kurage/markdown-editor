@@ -4,5 +4,6 @@ export interface ISettingOptions
     adminThemes: {key: string, name: string, url: string}[];
     prismThemes: {key: string, name: string, url: string}[];
     monacoThemes: {key: string, name: string}[];
+    themeUrl: string;
 }
 

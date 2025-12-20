@@ -1,7 +1,7 @@
 ﻿import { CellInfoHelper } from "./TableCellCommandBase";
-import { MarkdownTableRows, TableCellInfo, TableCell } from "../MarkdownTableContent";
 import { InsertCommandBase } from "./CommandBaseClasses";
 import { IFormattableParameter } from "@mde/markdown-core";
+import { MarkdownTableRows, TableCell, TableCellInfo } from "../tables/MarkdownTableContent";
 
 
 

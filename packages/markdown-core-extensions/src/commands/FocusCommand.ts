@@ -1,7 +1,7 @@
-﻿import { TableCellInfo } from "../MarkdownTableContent";
+﻿import { Direction } from "../tables/Direction";
+import { TableCellInfo } from "../tables/MarkdownTableContent";
+import { TablePosition } from "../tables/TablePosition";
 import { FocusCommandBase } from "./CommandBaseClasses";
-import { Direction } from "../Direction";
-import { TablePosition } from "../TablePosition";
 import { IFormattableParameter } from "@mde/markdown-core";
 
 export class FocusCommand extends FocusCommandBase

@@ -1,19 +1,17 @@
 // @ts-ignore
-import { BlockControls, LinkControl } from "@wordpress/block-editor";
-import { Button, Modal, ToolbarButton, ToolbarGroup } from "@wordpress/components";
+import { BlockControls } from "@wordpress/block-editor";
+import { Modal, ToolbarButton, ToolbarGroup } from "@wordpress/components";
 import React, { useMemo, useState } from "react";
-import ImageUploadEditor from "./image-upload-editor";
-import BlogCardGenerator from "./blog-card-generator";
+import ImageUploadEditor from "./ImageUploadEditor";
+import BlogCardGenerator from "./BlogCardGenerator";
 import { __ } from "@wordpress/i18n";
-import { useMarkdownAppContext } from "../context/markdown-app-context";
 import { CommandToolbarGroup } from "./edit-toolbar";
-import { useMarkdownTokenContext } from "../context/markdown-token-context";
 import { useToolbarActiveCommands } from "./inspector-hooks";
 import { useExtensionContexts } from "./hooks";
+import { LinkEditor } from "./LinkEditor";
 
 const AppToolbars = () =>
 {
-    const { markdownCore } = useMarkdownAppContext();
     const contexts = useExtensionContexts();
 
     const [imageOpen, setImageOpen] = useState(false);
@@ -33,11 +31,11 @@ const AppToolbars = () =>
             </BlockControls>
 
             <ToolbarButtonModal title={__('Add Image', 'mdtableeditor')} isOpen={imageOpen} openChanged={setImageOpen}>
-                <ImageUploadEditor mc={markdownCore} onExecuted={() => setImageOpen(false)} />
+                <ImageUploadEditor onExecuted={() => setImageOpen(false)} />
             </ToolbarButtonModal>
 
             <ToolbarButtonModal title={__('Add Blog Card', 'mdtableeditor')} isOpen={cardOpen} openChanged={setCardOpen}>
-                <BlogCardGenerator mc={markdownCore} onExecuted={() => setCardOpen(false)} />
+                <BlogCardGenerator onExecuted={() => setCardOpen(false)} />
             </ToolbarButtonModal>
 
             <ToolbarButtonModal title={__('Add Link', 'mdtableeditor')} isOpen={linkOpen} openChanged={setLinkOpen}>
@@ -54,25 +52,6 @@ const AppToolbars = () =>
     
 }
 
-
-export const LinkEditor = ({ onExecuted }: any) =>
-{
-    const [url, setUrl] = useState('');
-
-    const accept = () =>
-    {
-        console.log(url);
-        onExecuted();
-    }
-
-    return (
-        <>
-            <LinkControl onChange={setUrl} />
-
-            <Button variant="primary" onClick={accept}>決定</Button>
-        </>
-    )
-}
 
 const ToolbarButtonModal = ({children, isOpen, title, openChanged}: any) =>
 {

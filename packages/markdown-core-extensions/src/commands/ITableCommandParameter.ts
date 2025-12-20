@@ -1,5 +1,5 @@
 ﻿import { ICommandParameter } from "@mde/markdown-core";
-import { MarkdownTableContent } from "../MarkdownTableContent";
+import { MarkdownTableContent } from "../tables";
 
 export interface ITableCommandParameter extends ICommandParameter
 {

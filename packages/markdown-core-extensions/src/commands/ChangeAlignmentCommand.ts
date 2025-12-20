@@ -1,8 +1,8 @@
-﻿import { MarkdownAlignments } from "../MarkdownAlignments";
-import { TableAlignmentCell, TableCellInfo } from "../MarkdownTableContent";
-import { ITableCommandParameter } from "./ITableCommandParameter";
+﻿import { ITableCommandParameter } from "./ITableCommandParameter";
 import { ChangeAlignmentCommandBase } from "./CommandBaseClasses";
 import { IFormattableParameter } from "@mde/markdown-core";
+import { TableAlignmentCell, TableCellInfo } from "../tables/MarkdownTableContent";
+import { MarkdownAlignments } from "../tables/MarkdownAlignments";
 
 
 

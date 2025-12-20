@@ -1,25 +1,14 @@
-import { ChangeAlignmentCommand } from "./commands/ChangeAlignmentCommand";
-import { RemoveColumnCommand } from "./commands/RemoveColumnCommand";
-import { InsertColumnCommand } from "./commands/InsertColumnCommand";
-import { InsertRowCommand } from "./commands/InsertRowCommand";
-import { MoveRowCommand } from "./commands/MoveRowCommand";
-import { MoveColumnCommand } from "./commands/MoveColumnCommand";
-import { FillCellsCommand } from "./commands/FillCellsCommand";
-import { FormatCommand } from "./commands/FormatCommand";
-import { RemoveRowCommand } from "./commands/RemoveRowCommand";
-import { FocusCommand } from "./commands/FocusCommand";
-import { DeleteCommentCommand } from "./commands/DeleteCommetCommand";
-import { SortCommand } from "./commands/SortCommand";
-import { TextSortCommand } from "./commands/TextSortCommand";
-import { ScrollCommand } from "./commands/ScrollCommand";
 import { MarkdownAlignments } from "./MarkdownAlignments";
 import { MarkdownTableConverter, MarkdownTableRenderMode } from "./MarkdownTableConverter";
 import { Direction } from "./Direction";
 import { TableCacheManager } from "./TableCacheManager";
 import { IFormatterContext } from "./IFormatterContext";
-import { ColumnSelectCommand, SelectType } from "./commands/ColumnSelectCommand";
 import { MarkdownTableContent } from "./MarkdownTableContent";
 import { IAppContext, ICommand } from "@mde/markdown-core";
+import { ChangeAlignmentCommand, ColumnSelectCommand, DeleteCommentCommand, FillCellsCommand, FocusCommand, InsertColumnCommand, InsertRowCommand, MoveColumnCommand, MoveRowCommand, RemoveColumnCommand, RemoveRowCommand, ScrollCommand, TextSortCommand } from "../commands";
+import { FormatCommand } from "../commands/FormatCommand";
+import { SelectType } from "../commands/ColumnSelectCommand";
+import { SortCommand } from "../commands/SortCommand";
 
 
 export class DefaultCommandFactory

@@ -1,13 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useMarkdownContext } from "../context/markdown-context";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useMarkdownTokenContext } from "../context/markdown-token-context";
 import { parseEditMarkdown } from "./parser";
 import { IToken } from "@mde/markdown-core";
 import { applyFilters, doAction } from "@wordpress/hooks";
 import { Loading } from "./Loading";
 import { useMarkdownEditorContext } from "../context/markdown-editor-context";
-import { useSelect } from "@wordpress/data";
-import { store } from "../store";
 import { useMarkdownAppContext } from "../context/markdown-app-context";
 
 const getDoms = (iframe: HTMLIFrameElement|undefined|null) =>
@@ -41,6 +38,8 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
     const tokenContext = useMarkdownTokenContext();
     const { singleToken } = tokenContext;
     const { adminTheme, prismTheme } = settings;
+    const { themeUrl } = settingOptions;
+
     const frameRef = useRef<HTMLIFrameElement>(null);
 
     const prismMap = useMemo(() => new Map(settingOptions.prismThemes.map(p => [p.key, p.url])), [settingOptions]);
@@ -78,6 +77,9 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
 
             if(prismPath)
             {
+                //const theme = createCssLinkElement(`${themeUrl}/style.css`);
+                //doc.head.appendChild(theme);
+
                 const link = createCssLinkElement(`${prismPath}.css`);
                 doc.head.appendChild(link);
 

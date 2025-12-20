@@ -1,4 +1,4 @@
-import { IAppContext, IConfigureStorage, MarkdownEventCollection } from "@mde/markdown-core";
+import { IAppContext, IConfigurationStorage, MarkdownEventCollection } from "@mde/markdown-core";
 import { AutoFormatterConfiguration } from "./AutoFormatterConfiguration";
 import { DecoratorConfiguration } from "./DecoratorConfiguration";
 
@@ -11,7 +11,7 @@ export class MarkdownConfigurations
 
 	public constructor(
 		events: MarkdownEventCollection,
-		storage: IConfigureStorage,
+		storage: IConfigurationStorage,
 		editorContext: IAppContext) {
 		this.eventCollection = events;
 		this.autoFormatter = new AutoFormatterConfiguration(events, storage);

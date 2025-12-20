@@ -27,26 +27,23 @@ export class MarkdownParser
     {
         const rec = () => (tree: any) =>
         {
-            const nodes = [tree]
-            while(nodes.length)
-            {
-                const top = nodes.shift();
-                if(top.children)
+            visit(tree, (node, index, parent) => {
+                const position = node?.position;
+                const flag = [
+                    parent?.tagName === 'pre' && node?.tagName === 'code'
+                ];
+
+                if(position && !flag.some(f => f))
                 {
-                    nodes.push(...top.children);
+                    node.properties = {
+                        ...node.properties,
+                        "data-offset-start": position?.start?.offset,
+                        "data-offset-end": position?.end?.offset,
+                        "data-line-number": position?.start?.line,
+                        "data-offset": true
+                    };
                 }
-                
-                const position = top?.position;
-
-                top.properties = {
-                    ...top.properties,
-                    "data-offset-start": position?.start?.offset,
-                    "data-offset-end": position?.end?.offset,
-                    "data-line-number": position?.start?.line,
-                    "data-offset": true
-                };
-
-            }
+            });
         }
 
         const addTextElement = () =>tree => {
@@ -75,6 +72,7 @@ export class MarkdownParser
                 }
             })
         }
+
 
         return unified()
             .use(remarkParse)
@@ -164,13 +162,30 @@ const parseTable = (md: string) =>
 
     const rowTexts = (row: any) =>
     {
-        return row.children.map(c => c.children?.[0]?.value ?? '');
+        return row.children.map(c => {
+            const children = c?.children ?? [];
+            if(children.length)
+            {
+                const sp = children[0].position;
+                const ep = children[children.length - 1].position;
+                if(sp)
+                {
+                    const s = sp.start.offset;
+                    const e = (ep ?? sp).end.offset;
+                    return md.slice(s, e).trim();
+                }
+            }
+            return '';
+        });
     }
 
     const table = getTable(p);
 
     if(table)
     {
+        console.log(table);
+
+
         const tableHeader = table.children.shift();
         const tableRows = [...table.children];
         return {
@@ -192,10 +207,6 @@ const alignmentText = (text: string, textLen: number, widthLen: number, alignmen
 {
     const space = widthLen - textLen;
     const r = Math.floor(space / 2);
-    if(space - r < 0)
-        {
-            console.log(text, textLen, widthLen, space, r)
-        }
     const a = [
         [0, space],
         [r, space - r],
