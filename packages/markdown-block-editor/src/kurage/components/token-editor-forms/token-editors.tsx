@@ -1,8 +1,9 @@
 import { Button, SelectControl } from "@wordpress/components"
 import { sortedCodeLanguages } from "../../classes/CodeLanguages"
 import { TokenEditorProps } from "../inspector-hooks"
-import { useState } from "react"
-import { IToken, MarkdownParser } from "@mde/markdown-core"
+import { useState } from "@wordpress/element"
+import { IToken, MarkdownParser } from "@kurage/markdown-core"
+import { __ } from "@wordpress/i18n"
 
 
 const getTable = (token?: IToken) =>
@@ -30,13 +31,16 @@ export const TableTokenEditor = ({ token, contexts }: TokenEditorProps) =>
             const { start, end } = table.getPosition();
             const tableText = appContext.appContext.getEditorModel().getText(undefined).substring(start, end);
             const fmt = MarkdownParser.formatTable(tableText, contexts.appContext.appContext.getStringCounter());
-            onEdits([[fmt, start, end]]);
+            if(fmt)
+            {
+                onEdits([[fmt, start, end]]);
+            }
         }
     }
 
     return (
         <>
-            <Button onClick={formatTable} variant="primary">テーブルをフォーマット</Button>
+            <Button onClick={formatTable} variant="primary">{__('format table', 'markdown-block-editor')}</Button>
         </>
     )
 }
@@ -59,7 +63,7 @@ export const HeadingTokenEditor = ({ token, contexts }: TokenEditorProps) =>
     return (
         <>
             <SelectControl
-                label="Deps"
+                label={__('Heading Level', 'markdown-block-editor')}
                 options={headingItems}
                 value={head}
                 onChange={changed} />

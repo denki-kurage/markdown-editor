@@ -1,6 +1,6 @@
 ﻿import { MarkdownTableContent } from "./MarkdownTableContent";
 import { IFormatterContext } from "./IFormatterContext";
-import { IAppContext } from "@mde/markdown-core";
+import { IAppContext } from "@kurage/markdown-core";
 
 export interface ICommandContext
 {

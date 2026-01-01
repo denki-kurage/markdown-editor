@@ -1,4 +1,4 @@
-=== MdTableEditor with Block Editor ===
+=== Markdown with Block Editor ===
 Contributors: denkikurage
 Tags: markdown table
 Tested up to: 6.8
@@ -19,20 +19,20 @@ You can edit Markdown tables by adding, deleting, moving columns and rows, align
 Please see here for specific operations.
 
 
-This is a port of the VSCode extension "MdTableEditor" to the block editor.
+This is a port of the VSCode extension "Markdown" to the block editor.
 
-[https://marketplace.visualstudio.com/items?itemName=clover.md-table-editor](https://marketplace.visualstudio.com/items?itemName=clover.md-table-editor)
+[https://marketplace.visualstudio.com/items?itemName=clover.markdown-block-editor](https://marketplace.visualstudio.com/items?itemName=clover.markdown-block-editor)
 
 
 
 Please see here for specific operations.
 
-[https://github.com/denki-kurage/md-table-editor-with-block-editor/blob/main/src/kurage/document/readme.md](https://github.com/denki-kurage/md-table-editor-with-block-editor/blob/main/src/kurage/document/readme.md)
+[https://github.com/denki-kurage/markdown-block-editor-with-block-editor/blob/main/src/kurage/document/readme.md](https://github.com/denki-kurage/markdown-block-editor-with-block-editor/blob/main/src/kurage/document/readme.md)
 
 
 for developers.
 
-[https://github.com/denki-kurage/md-table-editor-with-block-editor](https://github.com/denki-kurage/md-table-editor-with-block-editor)
+[https://github.com/denki-kurage/markdown-block-editor-with-block-editor](https://github.com/denki-kurage/markdown-block-editor-with-block-editor)
 
 
 Venders
@@ -45,8 +45,8 @@ vender-licenses.md
 
 1. Go to the admin screen
 2. Open the "Plugins" item and click "Add New Plugin"
-3. Enter "MdTableEditor" in the search box.
-4. Find "MdTableEditor with WordPress Block Editor" and click "Install"
+3. Enter "Markdown" in the search box.
+4. Find "Markdown with WordPress Block Editor" and click "Install"
 
 == Frequently Asked Questions ==
 

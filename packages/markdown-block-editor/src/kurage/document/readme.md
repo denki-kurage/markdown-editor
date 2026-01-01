@@ -1,12 +1,12 @@
-# MdTableEditor with Block Editor
+# Markdown with Block Editor
 
 You can edit tables written in Markdown with the block editor.
 
-Originally created as a VSCode extension, MdTableEditor has been ported to WordPress.
+Originally created as a VSCode extension, Markdown has been ported to WordPress.
 
-Below is the VSCode extension MdTableEditor
+Below is the VSCode extension Markdown
 
-https://marketplace.visualstudio.com/items?itemName=clover.md-table-editor
+https://marketplace.visualstudio.com/items?itemName=clover.markdown-block-editor
 
 
 ## What it can do.
@@ -19,9 +19,9 @@ It allows you to do all the editing of Markdown tables, such as adding, deleting
 
 ## How to use
 
-For basic usage, please see MdTableEditor (some functions may not be available).
+For basic usage, please see Markdown (some functions may not be available).
 
-https://marketplace.visualstudio.com/items?itemName=clover.md-table-editor
+https://marketplace.visualstudio.com/items?itemName=clover.markdown-block-editor
 
 ![](md-add.png)
 
@@ -141,7 +141,7 @@ Therefore, you should design it in SASS as follows.
 * This SCSS may change in the future.
 The latest SCSS can be found on GitHub.
 
-https://github.com/denki-kurage/md-table-editor-with-block-editor/blob/main/markdown.scss
+https://github.com/denki-kurage/markdown-block-editor-with-block-editor/blob/main/markdown.scss
 
 
 This is the style used by default.
@@ -193,7 +193,7 @@ Here is an example.
 
 After converting to CSS, upload it to a suitable location.
 
-https://denki-kurage.github.io/md-table-editor-with-block-editor/sample.css
+https://denki-kurage.github.io/markdown-block-editor-with-block-editor/sample.css
 
 ![](md-css-set.png)
 

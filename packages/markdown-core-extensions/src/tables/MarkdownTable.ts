@@ -7,7 +7,7 @@ import { IFormatterContext } from "./IFormatterContext";
 import { MarkdownTableRenderMode } from "./MarkdownTableConverter";
 import { TableCacheManager } from "./TableCacheManager";
 import { TableObserver } from "./TableObserver";
-import { EventListeners, IAppContext, ICommand, ICommandItem, ICommandsMapRoot, IConfigurationStorage, MarkdownEventCollection } from "@mde/markdown-core";
+import { EventListeners, IAppContext, ICommand, ICommandItem, ICommandsMapRoot, IConfigurationStorage, MarkdownEventCollection } from "@kurage/markdown-core";
 import { MarkdownTableContent } from "./MarkdownTableContent";
 import { createDefaultCommandItem } from "./createDefaultCommandItem";
 import { MarkdownConfigurations } from "../configurations/MarkdownConfigurations";

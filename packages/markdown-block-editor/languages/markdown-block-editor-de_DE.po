@@ -1,0 +1,146 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-12-28T22:31:55+00:00\n"
+"PO-Revision-Date: 2025-12-28T22:31:55+00:00\n"
+"Language: de\n"
+
+
+#: build/index.js
+msgid "You can edit markdown in a VSCode-like editor on the block editor."
+msgstr "Sie können Markdown im Block-Editor mit einem VSCode-ähnlichen Editor bearbeiten."
+
+
+#: build/index.js
+msgid "Control Panel"
+msgstr "Systemsteuerung"
+
+#: build/index.js
+msgid "Settings Panel"
+msgstr "Einstellungsbereich"
+
+#: build/index.js
+msgid "Loading settings information..."
+msgstr "Einstellungsinformationen werden geladen..."
+
+#: build/index.js
+msgid "Text Update"
+msgstr "Textaktualisierung"
+
+#: build/index.js
+msgid "Open Other Settings"
+msgstr "Weitere Einstellungen öffnen"
+
+#: build/index.js
+msgid "Front Theme"
+msgstr "Frontend-Theme"
+
+#: build/index.js
+msgid "Admin Theme"
+msgstr "Admin-Theme"
+
+#: build/index.js
+msgid "Monaco Editor Theme"
+msgstr "Monaco-Editor-Theme"
+
+#: build/index.js
+msgid "Prism Theme"
+msgstr "Prism-Theme"
+
+#: build/index.js
+msgid "This will update the options used globally, but you will need to reload the page for the changes to take effect."
+msgstr "Diese Einstellungen werden global angewendet, aber Sie müssen die Seite neu laden, damit die Änderungen wirksam werden."
+
+#: build/index.js
+msgid "Accept"
+msgstr "Bestätigen"
+
+#: build/index.js
+msgid "Updating settings..."
+msgstr "Einstellungen werden aktualisiert..."
+
+#: build/index.js
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: build/index.js
+msgid "Font Family"
+msgstr "Schriftart"
+
+#: build/index.js
+msgid "Font Size"
+msgstr "Schriftgröße"
+
+#: build/index.js
+msgid "undo"
+msgstr "Rückgängig"
+
+#: build/index.js
+msgid "redo"
+msgstr "Wiederholen"
+
+#: build/index.js
+msgid "find"
+msgstr "Suchen"
+
+#: build/index.js
+msgid "replace"
+msgstr "Ersetzen"
+
+#: build/index.js
+msgid "Restore the editor to normal size."
+msgstr "Editor auf normale Größe zurücksetzen"
+
+#: build/index.js
+msgid "Maximize the editor."
+msgstr "Editor maximieren"
+
+#: build/index.js
+msgid "Add blog card"
+msgstr "Blogkarte hinzufügen"
+
+#: build/index.js
+msgid "Add Image"
+msgstr "Bild hinzufügen"
+
+#: build/index.js
+msgid "Add Blog Card"
+msgstr "Blogkarte hinzufügen"
+
+#: build/index.js
+msgid "Add Link"
+msgstr "Link hinzufügen"
+
+#: build/index.js
+msgid "Create a new table."
+msgstr "Neue Tabelle erstellen"
+
+#: build/index.js
+msgid "Your code here..."
+msgstr "Code hier eingeben..."
+
+#: build/index.js
+msgid "current level"
+msgstr "Aktuelle Ebene"
+
+#: build/index.js
+msgid "lower level"
+msgstr "Niedrigere Ebene"
+
+#: build/index.js
+msgid "Insert Heading level ${index} ${detail}."
+msgstr "Überschrift der Ebene ${index} (${detail}) einfügen"
+
+#: build/index.js
+msgid "format table"
+msgstr "Tabelle formatieren"
+
+#: build/index.js
+msgid "Heading Level"
+msgstr "Überschriftenebene"

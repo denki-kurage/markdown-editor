@@ -1,7 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "@wordpress/element";
 import { useMarkdownContext } from "./markdown-context";
 import { useMarkdownAppContext } from "./markdown-app-context";
-import { IAppContext, IReplaceText, IToken, MarkdownCore, MarkdownParser, Utils } from "@mde/markdown-core";
+import { IReplaceText, IToken, MarkdownCore, MarkdownParser, Utils } from "@kurage/markdown-core";
 import { useMarkdownEditorContext } from "./markdown-editor-context";
 
 

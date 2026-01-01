@@ -4,7 +4,7 @@ import { useDispatch, useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 
 import { store as noticeStore } from "@wordpress/notices";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "@wordpress/element";
 import { store } from "../store";
 import { useMarkdownAppContext } from "../context/markdown-app-context";
 
@@ -18,7 +18,7 @@ export const OthreSettings = ({}) =>
 
     return (
         <>
-            <Button variant="primary" style={{width: '100%'}} onClick={() => setIsOpen(true)}>ほかの設定を開く</Button>
+            <Button variant="primary" style={{width: '100%'}} onClick={() => setIsOpen(true)}>{__('Open Other Settings', 'markdown-block-editor')}</Button>
             { isOpen && <Modal onRequestClose={e => setIsOpen(false)}><OtherSettingsDialog /></Modal>}
         </>
     )
@@ -49,34 +49,34 @@ const OtherSettingsDialog = ({}) =>
             <p>{recentCodeLanguages.join(', ')}</p>
 
             <SelectControl
-                label={__('Front Theme', 'mdtableeditor')}
+                label={__('Front Theme', 'markdown-block-editor')}
                 options={frontThemeOptions}
                 value={frontTheme}
                 onChange={value => updateSettings({ frontTheme: value })}
             />
 
             <SelectControl
-                label={__('Admin Theme', 'mdtableeditor')}
+                label={__('Admin Theme', 'markdown-block-editor')}
                 options={adminThemeOptions}
                 value={adminTheme}
                 onChange={value => updateSettings({ adminTheme: value })}
             />
 
             <SelectControl
-                label={__('Monaco Editor Theme', 'mdtableeditor')}
+                label={__('Monaco Editor Theme', 'markdown-block-editor')}
                 options={monacoThemeOptions}
                 value={monacoTheme}
                 onChange={value => updateSettings({ monacoTheme: value })}
             />
 
             <SelectControl
-                label={__('Prism Theme', 'mdtableeditor')}
+                label={__('Prism Theme', 'markdown-block-editor')}
                 options={prismThemeOptions}
                 value={prismTheme}
                 onChange={value => updateSettings({ prismTheme: value })}
             />
 
-            <p>{ __('This will update the options used globally, but you will need to reload the page for the changes to take effect.', 'mdtableeditor') }</p>
+            <p>{ __('This will update the options used globally, but you will need to reload the page for the changes to take effect.', 'markdown-block-editor') }</p>
 
         </div>
     )

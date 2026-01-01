@@ -3,11 +3,11 @@
  *
  * Replace them with your own styles or remove the file completely.
  */
-.wp-block-kurage-worker-md-table-editor {
+.wp-block-kurage-worker-markdown-block-editor {
   border: 1px solid #3773f9;
 }
 
-.wp-block-kurage-worker-md-table-editor-label {
+.wp-block-kurage-worker-markdown-block-editor-label {
   padding: 0.1em;
   background-color: #3371ff;
   color: white;

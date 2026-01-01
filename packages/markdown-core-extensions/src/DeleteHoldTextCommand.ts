@@ -1,4 +1,5 @@
-import { IAppContext, MarkdownCommandBase, MarkdownParser } from "@mde/markdown-core";
+//import { IAppContext, MarkdownCommandBase, MarkdownParser } from "@kurage/markdown-core";
+import { IAppContext, MarkdownCommandBase, MarkdownParser } from "@kurage/markdown-core";
 import { createFilter, flatItem } from "./token-utils";
 
 export enum DelDecorations
@@ -29,7 +30,7 @@ export class DeleteHoldTextCommand extends MarkdownCommandBase<any>
             (this.decorations & DelDecorations.Strike) ? 'delete' : undefined,
             (this.decorations & DelDecorations.Under) ? 'html' : undefined,
             (this.decorations & DelDecorations.InlineCode) ? 'inlineCode' : undefined,
-        ].filter((v) => !!v);
+        ].filter((v) => !!v) as string[];
 
         const filter = createFilter({
             tokenTypes,
@@ -42,7 +43,7 @@ export class DeleteHoldTextCommand extends MarkdownCommandBase<any>
     }
 
 
-    public execute(parameter)
+    public execute(parameter: any)
     {
         const model = this.appContext.getEditorModel();
         const tokens = this.getTargetTokens();
@@ -78,7 +79,8 @@ export class DeleteHoldTextCommand extends MarkdownCommandBase<any>
         }
     }
 
-    canExecute(parameter) {
+    canExecute(parameter?: any): boolean
+    {
         return true;
     }
 }

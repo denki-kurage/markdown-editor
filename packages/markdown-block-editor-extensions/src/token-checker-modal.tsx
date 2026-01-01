@@ -1,8 +1,8 @@
 import { Button, CheckboxControl, Modal } from "@wordpress/components";
-import { flatItem, flatLeafTokenSet, TokenSet } from '@mde/markdown-core-extensions';
+import { flatItem, flatLeafTokenSet, TokenSet } from '@kurage/markdown-core-extensions';
 
-import { useEffect, useMemo, useState } from "react";
-import { IToken } from "@mde/markdown-core";
+import { useEffect, useMemo, useState } from "@wordpress/element";
+import { IToken } from "@kurage/markdown-core";
 
 type TokenCheckerModalProps =
 {

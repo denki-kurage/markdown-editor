@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "@wordpress/element";
 import { AppContextGenerateParams, useMarkdownAppContext } from "../context/markdown-app-context";
 import { MonacoEditor } from "./MonacoEditor";
 

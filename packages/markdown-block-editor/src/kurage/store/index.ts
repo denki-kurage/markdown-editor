@@ -17,10 +17,8 @@ export const storeConfig =
 
 export const store = createReduxStore(
     'kurage/markdown-block-editor',
-    {
-        ...storeConfig
-    }
+    storeConfig
 )
 
-const registeredStore = register(store);
+export const registeredStore = register(store);
 

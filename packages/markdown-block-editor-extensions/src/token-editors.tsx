@@ -1,7 +1,10 @@
-import { CheckBoxEditCommand, CheckBoxState } from '@mde/markdown-core-extensions';
+import { CheckBoxEditCommand, CheckBoxState } from '@kurage/markdown-core-extensions';
 import { ToggleControl } from '@wordpress/components';
-import { useState } from 'react';
-import { TokenEditorProps } from '../../markdown-block-editor/src/kurage/components/inspector-hooks';
+import { useState } from "@wordpress/element";
+import { __ } from '@wordpress/i18n';
+
+import type { TokenEditorProps } from "@kurage/markdown-block-editor";
+
 
 export const ListItemEditor = ({ token, contexts }: TokenEditorProps) =>
 {
@@ -19,7 +22,7 @@ export const ListItemEditor = ({ token, contexts }: TokenEditorProps) =>
         <div>
             { hasCheckBox && <ToggleControl
                 checked={isChecked}
-                label="チェックボックス"
+                label={__('Checked', 'markdown-block-editor')}
                 onChange={checked => {
                     setIsChecked(checked);
                     const newText = command.toggleCheckBox(text);

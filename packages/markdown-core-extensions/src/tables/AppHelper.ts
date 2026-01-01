@@ -2,7 +2,7 @@
 import { MarkdownTableContent } from "./MarkdownTableContent";
 import { MarkdownTableConverter, MarkdownTableFormatter, MarkdownTableRenderMode } from "./MarkdownTableConverter";
 import { IFormatterContext } from "./IFormatterContext";
-import { IAppContext, IDocumentPosition, MarkdownRange, TextReader } from "@mde/markdown-core";
+import { IAppContext, IDocumentPosition, MarkdownRange, TextReader } from "@kurage/markdown-core";
 
 
 

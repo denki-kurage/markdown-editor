@@ -15,8 +15,8 @@ export abstract class MarkdownCommandBase<T> implements ICommand
         return new TextReplacer(this.appContext);
     }
     
-    public abstract execute(parameter?: T);
+    public abstract execute(parameter?: T): void;
     public abstract canExecute(parameter?: T): boolean;
-    canExecuteChanged: (() => void)[];
+    public readonly canExecuteChanged: (() => void)[] = [];
 }
 

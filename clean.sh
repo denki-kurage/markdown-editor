@@ -1,0 +1,2 @@
+rm -rf packages/markdown-{core,core-extensions,block-editor,block-editor-extensions}/src/{,**,**/**,**/**/**}/*.{jsx,js,d.ts.map}
+rm -rf packages/markdown-{core,core-extensions,block-editor,block-editor-extensions}/*.tsbuildinfo

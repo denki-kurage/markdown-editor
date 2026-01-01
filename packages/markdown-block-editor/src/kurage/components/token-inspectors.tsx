@@ -2,7 +2,7 @@ import { PanelBody } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useExtensionComponents, useTokenEditorComponents } from "./inspector-hooks";
 import { InspectorControls } from "@wordpress/block-editor";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef } from "@wordpress/element";
 import { LoadingPanel } from './Loading'
 import { useExtensionContexts } from "./hooks";
 

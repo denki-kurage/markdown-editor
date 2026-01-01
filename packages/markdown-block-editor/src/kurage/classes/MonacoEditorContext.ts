@@ -1,8 +1,10 @@
 import { Monaco } from "@monaco-editor/react";
 import { editor, IRange, ISelection as IMonacoSelection, languages, Position, Selection } from 'monaco-editor';
-import { IAppContext, IDisposable, IDocumentPosition, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, ISelection as IMdeSelection, IStringCounter, ITextSource, IConfigurationStorage, ConfigurationHelper, IEditControl } from "@mde/markdown-core"
+import { IAppContext, IDisposable, IDocumentPosition, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, ISelection as IMdeSelection, IStringCounter, ITextSource, IConfigurationStorage, ConfigurationHelper, IEditControl } from "@kurage/markdown-core"
 import { MonacoDecorator } from "./MonacoDecorator";
 import { codeLanguages, sortedCodeLanguages } from "./CodeLanguages";
+import { __ } from "@wordpress/i18n";
+import { eastAsianWidth } from "eastasianwidth";
 
 
 class Utils
@@ -88,7 +90,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                 'markdown',
                 {
                     triggerCharacters: ['x'],
-                    provideCompletionItems: (model, pos, content, token) =>
+                    provideCompletionItems: (model: any, pos: any, content: any, token: any) =>
                     {
                         if(pos.column === 3)
                         {
@@ -118,7 +120,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                                     return <languages.CompletionItem>{
                                         label: `${nbr}x${len}`,
                                         kind: this.monaco.languages.CompletionItemKind.Snippet,
-                                        detail: `Create a new table.`,
+                                        detail: __('Create a new table.', 'markdown-block-editor') as string,
                                         documentation: doc,
                                         insertText: table
                                     };
@@ -137,7 +139,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                 'markdown',
                 {
                     triggerCharacters: ['`', '~'],
-                    provideCompletionItems: (model, pos, context, token) =>
+                    provideCompletionItems: (model: any, pos: any, context: any, token: any) =>
                     {
                         const line: string = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
 
@@ -155,11 +157,11 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                                     sortText: index.toString().padStart(3, '0'),
                                     label: { label: lang.name, detail: ` (${lang.label})`},
                                     kind: this.monaco.languages.CompletionItemKind.Snippet,
-                                    detail: `Insert code block for ${lang.label}.`,
+                                    detail: __(`Insert code block for ${lang.label}.`, 'markdown-block-editor') as string,
                                     insertText: `${lang.name}${breaks}`,
                                     insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                                     command: { id: 'markdown.code.changed', arguments: [lang.name] },
-                                    documentation: `${triple}${lang.name}\nYour code here...\n${triple}`,
+                                    documentation: `${triple}${lang.name}\n${__('Your code here...', 'markdown-block-editor')}\n${triple}`,
                                 };
                             });
 
@@ -172,7 +174,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
             this.monaco.editor.addEditorAction({
                 id: 'markdown.code.changed',
                 label: 'RECENT CODE',
-                run: (editor, ...args) =>
+                run: (editor: any, ...args: any[]) =>
                 {
                     this.configurationHelper.updateRecentCodeLanguage(args[0]);
                 }
@@ -182,7 +184,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                 'markdown',
                 {
                     triggerCharacters: ['#'],
-                    provideCompletionItems: (model, pos, content, token) =>
+                    provideCompletionItems: (model: any, pos: any, content: any, token: any) =>
                     {
                         const text = "\n" + model.getLinesContent().slice(0, Math.max(0, pos.lineNumber - 1)).join("\n");
                         const line = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
@@ -197,12 +199,12 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                                 const Heading = '#'.repeat(index - 1);
                                 const isCurrent = index === currentDeps;
                                 const isLower = index - 1 === currentDeps;
-                                const detail = isCurrent ? ' (current level)' : isLower ? ' (lower level)' : '';
+                                const detail = isCurrent ? __('current level', 'markdown-block-editor') : isLower ? __('lower level', 'markdown-block-editor') : '';
                                 return <languages.CompletionItem>{
                                     preselect: isLower,
-                                    label: `#${Heading} ${index} ${detail}`,
+                                    label: `#${Heading} ${index} ${detail ? `- ${detail}` : ''}`,
                                     kind: this.monaco.languages.CompletionItemKind.Snippet,
-                                    detail: `Insert Heading level ${index} ${detail}.`,
+                                    detail: __('Insert Heading level ${index} ${detail}.', 'markdown-block-editor') as string,
                                     insertText: `${Heading}`,
                                 };
                             });
@@ -217,9 +219,9 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                 'markdown',
                 {
 
-                    provideSelectionRanges: (model, positions) =>
+                    provideSelectionRanges: (model: any, positions: any) =>
                     {
-                        const ranges = positions.map(pos =>
+                        const ranges = positions.map((pos: any) =>
                         {
                             const charIndex = pos.column - 1;
                             const docIndex = pos.lineNumber - 1;
@@ -296,19 +298,9 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
 
     public getStringCounter(): IStringCounter
     {
-        return str => {
-            let len = 0;
-            let strSrc = escape(str);
-            for(let i = 0; i < strSrc.length; i++, len++){
-                if(strSrc.charAt(i) === "%"){
-                    if(strSrc.charAt(++i) === "u"){
-                        i += 3;
-                        len++;
-                    }
-                    i++;
-                }
-            }
-            return len;
+        return (str: string) => {
+            const m = eastAsianWidth(str);
+            return 'FW'.includes(m) ? 2 : 1;
         }
     }
 
@@ -447,17 +439,14 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
             {
                 return this.model.getOffsetAt(new Position(position.docIndex + 1, position.charIndex + 1));
             },
-            indexToPosition: (docIndex: number): IDocumentPosition | undefined =>
+            indexToPosition: (docIndex: number): IDocumentPosition =>
             {
                 const pos = this.model.getPositionAt(docIndex);
-                if(pos)
-                {
-                    return {
-                        docIndex: pos.lineNumber - 1,
-                        charIndex: pos.column - 1
-                    }
+
+                return {
+                    docIndex: pos.lineNumber - 1,
+                    charIndex: pos.column - 1
                 }
-                return undefined;
             },
             scroll: (docIndex: number) =>
             {

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "target": "ESNext",
+    "composite": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "rootDir": "${configDir}/src",
+  }
+}

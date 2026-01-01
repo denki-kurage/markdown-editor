@@ -1,12 +1,13 @@
-import { IAppContext, IConfigurationStorage, IEditorModel, IEventsInitializer, IMarkdownEvents, MarkdownCore } from "@mde/markdown-core"
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
-import { MarkdownEventCollection } from "@mde/markdown-core";
+import { IAppContext, IConfigurationStorage, IEditorModel, IEventsInitializer, IMarkdownEvents, MarkdownCore } from "@kurage/markdown-core"
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from "@wordpress/element";
+import { MarkdownEventCollection } from "@kurage/markdown-core";
 import { applyFilters } from '@wordpress/hooks'
 import { useDispatch, useSelect } from "@wordpress/data";
 import { store } from "../store";
 import { ISettings } from "../store/ISettings";
 import { ISettingOptions } from "../store/ISettingOptions";
 import { Spinner } from "@wordpress/components";
+import { __ } from "@wordpress/i18n";
 
 export type AppContextGenerateParams =
 {
@@ -166,7 +167,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
             <AppContextProvider value={ctx}>
                 { children }
             </AppContextProvider>
-        ) : <div><Spinner />設定情報を読み込み中...</div> }
+        ) : <div><Spinner />{__('Loading settings information...', 'markdown-block-editor')}</div> }
         </>
     )
 }

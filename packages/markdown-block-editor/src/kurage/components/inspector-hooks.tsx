@@ -1,9 +1,10 @@
 import { Button, TextareaControl } from "@wordpress/components";
-import { useCallback, useMemo, useState } from "react";
-import { ICommandItem, IToken, MarkdownCore } from "@mde/markdown-core";
+import { useCallback, useMemo, useState } from "@wordpress/element";
+import { ICommandItem, IToken, MarkdownCore } from "@kurage/markdown-core";
 import { applyFilters } from "@wordpress/hooks";
 import { ExtensionContexts } from "./hooks";
 import { CodeEditor, HeadingTokenEditor, TableTokenEditor } from "./token-editor-forms/token-editors";
+import { __ } from "@wordpress/i18n";
 
 
 
@@ -113,7 +114,7 @@ export const TextTokenEditor = ({ token, contexts }: TokenEditorProps) =>
                 onChange={setValue}
                 rows={2}
             />
-            <Button value={value} onClick={edit} variant="primary">Text Update</Button>
+            <Button value={value} onClick={edit} variant="primary">{__('Text Update', 'markdown-block-editor')}</Button>
         </div>
     )
 };

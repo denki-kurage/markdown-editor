@@ -1,6 +1,6 @@
-﻿import { EventUpdateManager, IMarkdownEvents } from "@mde/markdown-core";
+﻿import { EventUpdateManager, IMarkdownEvents } from "@kurage/markdown-core";
 import { TableCacheManager } from "./TableCacheManager";
-import { ISelectChanged, ITextChanged } from "@mde/markdown-core/dist/ITextEventReciever";
+import { ISelectChanged, ITextChanged } from "@kurage/markdown-core/dist/ITextEventReciever";
 
 
 

@@ -1,15 +1,18 @@
 {
-	"name": "@markdown-block-editor/block-editor",
+	"name": "@kurage/markdown-block-editor",
 	"version": "0.1.0",
 	"description": "Example block scaffolded with Create Block tool.",
 	"author": "The WordPress Contributors",
 	"license": "GPL-2.0-or-later",
 	"main": "build/kurage/index.js",
+	"types": "dist/kurage/index.d.ts",
 	"scripts": {
 		"build": "wp-scripts build",
 		"dev": "wp-scripts build --mode development",
 		"typing": "tsc -p tsconfig-types.json",
 		"now": "npx wp-now start",
+		"now2": "pnpm dlx @wp-now/wp-now start",
+		"build:types": "rm tsconfig.tsbuildinfo && tsc --emitDeclarationOnly --declaration --outDir build/",
 		"all": "../build.sh",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
@@ -19,24 +22,36 @@
 		"start": "wp-scripts start"
 	},
 	"dependencies": {
-		"@mde/markdown-core": "file:../markdown-core",
+		"@kurage/markdown-core": "workspace:^",
+		"@kurage/markdown-core-extensions": "workspace:^",
 		"@monaco-editor/react": "^4.7.0",
 		"@wordpress/api-fetch": "^7.21.0",
 		"@wordpress/block-editor": "^14.14.0",
+		"@wordpress/blocks": "^15.10.0",
 		"@wordpress/components": "^29.5.0",
 		"@wordpress/compose": "^7.34.0",
 		"@wordpress/data": "^10.21.0",
 		"@wordpress/editor": "^14.21.0",
+		"@wordpress/element": "^6.37.0",
 		"@wordpress/hooks": "^4.32.0",
+		"@wordpress/i18n": "^6.10.0",
 		"@wordpress/notices": "^5.21.0",
-		"react-shadow": "^20.6.0"
+		"eastasianwidth": "^0.3.0",
+		"monaco-editor": "^0.55.1",
+		"po2json": "^0.4.5",
+		"react-shadow": "^20.6.0",
+		"redux": "^5.0.1"
 	},
 	"devDependencies": {
+		"@svgr/webpack": "^8.1.0",
 		"@types/react": "^18.3.18",
 		"@types/wordpress__block-editor": "^11.5.16",
+		"@types/wordpress__blocks": "^12.5.18",
 		"@types/wordpress__i18n": "^3.11.0",
 		"@wordpress/scripts": "^30.11.0",
+		"@wp-blocks/make-pot": "^1.6.3",
 		"raw-loader": "^4.0.2",
-		"ts-loader": "^9.5.4"
+		"ts-loader": "^9.5.4",
+		"url-loader": "^4.1.1"
 	}
 }

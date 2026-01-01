@@ -1,8 +1,7 @@
-import { IAppContext, ICommandItem, IConfigurationStorage, IEventsInitializer, IMarkdownEvents, MarkdownCore, MarkdownEventCollection } from "@mde/markdown-core";
+import { IAppContext, ICommandItem, IConfigurationStorage, MarkdownCore, MarkdownEventCollection } from "@kurage/markdown-core";
 import { MarkdownTable } from "./tables/MarkdownTable";
 import { MarkdownTableContent } from "./tables";
-import { createExtensionMarkdownCommandItem } from "./commands/createCommands";
-
+import { createExtensionMarkdownCommandItem } from "./createCommands";
 
 export class ExMarkdownCore extends MarkdownCore
 {
@@ -49,9 +48,9 @@ export class ExMarkdownCore extends MarkdownCore
         table.currentTableChanged.addListener(currentTable => this.onCurrentTableChanged(currentTable));
     }
 
-    private onCurrentTableChanged(currentTable: MarkdownTableContent): void
+    private onCurrentTableChanged(currentTable?: MarkdownTableContent): void
     {
-        this._currentTableContent = currentTable;
+        this._currentTableContent = currentTable ?? null;
     }
 
     public override dispose(): void

@@ -4,26 +4,28 @@ import { CodeHoldTextCommand, HoldTextCommand } from './HoldTextCommand';
 import { SelectCommand } from './SelectCommand';
 
 
-import boldLight from '../../icons/light/bold.svg';
-import boldDark from '../../icons/dark/bold.svg';
+import boldLight from '../icons/light/bold.svg';
+import boldDark from '../icons/dark/bold.svg';
 
-import italicLight from '../../icons/light/italic.svg';
-import italicDark from '../../icons/dark/italic.svg';
+import italicLight from '../icons/light/italic.svg';
+import italicDark from '../icons/dark/italic.svg';
 
-import strikeLight from '../../icons/light/strike.svg';
-import strikeDark from '../../icons/dark/strike.svg';
+import strikeLight from '../icons/light/strike.svg';
+import strikeDark from '../icons/dark/strike.svg';
 
-import underLight from '../../icons/light/under.svg';
-import underDark from '../../icons/dark/under.svg';
+import underLight from '../icons/light/under.svg';
+import underDark from '../icons/dark/under.svg';
 
-import codeLight from '../../icons/light/code.svg';
-import codeDark from '../../icons/dark/code.svg';
+import codeLight from '../icons/light/code.svg';
+import codeDark from '../icons/dark/code.svg';
 
-import inlineCodeLight from '../../icons/light/inline-code.svg';
-import inlineCodeDark from '../../icons/dark/inline-code.svg';
+import inlineCodeLight from '../icons/light/inline-code.svg';
+import inlineCodeDark from '../icons/dark/inline-code.svg';
 
-import linkLight from '../../icons/light/link.svg';
-import linkDark from '../../icons/dark/link.svg';
+import linkLight from '../icons/light/link.svg';
+import linkDark from '../icons/dark/link.svg';
+
+
 import { AddImageCommand } from './AddImageCommand';
 import { AddLinkCommand } from './AddLinkCommand';
 import { AddBlogCardCommand } from './AddBlogCardCommand';
@@ -69,7 +71,7 @@ export function createDefaultMarkdownCommandItem(appContext: IAppContext, mode: 
             { name: 'markdown:add-image', label: 'Image', icon: undefined, command: new AddImageCommand(appContext) },
             { name: 'markdown:add-blog-card', label: 'Blog Card', icon: undefined, command: new AddBlogCardCommand(appContext) },
             { name: 'markdown:add-link', label: 'Link', icon: undefined, command: new AddLinkCommand(appContext) },
-            { name: 'markdown:select', label: undefined, icon: undefined, command: new SelectCommand(appContext) },
+            { name: 'markdown:select', label: 'Select', icon: undefined, command: new SelectCommand(appContext) },
         ]
     }
 }

@@ -13,7 +13,7 @@ export class CommandCollection
         
         while(items.length)
         {
-            const current = items.pop();
+            const current = items.pop()!;
 
             if(current.name === name)
             {
@@ -25,7 +25,7 @@ export class CommandCollection
     }
     public getCommand3(name: string): ICommandItem | undefined
     {
-        return this.getAllCommands().find(c => c.name === name);
+        return [...this.getAllCommands()].find(c => c.name === name);
     }
 
     public *getAllCommands()
@@ -34,7 +34,7 @@ export class CommandCollection
         
         while(items.length)
         {
-            const current = items.pop();
+            const current = items.pop()!;
             yield current;
             items.push(...(current.children ?? []))
         }
@@ -43,6 +43,6 @@ export class CommandCollection
     public execute(name: string, parameter?: any): void
     {
         const item = this.getCommand(name);
-        item.command.execute(parameter);
+        item?.command?.execute(parameter);
     }
 }

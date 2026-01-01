@@ -1,20 +1,18 @@
-import { Editor, Monaco,  } from '@monaco-editor/react';
-import { editor, editor as ieditor } from 'monaco-editor';
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Editor, Monaco, } from '@monaco-editor/react';
+import { editor as monacoEditor } from 'monaco-editor';
+import { useEffect, useMemo, useRef, useState } from "@wordpress/element";
 import root from 'react-shadow';
-// @ts-ignore
-import css2 from './table.dscss';
 import { useMarkdownContext } from "../context/markdown-context";
 import { AppContextGenerateParams, useMarkdownAppContext } from '../context/markdown-app-context';
 import { MarkdownEditorProps } from './editor-wrapper';
 import { MonacoEditorContext } from '../classes/MonacoEditorContext';
 import { useSelect } from '@wordpress/data';
 import { store } from '../store';
-import { IConfigurationStorage } from '@mde/markdown-core';
+import { IConfigurationStorage } from '@kurage/markdown-core';
 
 export const useMarkdownApp = (
         configurationStorage: IConfigurationStorage,
-        editor?: editor.IStandaloneCodeEditor,
+        editor?: monacoEditor.IStandaloneCodeEditor,
         monaco?: Monaco
     ) =>
 {
@@ -39,7 +37,7 @@ export const useMarkdownApp = (
 export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =>
 {
     const [monaco, setMonaco] = useState<Monaco|undefined>();
-    const [editor, setEditor] = useState<ieditor.IStandaloneCodeEditor|undefined>();
+    const [editor, setEditor] = useState<monacoEditor.IStandaloneCodeEditor|undefined>();
     const { configurationStorage } = useMarkdownAppContext();
     const { markdown, onMarkdownChanged: onValueChanged } = useMarkdownContext();
     const settings = useSelect(select => select(store).getSettings(), []);
@@ -50,7 +48,7 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
     useEffect(() => initializedMarkdownCore(params), [params])
 
     
-    const family = editor?.getOption(ieditor.EditorOption.fontFamily);
+    const family = editor?.getOption(monacoEditor.EditorOption.fontFamily);
 
     /*
     AABBCCDDEE
@@ -101,8 +99,6 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
         <>
         
             <root.div className="monaco-shadow-dom">
-
-                <style>{css2}</style>
 
                 <link
                     rel="stylesheet"

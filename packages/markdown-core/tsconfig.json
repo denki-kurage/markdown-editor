@@ -1,4 +1,6 @@
 {
+  "extends": "../../tsconfig.base.json",
+
   "compilerOptions": {
     "module": "ESNext",
     "target": "ESNext",
@@ -8,11 +10,10 @@
     "outDir": "./dist",
     "esModuleInterop": false,
     "moduleResolution": "node",
-    "declaration": true,
-    "declarationMap": true
   },
   "exclude": [
     "node_modules","node_modules"
   ],
-  "include": ["./src/**/*.ts"]
+  "include": ["./src/**/*.ts"],
+
 }

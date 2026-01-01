@@ -27,17 +27,17 @@ export const ControlPanel = ({}) =>
 
         
             <div className="markdown-block-editor-button-group markdown-block-editor-margin-vertical" >
-                <Button variant="primary" onClick={undo}>戻る</Button>
-                <Button variant="primary" onClick={redo}>進む</Button>
+                <Button variant="primary" onClick={undo}>{__('undo', 'markdown-block-editor')}</Button>
+                <Button variant="primary" onClick={redo}>{__('redo', 'markdown-block-editor')}</Button>
             </div>
 
             <div className="markdown-block-editor-button-group markdown-block-editor-margin-vertical" >
-                <Button variant="primary" className="markdown-block-editor-button-vertical" onClick={openFindDialog}>検索</Button>
-                <Button variant="primary" className="markdown-block-editor-button-vertical" onClick={openReplaceDialog}>置換</Button>
+                <Button variant="primary" className="markdown-block-editor-button-vertical" onClick={openFindDialog}>{__('find', 'markdown-block-editor')}</Button>
+                <Button variant="primary" className="markdown-block-editor-button-vertical" onClick={openReplaceDialog}>{__('replace', 'markdown-block-editor')}</Button>
             </div>
 
             <Button variant="primary" className="markdown-block-editor-button-vertical markdown-block-editor-margin-vertical" onClick={() => setEditorState({ maximized: !editorState.maximized})}>
-                { editorState.maximized ? 'エディタを普通サイズに戻す' : 'エディタ最大化' }
+                { editorState.maximized ? __('Restore the editor to normal size.', 'markdown-block-editor') : __('Maximize the editor.', 'markdown-block-editor') }
             </Button>
 
 

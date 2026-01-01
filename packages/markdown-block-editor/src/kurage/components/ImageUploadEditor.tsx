@@ -1,8 +1,8 @@
-import { MarkdownCore } from '@mde/markdown-core';
+import { MarkdownCore } from '@kurage/markdown-core';
 import { MediaPlaceholder } from '@wordpress/block-editor';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import React, { useState } from 'react';
+import { useState } from "@wordpress/element";
 import { useMarkdownAppContext } from '../context/markdown-app-context';
 
 

@@ -1,6 +1,6 @@
 import { compose, createHigherOrderComponent } from "@wordpress/compose";
 import { createRegistry, RegistryProvider, useRegistry } from "@wordpress/data";
-import { useState } from "react";
+import { useState } from "@wordpress/element";
 import { store, storeConfig } from "../store";
 
 

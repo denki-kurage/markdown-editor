@@ -2,8 +2,8 @@
 import { TableCacheManager } from "./TableCacheManager";
 import { AppHelper } from "./AppHelper";
 import { IFormatterContext } from "./IFormatterContext";
-import { EventUpdateManager, IAppContext, IDocumentPosition, IMarkdownEvents } from "@mde/markdown-core";
-import { ISelectChanged, ITextChanged } from "@mde/markdown-core/dist/ITextEventReciever";
+import { EventUpdateManager, IAppContext, IDocumentPosition, IMarkdownEvents } from "@kurage/markdown-core";
+import { ISelectChanged, ITextChanged } from "@kurage/markdown-core/dist/ITextEventReciever";
 
 /**
  * 現在キャッシュされているテーブルを文字列化したものと、

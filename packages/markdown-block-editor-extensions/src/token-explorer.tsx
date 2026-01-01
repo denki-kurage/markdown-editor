@@ -1,11 +1,12 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "@wordpress/element";
 import { Button, CheckboxControl, Modal, SelectControl, ToggleControl } from "@wordpress/components";
 
-import { IToken, Utils } from "@mde/markdown-core";
-import { createFilter, filterTokenTreeFromBottom, flatItem, flatLeafTokenSet, getAncestorsByToken, TokenSet, TokenTypes } from "@mde/markdown-core-extensions";
+import { IToken, Utils } from "@kurage/markdown-core";
+import { createFilter, filterTokenTreeFromBottom, flatItem, flatLeafTokenSet, getAncestorsByToken, TokenSet, TokenTypes } from "@kurage/markdown-core-extensions";
 import './token-viewer.scss';
 import { TokenCheckerModal } from "./token-checker-modal";
-import { ExtensionContexts } from "../../markdown-block-editor/src/kurage/components/hooks";
+import { __ } from "@wordpress/i18n";
+import { ExtensionContexts } from "@kurage/markdown-block-editor";
 
 
 
@@ -51,7 +52,7 @@ const TokenFilter = ({ tokenTypes, tokenTypesChanged }: any) =>
         <>
             <SelectControl
                 multiple
-                label="Token Types"
+                label={__('Token Types', 'markdown-block-editor')}
                 style={{height: '10em'}}
                 options={TokenTypeOptions}
                 value={tokenTypes}
@@ -61,7 +62,7 @@ const TokenFilter = ({ tokenTypes, tokenTypesChanged }: any) =>
             <CheckboxControl
                 checked={enabledSelectionsFilter}
                 onChange={updateState}
-                label="選択フィルターを有効にする"
+                label={__('Enable Selection Filter', 'markdown-block-editor')}
                 />
             
             { enabledSelectionsFilter && (
@@ -69,12 +70,12 @@ const TokenFilter = ({ tokenTypes, tokenTypesChanged }: any) =>
                     <ToggleControl
                         checked={enabledSelectionsFilterFillMode}
                         onChange={fillMode}
-                        help="選択範囲に完全に含まれるトークンのみを対象とするかどうかを切り替えます。"
-                        label={(enabledSelectionsFilterFillMode ? "全部" : "部分") + "選択"} />
+                        help={__('Toggles whether to consider only tokens that are completely contained in the selection.', 'markdown-block-editor')}
+                        label={(enabledSelectionsFilterFillMode ? __('All', 'markdown-block-editor') : __('Parts', 'markdown-block-editor')) + ' ' + __('Selection', 'markdown-block-editor')} />
                 </>
             )}
         </>
-    )
+    ) //選択範囲に完全に含まれるトークンのみを対象とするかどうかを切り替えます。
 }
 
 const TokenChecker = () =>
@@ -128,7 +129,7 @@ const TokenChecker = () =>
                 <Button
                     className="markdown-block-editor-button-vertical"
                     variant="primary"
-                    text="範囲を選択する"
+                    text={__('Selections', 'markdown-block-editor')}
                     onClick={selectTokens}
                     />
             </div>
@@ -138,7 +139,7 @@ const TokenChecker = () =>
                     disabled={!isActive}
                     className="markdown-block-editor-button-vertical"
                     variant="primary"
-                    text="よりトークンを絞る"
+                    text={__('Open Token Checker', 'markdown-block-editor')}
                     onClick={openChecker} />
 
 
@@ -160,7 +161,7 @@ const TokenChecker = () =>
 
 
 
-export const TokenExplorer = React.memo(({ contexts }: { contexts: ExtensionContexts }) =>
+export const TokenExplorer = memo(({ contexts }: { contexts: ExtensionContexts }) =>
 {
     const { tokenContext, editorContext } = contexts;
     const { rootToken, singleToken, selections } = tokenContext;
@@ -202,7 +203,7 @@ export const TokenExplorer = React.memo(({ contexts }: { contexts: ExtensionCont
 
         </Context.Provider>
     );
-});
+}) as any;
 export default TokenExplorer;
 
 const TokenDeps = ({ depsTokenSets }: { depsTokenSets: TokenSet[] }) =>
@@ -211,14 +212,14 @@ const TokenDeps = ({ depsTokenSets }: { depsTokenSets: TokenSet[] }) =>
 
     return (
         <div className="token-tree-view navigation-bar">
-            <div className="navigation-bar-label">ナビゲーション</div>
+            <div className="navigation-bar-label">{__('Navigation', 'markdown-block-editor')}</div>
             { tokenList }
         </div>
     )
 }
 
 
-const TokenTree = React.memo(({ token, depsTokenSets }: { token: TokenSet|null, depsTokenSets: TokenSet[] }) =>
+const TokenTree = memo(({ token, depsTokenSets }: { token: TokenSet|null, depsTokenSets: TokenSet[] }) =>
 {
     const containerRef = useRef<HTMLDivElement>(null);
     const tokenSets = token ? [...flatItem(token, t => t.children)] : [];
@@ -226,7 +227,7 @@ const TokenTree = React.memo(({ token, depsTokenSets }: { token: TokenSet|null, 
 
     return (
         <div className="token-tree-view navigation-bar">
-            <div className="navigation-bar-label">トークンツリー</div>
+            <div className="navigation-bar-label">{__('Token Tree', 'markdown-block-editor')}</div>
             <div className="token-scrollbar" ref={containerRef}>
                 { tokenList }
             </div>
@@ -236,7 +237,7 @@ const TokenTree = React.memo(({ token, depsTokenSets }: { token: TokenSet|null, 
 
 
 
-const TokenView = React.memo(({ tokenSet, depsTokens, container }: { tokenSet: TokenSet, depsTokens: TokenSet[], container?: React.RefObject<HTMLDivElement> }) =>
+const TokenView = memo(({ tokenSet, depsTokens, container }: { tokenSet: TokenSet, depsTokens: TokenSet[], container?: React.RefObject<HTMLDivElement> }) =>
 {
     const { tokenContext, markdownContext } = useContext(Context);
     const { token, children, deps } = tokenSet;

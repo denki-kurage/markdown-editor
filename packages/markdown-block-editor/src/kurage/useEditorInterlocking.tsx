@@ -1,4 +1,4 @@
-import { IAppContext, IDisposable } from '@mde/markdown-core';
+import { IAppContext, IDisposable } from '@kurage/markdown-core';
 import { registerMarkdownViewer, scrollToLineNumber } from './components/parser';
 //import { EventBlocker } from './components/EventBlocker';
 

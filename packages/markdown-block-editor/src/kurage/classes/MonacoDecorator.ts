@@ -1,4 +1,4 @@
-import { IDocumentPosition, IEditorDecorateSelection, } from "@mde/markdown-core";
+import { IDocumentPosition, IEditorDecorateSelection, } from "@kurage/markdown-core";
 import { editor, IDisposable, Range } from "monaco-editor";
 
 

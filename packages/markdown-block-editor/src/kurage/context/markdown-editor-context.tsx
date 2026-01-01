@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "@wordpress/element";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { store } from "../store";
 import { IMarkdownBlockEditorState } from "../store/type";
-import { EventUpdateManager } from "@mde/markdown-core";
+import { EventUpdateManager } from "@kurage/markdown-core";
 import { useMarkdownContext } from "./markdown-context";
 
 export type MarkdownEditorContextProps =

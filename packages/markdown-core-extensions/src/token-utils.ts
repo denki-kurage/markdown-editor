@@ -1,4 +1,4 @@
-import { IToken } from "@mde/markdown-core"
+import { IToken } from "@kurage/markdown-core"
 
 
 

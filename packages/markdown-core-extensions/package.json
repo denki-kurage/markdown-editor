@@ -1,14 +1,16 @@
 {
-  "name": "@mde/markdown-core-extensions",
+  "name": "@kurage/markdown-core-extensions",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx tsc --out ./src/index.ts"
+    "build": "tsc && pnpm run cp && pnpm run build:types",
+    "cp": "cp ./src/resources ./dist/ -r",
+		"build:types": "rm tsconfig.tsbuildinfo && tsc --emitDeclarationOnly --declaration --outDir dist/"
   },
   "dependencies": {
-    "@mde/markdown-core": "file:../markdown-core"
+    "@kurage/markdown-core": "workspace:^"
   },
   "author": "",
   "license": "ISC",

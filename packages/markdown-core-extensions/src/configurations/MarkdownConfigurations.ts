@@ -1,4 +1,4 @@
-import { IAppContext, IConfigurationStorage, MarkdownEventCollection } from "@mde/markdown-core";
+import { IAppContext, IConfigurationStorage, MarkdownEventCollection } from "@kurage/markdown-core";
 import { AutoFormatterConfiguration } from "./AutoFormatterConfiguration";
 import { DecoratorConfiguration } from "./DecoratorConfiguration";
 

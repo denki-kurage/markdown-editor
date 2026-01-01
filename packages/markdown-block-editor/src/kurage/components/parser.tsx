@@ -1,4 +1,4 @@
-import { IDisposable, MarkdownParser } from "@mde/markdown-core";
+import { IDisposable, MarkdownParser } from "@kurage/markdown-core";
 import { MarkdownEditorSynchronizer } from "./MarkdownEditorSynchronizer";
 
 const ps = new MarkdownParser();

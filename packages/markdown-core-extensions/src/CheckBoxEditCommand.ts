@@ -1,4 +1,4 @@
-import { IAppContext, MarkdownCommandBase, MarkdownParser } from "@mde/markdown-core";
+import { IAppContext, MarkdownCommandBase, MarkdownParser } from "@kurage/markdown-core";
 import { createFilter, flatItem } from "./token-utils";
 
 export enum CheckBoxState

@@ -1,11 +1,11 @@
-# MdTableEditor with Block Editor
+# Markdown with Block Editor
 
 ブロックエディタでマークダウン表記のテーブルを編集できます。
-元々はVSCodeの拡張機能として作っていたMdTableEditorをWordPressに移植したものです。
+元々はVSCodeの拡張機能として作っていたMarkdownをWordPressに移植したものです。
 
-以下はVSCode拡張機能 MdTableEditor
+以下はVSCode拡張機能 Markdown
 
-https://marketplace.visualstudio.com/items?itemName=clover.md-table-editor
+https://marketplace.visualstudio.com/items?itemName=clover.markdown-block-editor
 
 
 ## 出来ること。
@@ -16,9 +16,9 @@ https://marketplace.visualstudio.com/items?itemName=clover.md-table-editor
 
 ## 使い方
 
-基本的な使い方はMdTableEditorをご覧ください(一部使えない機能あり)。
+基本的な使い方はMarkdownをご覧ください(一部使えない機能あり)。
 
-https://marketplace.visualstudio.com/items?itemName=clover.md-table-editor
+https://marketplace.visualstudio.com/items?itemName=clover.markdown-block-editor
 
 
 
@@ -152,7 +152,7 @@ https://marketplace.visualstudio.com/items?itemName=clover.md-table-editor
 *このSCSSは今後変更される可能性があります。
 最新のSCSSはGitHubにあります。
 
-https://github.com/denki-kurage/md-table-editor-with-block-editor/blob/main/markdown.scss
+https://github.com/denki-kurage/markdown-block-editor-with-block-editor/blob/main/markdown.scss
 
 
 
@@ -200,7 +200,7 @@ CSSに変換しウェブ上に配置した後、グローバル設定で指定�
 
 CSSへ変換後、適当な場所にアップロードします。
 
-    https://denki-kurage.github.io/md-table-editor-with-block-editor/sample.css
+    https://denki-kurage.github.io/markdown-block-editor-with-block-editor/sample.css
 
 
 ![](md-css-set.png)

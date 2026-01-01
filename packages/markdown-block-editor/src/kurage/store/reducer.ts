@@ -1,5 +1,5 @@
 import { combineReducers } from "@wordpress/data";
-import { EditorState, IMarkdownBlockEditorInfo, IMarkdownBlockEditorState, IStoreState } from "./type";
+import { EditorState, IMarkdownBlockEditorInfo, IStoreState } from "./type";
 import { ISettings } from "./ISettings";
 import { ISettingOptions } from "./ISettingOptions";
 
@@ -67,10 +67,13 @@ const storeState = (state: IStoreState = { isLoading: false, faultMessage: '' },
     return state;
 }
 
-export default combineReducers({
+export const reducer = combineReducers({
     info,
     editorStates,
     settings,
     settingOptions,
     storeState
-})
+});
+
+export default reducer;
+

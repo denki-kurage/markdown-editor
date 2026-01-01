@@ -1,0 +1,17 @@
+{
+  "include": [],
+  "references": [
+    {
+      "path": "packages/markdown-core"
+    },
+    {
+      "path": "packages/markdown-core-extensions"
+    },
+    {
+      "path": "packages/markdown-block-editor"
+    },
+    {
+      "path": "packages/markdown-block-editor-extensions"
+    }
+  ]
+}

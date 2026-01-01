@@ -1,12 +1,13 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "kurage-worker/md-table-editor",
+	"name": "denkikurage/markdown-block-editor",
 	"version": "0.1.0",
-	"title": "MdTableEditor with Block Editor",
+	"title": "Markdown with Block Editor",
 	"category": "text",
 	"icon": "smile",
-	"description": "This is an editor that allows you to edit tables in Markdown notation.",
+	"keywords": ["markdown", "vscode"],
+	"description": "You can edit markdown in a VSCode-like editor on the block editor.",
 	"example": {},
 	"supports": {
 		"html": false,
@@ -35,7 +36,7 @@
 			"default": null
 		}
 	},
-	"textdomain": "mdtableeditor",
+	"textdomain": "markdown-block-editor",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",

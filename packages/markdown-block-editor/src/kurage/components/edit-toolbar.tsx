@@ -1,9 +1,9 @@
 import { ToolbarButton, ToolbarDropdownMenu, ToolbarGroup } from "@wordpress/components";
-import { ICommandItem } from "@mde/markdown-core";
-import { useCallback, useEffect, useMemo } from "react";
+import { ICommandItem } from "@kurage/markdown-core";
+import { useCallback, useEffect, useMemo } from "@wordpress/element";
 import { useMarkdownTokenContext } from "../context/markdown-token-context";
 
-//import { DefaultCommandItems, lightIconsMap } from "@mde/markdown-core-extensions";
+//import { DefaultCommandItems, lightIconsMap } from "@kurage/markdown-core-extensions";
 
 const toIcon = (item: ICommandItem) =>
 {

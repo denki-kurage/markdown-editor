@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 /*
-import { IAppContext, IDocumentPosition, IStringCounter, ITextSource, ITextReplacer, ITextEventReciever} from "@mde/markdown-core"
+import { IAppContext, IDocumentPosition, IStringCounter, ITextSource, ITextReplacer, ITextEventReciever} from "@kurage/markdown-core"
 import { BrowserAppHelper } from './BrowserAppHelper';
 
 

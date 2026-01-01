@@ -1,4 +1,4 @@
-import { IConfigurationStorage } from "./IConfigureStorage";
+import { IConfigurationStorage } from "./IConfigurationStorage";
 
 export interface IConfigValue<T>
 {

@@ -14,13 +14,12 @@ registerBlockType( metadata.name, {
 import './style.scss';
 import './token-viewer.scss';
 
-import { IAppContext, ICommandItem, IConfigurationStorage, IToken, MarkdownCore } from '@mde/markdown-core'
+import { IAppContext, ICommandItem, IConfigurationStorage, IToken, MarkdownCore } from '@kurage/markdown-core'
 
-import { ExMarkdownCore } from '@mde/markdown-core-extensions'
+import { ExMarkdownCore } from '@kurage/markdown-core-extensions'
 import { addAction, addFilter } from '@wordpress/hooks';
 import TokenExplorer from './token-explorer';
-import { ExtensionComponentInfo, TokenCommandsInfo,  TokenEditorComponentInfo } from '../../markdown-block-editor/src/kurage/components/inspector-hooks';
-import { ExtensionContexts } from '../../markdown-block-editor/src/kurage/components/hooks';
+import { ExtensionComponentInfo,  ExtensionContexts,  TokenEditorComponentInfo } from "@kurage/markdown-block-editor"
 import { ListItemEditor } from './token-editors';
 
 

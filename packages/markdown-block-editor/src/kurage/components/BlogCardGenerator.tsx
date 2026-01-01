@@ -1,10 +1,10 @@
 import { Button, TextControl } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import React, { useCallback, useState } from "react";
+import  { useCallback, useState } from "@wordpress/element";
 import { ogpGenerator } from "../classes/OgpManager";
 import { store as noticesStore } from "@wordpress/notices";
 import { useDispatch } from "@wordpress/data";
-import { AddBlogCardParams, MarkdownCore } from "@mde/markdown-core";
+import { AddBlogCardParams, MarkdownCore } from "@kurage/markdown-core";
 import { useMarkdownAppContext } from "../context/markdown-app-context";
 
 
@@ -52,7 +52,7 @@ const BlogCardGenerator = ({ onExecuted }: { onExecuted: () => void}) =>
         {
             const em = e.message ?? 'blog card load error';
             setError(em);
-            createErrorNotice('blog card load error', { type: 'snackbar' })
+            createErrorNotice(em, { type: 'snackbar' })
         }
 
         setLoading(false);
@@ -65,7 +65,7 @@ const BlogCardGenerator = ({ onExecuted }: { onExecuted: () => void}) =>
             <TextControl value={url} onChange={updateState} style={style} help={error}  />
 
             <Button variant="primary" disabled={loading} onClick={() => addBlogCard()}>
-                { __('Add blog card', 'mdtableeditor') }
+                { __('Add blog card', 'markdown-block-editor') }
             </Button>
         </>
     )

@@ -1,5 +1,5 @@
 import { Spinner } from "@wordpress/components";
-import React from "react";
+import { memo } from "@wordpress/element";
 
 export const Loading = ({isLoading}: any) =>
 {
@@ -24,7 +24,7 @@ export const Loading = ({isLoading}: any) =>
     )
 }
 
-export const LoadingPanel = React.memo(({isLoading, children}: {isLoading: boolean, children: any}) =>
+export const LoadingPanel = memo(({isLoading, children}: {isLoading: boolean, children: any}) =>
 {
     return (
         <div style={{position: 'relative'}}>

@@ -1,11 +1,14 @@
+
+export * from './context';
+export * from './components';
+
+
 import { registerBlockType } from '@wordpress/blocks';
-
-
 import './style.scss';
-
-
 import Edit from './edit';
-import save from './save';
+import Save from './save';
+
+export { Edit, Save };
 
 // @ts-ignore
 import metadata from './block.json';
@@ -18,8 +21,25 @@ registerBlockType( metadata.name, {
 
 	edit: Edit,
 	icon: <M />,
-	save,
+	save: Save,
 } );
+
+
+
+console.log("x222")
+
+
+export const x = 3;
+
+
+
+
+
+
+
+
+
+
 
 
 

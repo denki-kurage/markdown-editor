@@ -1,4 +1,4 @@
-import { BooleanConfigValue, EventCollection, IConfigurationStorage, IMarkdownEvents } from "@mde/markdown-core";
+import { BooleanConfigValue, EventCollection, IConfigurationStorage, IMarkdownEvents } from "@kurage/markdown-core";
 
 
 export class AutoFormatterConfiguration extends BooleanConfigValue {

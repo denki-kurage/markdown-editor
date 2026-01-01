@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "@wordpress/element";
 import { useMarkdownTokenContext } from "../context/markdown-token-context";
 import { parseEditMarkdown } from "./parser";
-import { IToken } from "@mde/markdown-core";
+import { IToken } from "@kurage/markdown-core";
 import { applyFilters, doAction } from "@wordpress/hooks";
 import { Loading } from "./Loading";
 import { useMarkdownEditorContext } from "../context/markdown-editor-context";

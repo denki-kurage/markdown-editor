@@ -7,7 +7,7 @@ export class Utils
     {
         const arr = str.substring(0, index).split("\n");
         const docIndex = arr.length - 1;
-        const charIndex = arr.pop().length;
+        const charIndex = arr.pop()?.length ?? 0;
         return { docIndex, charIndex };
     }
 

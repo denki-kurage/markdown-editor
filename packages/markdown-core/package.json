@@ -1,14 +1,16 @@
 {
-  "name": "@mde/markdown-core",
-  "version": "0.0.0",
-  "description": "MdTableEditor",
+  "name": "@kurage/markdown-core",
+  "version": "1.0.0",
+  "description": "Markdown",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": {
     "name": "clover"
   },
   "scripts": {
-    "build": "npx tsc --out ./src/index.ts"
+    "build": "tsc && pnpm run cp && pnpm run build:types",
+    "cp": "cp ./src/icons ./dist -r",
+		"build:types": "rm tsconfig.tsbuildinfo && tsc --emitDeclarationOnly --declaration --outDir dist"
   },
   "dependencies": {
     "rehype-stringify": "^10.0.1",
@@ -20,6 +22,7 @@
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
     "@types/node": "^22.13.10",
     "ts-loader": "^9.5.2",
     "typescript": "^5.8.2",

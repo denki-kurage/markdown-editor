@@ -36,5 +36,3 @@ export { IEditControl } from './IEditControl'
 
 export * from './component-model';
 export * from './commands';
-
-

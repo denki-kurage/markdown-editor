@@ -13,11 +13,10 @@ build/Release
 
 # Dependency directories
 node_modules/
-venders/md-table-editor/node_modules/
-venders/md-table-editor/dist/
 build/
+dist/
 extensions.js
-
+tsconfig.tsbuildinfo
 
 # Optional npm cache directory
 .npm

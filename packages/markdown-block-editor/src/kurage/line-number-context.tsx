@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react"
+import { createContext, useContext } from "@wordpress/element"
 
 export type LineNumberContextType =
 {

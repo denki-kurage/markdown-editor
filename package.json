@@ -1,11 +1,26 @@
 {
-  "name": "@kurage/markdown-editor",
+  "name": "@kurage/markdown-editor-monorepo",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -b",
+    "build:editor-core": "pnpm --filter @kurage/markdown-block-editor build",
+    "build:editor-core-extensions": "pnpm --filter @kurage/markdown-block-editor-extensions build",
+    "resources": "pnpm --filter @kurage/markdown-core cp && pnpm --filter @kurage/markdown-core-extensions cp",
+    "make-pot": "pnpm dlx @wp-blocks/make-pot ./packages/markdown-block-editor ./packages/markdown-block-editor/languages"
   },
+  "private": true,
+  "workspaces": [
+    "packages/markdown-core",
+    "packages/markdown-core-extensions",
+    "packages/markdown-block-editor",
+    "packages/markdown-block-editor-extensions"
+  ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@wp-blocks/make-pot": "^1.6.3"
+  }
 }

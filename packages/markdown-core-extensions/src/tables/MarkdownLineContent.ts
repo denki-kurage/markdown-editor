@@ -1,4 +1,4 @@
-﻿import { MarkdownContentBase } from "@mde/markdown-core";
+﻿import { MarkdownContentBase } from "@kurage/markdown-core";
 
 
 export class MarkdownLineContent extends MarkdownContentBase

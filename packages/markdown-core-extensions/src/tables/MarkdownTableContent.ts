@@ -1,4 +1,4 @@
-﻿import { IDocumentPosition, ISelection, IStringCounter, MarkdownContentBase, MarkdownRange} from '@mde/markdown-core';
+﻿import { IDocumentPosition, ISelection, IStringCounter, MarkdownContentBase, MarkdownRange} from '@kurage/markdown-core';
 import { TablePosition } from './TablePosition';
 import { Direction } from './Direction';
 import { MarkdownAlignments } from './MarkdownAlignments';

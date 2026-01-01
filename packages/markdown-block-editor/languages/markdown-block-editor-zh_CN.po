@@ -1,0 +1,146 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-12-28T22:31:55+00:00\n"
+"PO-Revision-Date: 2025-12-28T22:31:55+00:00\n"
+"Language: \n"
+
+
+#: build/index.js
+msgid "You can edit markdown in a VSCode-like editor on the block editor."
+msgstr "您可以在区块编辑器中使用类似 VSCode 的编辑器来编辑 Markdown。"
+
+
+#: build/index.js
+msgid "Control Panel"
+msgstr "控制面板"
+
+#: build/index.js
+msgid "Settings Panel"
+msgstr "设置面板"
+
+#: build/index.js
+msgid "Loading settings information..."
+msgstr "正在加载设置信息…"
+
+#: build/index.js
+msgid "Text Update"
+msgstr "文本更新"
+
+#: build/index.js
+msgid "Open Other Settings"
+msgstr "打开其他设置"
+
+#: build/index.js
+msgid "Front Theme"
+msgstr "前端主题"
+
+#: build/index.js
+msgid "Admin Theme"
+msgstr "管理后台主题"
+
+#: build/index.js
+msgid "Monaco Editor Theme"
+msgstr "Monaco 编辑器主题"
+
+#: build/index.js
+msgid "Prism Theme"
+msgstr "Prism 主题"
+
+#: build/index.js
+msgid "This will update the options used globally, but you will need to reload the page for the changes to take effect."
+msgstr "这些设置将全局生效，但需要重新加载页面才能应用更改。"
+
+#: build/index.js
+msgid "Accept"
+msgstr "确认"
+
+#: build/index.js
+msgid "Updating settings..."
+msgstr "正在更新设置…"
+
+#: build/index.js
+msgid "Settings"
+msgstr "设置"
+
+#: build/index.js
+msgid "Font Family"
+msgstr "字体"
+
+#: build/index.js
+msgid "Font Size"
+msgstr "字号"
+
+#: build/index.js
+msgid "undo"
+msgstr "撤销"
+
+#: build/index.js
+msgid "redo"
+msgstr "重做"
+
+#: build/index.js
+msgid "find"
+msgstr "查找"
+
+#: build/index.js
+msgid "replace"
+msgstr "替换"
+
+#: build/index.js
+msgid "Restore the editor to normal size."
+msgstr "恢复编辑器为正常大小"
+
+#: build/index.js
+msgid "Maximize the editor."
+msgstr "最大化编辑器"
+
+#: build/index.js
+msgid "Add blog card"
+msgstr "添加博客卡片"
+
+#: build/index.js
+msgid "Add Image"
+msgstr "添加图片"
+
+#: build/index.js
+msgid "Add Blog Card"
+msgstr "添加博客卡片"
+
+#: build/index.js
+msgid "Add Link"
+msgstr "添加链接"
+
+#: build/index.js
+msgid "Create a new table."
+msgstr "创建新表格"
+
+#: build/index.js
+msgid "Your code here..."
+msgstr "在此输入代码…"
+
+#: build/index.js
+msgid "current level"
+msgstr "当前级别"
+
+#: build/index.js
+msgid "lower level"
+msgstr "下一级别"
+
+#: build/index.js
+msgid "Insert Heading level ${index} ${detail}."
+msgstr "插入标题级别 ${index}（${detail}）"
+
+#: build/index.js
+msgid "format table"
+msgstr "格式化表格"
+
+#: build/index.js
+msgid "Heading Level"
+msgstr "标题级别"

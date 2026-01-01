@@ -1,7 +1,7 @@
 ﻿import { MarkdownTableContent } from "./MarkdownTableContent";
 import { AppHelper } from "./AppHelper";
-import { EventUpdateManager, IAppContext, IMarkdownEvents } from "@mde/markdown-core";
-import { ISelectChanged, ITextChanged } from "@mde/markdown-core/dist/ITextEventReciever";
+import { EventUpdateManager, IAppContext, IMarkdownEvents } from "@kurage/markdown-core";
+import { ISelectChanged, ITextChanged } from "@kurage/markdown-core/dist/ITextEventReciever";
 
 
 export class TableObserver implements Partial<IMarkdownEvents>

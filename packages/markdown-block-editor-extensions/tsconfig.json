@@ -1,0 +1,32 @@
+{
+  "extends": "../../tsconfig.base.json",
+
+  "compilerOptions": {
+    "jsx": "preserve",
+    "esModuleInterop": true,
+
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "esnext",
+
+    "outDir": "dist",
+
+    // export default ... が無い場合
+    "allowSyntheticDefaultImports": true,
+
+    // node_modules内の警告は無視
+    "skipLibCheck": true,
+  },
+  "include": [
+    "src/**/*"                     // 対象とするソースファイル
+  ],
+  "exclude": [
+    "node_modules/**/*"
+  ],
+  
+  "references": [
+    { "path": "../markdown-core" },
+    { "path": "../markdown-core-extensions" },
+    { "path": "../markdown-block-editor" }
+  ]
+}

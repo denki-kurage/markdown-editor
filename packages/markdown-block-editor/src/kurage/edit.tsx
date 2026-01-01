@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { __ } from '@wordpress/i18n';
+import { useEffect, useState, memo } from "@wordpress/element";
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 
@@ -22,6 +21,7 @@ import './editor.scss';
 import './components/token-viewer.scss'
 import { EditorSettings } from './components/EditorSettings';
 import { MarkdownViewer } from './components/MarkdownViewer';
+import { __ } from '@wordpress/i18n';
 
 
 const str = `
@@ -52,7 +52,7 @@ const Edit = ({ attributes, setAttributes, ...props }: any) =>
 	)
 };
 
-const EditMemo = React.memo(Edit);
+const EditMemo = memo(Edit);
 
 export default EditMemo;
 
@@ -64,7 +64,7 @@ const InternalBlockEditor = () =>
   	const className = editorState.maximized && isSelected ? 'block-editor-maximizer' : '';
 	return (
 		<div { ...useBlockProps({ className }) }>
-			<div className="wp-block-kurage-worker-md-table-editor-label">MdTableEditor with Block Editor</div>
+			<div className="wp-block-kurage-worker-markdown-block-editor-label">Markdown Block Editor</div>
 			<EditorPanel />
 		</div>
 	)
@@ -129,10 +129,10 @@ const ControlPanelInspector = () =>
 {
 	return (
 		<InspectorControls>
-			<PanelBody title="操作パネル">
+			<PanelBody title={__('Control Panel', 'markdown-block-editor')}>
 				<ControlPanel />
 			</PanelBody>
-			<PanelBody title="設定パネル">
+			<PanelBody title={__('Settings Panel', 'markdown-block-editor')}>
 				<EditorSettings />
 			</PanelBody>
 		</InspectorControls>
@@ -154,7 +154,7 @@ const SplitPanel = ({children, height}: any) =>
 	const style = { height: isMax ? '100%' : height ?? post?.md_table_editor_height ?? '500px' };
 
 	return (
-		<div className="md-table-editor split-panel" style={style}>
+		<div className="markdown-block-editor split-panel" style={style}>
 			{children}
 		</div>
 	)

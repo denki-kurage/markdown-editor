@@ -11,6 +11,6 @@ export interface IEditorModel
 	setSelections(selections: ISelection[]): void;
 	replaces(items: IReplaceText[], reselect?: (text: string, newSelection: ISelection) => ISelection): void;
 	positionToIndex(position: IDocumentPosition): number;
-	indexToPosition(docIndex: number): IDocumentPosition | undefined;
+	indexToPosition(docIndex: number): IDocumentPosition;
 	scroll(docIndex: number): void;
 }

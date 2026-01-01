@@ -46,7 +46,7 @@ export class MarkdownParser
             });
         }
 
-        const addTextElement = () =>tree => {
+        const addTextElement = () =>(tree: any) => {
             
             visit(tree, 'element', (node) => {
                 const { tagName } = node;
@@ -162,7 +162,7 @@ const parseTable = (md: string) =>
 
     const rowTexts = (row: any) =>
     {
-        return row.children.map(c => {
+        return row.children.map((c: any) => {
             const children = c?.children ?? [];
             if(children.length)
             {
@@ -189,7 +189,7 @@ const parseTable = (md: string) =>
         const tableHeader = table.children.shift();
         const tableRows = [...table.children];
         return {
-            alignments: table.align.map(a => a ?? ''),
+            alignments: table.align.map((a: any) => a ?? ''),
             headers: rowTexts(tableHeader),
             rows: tableRows.map(tr => rowTexts(tr))
         } as ITable;
@@ -240,7 +240,7 @@ const formatTables = (table: ITable, strCount: (text: string) => number) =>
     const a = alignments.map((a, i) => alignmentFill(a, columnSpaces[i] + 2));
     const rs = rows.map(row => toRow(row));
 
-    const wrap = text => `| ${text} |`;
+    const wrap = (text: string) => `| ${text} |`;
 
     return [
         //@ts-ignore

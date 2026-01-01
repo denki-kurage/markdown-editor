@@ -1,8 +1,9 @@
 // @ts-ignore
 import { LinkControl } from "@wordpress/block-editor";
 import { Button } from "@wordpress/components";
-import React, { useState } from "react";
+import { useState } from "@wordpress/element";
 import { useMarkdownAppContext } from "../context/markdown-app-context";
+import { __ } from "@wordpress/i18n";
 
 
 
@@ -25,7 +26,7 @@ export const LinkEditor = ({ onExecuted }: any) =>
         <>
             <LinkControl onChange={setLink} />
 
-            <Button variant="primary" disabled={!link} onClick={accept}>決定</Button>
+            <Button variant="primary" disabled={!link} onClick={accept}>{__('Accept', 'markdown-block-editor')}</Button>
         </>
     );
 };

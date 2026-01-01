@@ -1,14 +1,14 @@
 <?php
 /**
- * Plugin Name:       MdTableEditor with Block Editor
- * Description:       This is an editor that allows you to edit tables in Markdown notation.
+ * Plugin Name:       Markdown with Block Editor
+ * Description:       You can edit markdown in a VSCode-like editor on the block editor.
  * Version:           0.3.0
  * Requires at least: 6.8
  * Requires PHP:      8.0.30-dev
  * Author:            denkikurage
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       mdtableeditor
+ * Text Domain:       markdown-block-editor
  *
  * @package CreateBlock
  */
@@ -17,8 +17,61 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+add_filter('pre_load_script_translations2', function($x, $file, $handle, $domain){
+	if($domain === 'markdown-block-editor')
+	{
+	$pdir = plugin_dir_path(__FILE__);
+	
+		$f = __('undo') . __("You can edit markdown in a VSCode-like editor on the block editor.");
+		echo $f;
+		echo "<br>";
+		echo $x;
+		echo "<br />";
+		echo $file;
+		echo "<br />";
+		echo $handle;
+		echo "<br />";
+		echo $domain;
+		
 
-add_action( 'init', fn() => register_block_type( __DIR__ . '/build/kurage' ) );
+    #WP_Scripts#print_translations()
+
+
+    #load_script_translations()
+
+
+	exit;
+	}
+	return $x;
+}, 10, 4);
+
+add_action( 'init', function(){
+	$pdir = plugin_dir_path(__FILE__);
+
+
+	load_plugin_textdomain(
+		'markdown-block-editor',
+		false,
+		'markdown-block-editor/languages'
+	);
+
+
+	$x = register_block_type( __DIR__ . '/build/kurage' );
+	//$handle = $x->editor_script_hadn
+
+
+	
+
+	$handle = generate_block_asset_handle('denkikurage/markdown-block-editor', 'editorScript');
+
+
+	wp_set_script_translations(
+		$handle,
+		'markdown-block-editor',
+		$pdir . 'languages'
+	);
+
+});
 
 add_action( 'after_setup_theme', function(){
 	add_theme_support('align-wide');
@@ -93,16 +146,16 @@ add_action('init', function(){
 		$frontCss = $frontCss[1] ?? '';
 		if($frontCss)
 		{
-			wp_enqueue_style('md-table-editor-front-css', $frontCss);
+			wp_enqueue_style('markdown-block-editor-front-css', $frontCss);
 		}
-		wp_enqueue_style('md-table-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.css");
-		wp_enqueue_script('md-table-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.js");
+		wp_enqueue_style('markdown-block-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.css");
+		wp_enqueue_script('markdown-block-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.js");
 	});
 
 	//add_action('admin_enqueue_scripts', function() use($adminCss, $pluginPath, $prismTheme){
-		//wp_enqueue_style('md-table-editor-admin-css', $adminCss);
-		//wp_enqueue_style('md-table-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.css");
-		//wp_enqueue_script('md-table-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.js");
+		//wp_enqueue_style('markdown-block-editor-admin-css', $adminCss);
+		//wp_enqueue_style('markdown-block-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.css");
+		//wp_enqueue_script('markdown-block-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.js");
 	//});
 	
 	add_action('rest_api_init', function() use($defaultOptions){
@@ -190,7 +243,7 @@ add_action('init', function(){
 #
 #
 #
-//add_action('admin_enqueue_scripts', fn() => wp_enqueue_script('markdown-block-editor-extensions', plugin_dir_url(__FILE__) . 'extensions.js'));
+#add_action('admin_enqueue_scripts', fn() => wp_enqueue_script('markdown-block-editor-extensions', plugin_dir_url(__FILE__) . 'extensions.js'));
 #
 #
 #

@@ -6,7 +6,7 @@ import { ITableConverter } from "./ITableConverter";
 /**
  * TODO: 変更する
  */
-import { StringCounter } from "@mde/markdown-core/src/StringCounter";
+import { StringCounter } from "@kurage/markdown-core/src/StringCounter";
 
 export interface IColumnRenderSizeInfo
 {

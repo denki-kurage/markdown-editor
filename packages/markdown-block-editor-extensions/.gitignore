@@ -15,6 +15,8 @@ build/Release
 node_modules/
 
 build/
+dist
+tsconfig.tsbuildinfo
 
 # Optional npm cache directory
 .npm
@@ -30,3 +32,4 @@ build/
 
 # dotenv environment variables file
 .env
+.vscode

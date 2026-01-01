@@ -1,6 +1,6 @@
-import { IConfigureStorage } from "@mde/markdown-core";
+import {  } from "@kurage/markdown-core";
 
-export class MarkdownConfigureStorage implements IConfigureStorage
+export class MarkdownConfigureStorage implements MarkdownConfigureStorage
 {
     private config: Map<string, any> = new Map();
 

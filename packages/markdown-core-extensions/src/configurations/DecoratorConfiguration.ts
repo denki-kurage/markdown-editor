@@ -1,4 +1,4 @@
-import { BooleanConfigValue, IAppContext, IConfigurationStorage } from "@mde/markdown-core";
+import { BooleanConfigValue, IAppContext, IConfigurationStorage } from "@kurage/markdown-core";
 import { MarkdownTableContent } from "../tables";
 import { TableDecorator } from "../tables/TableDecorator";
 

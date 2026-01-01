@@ -4,12 +4,8 @@ import { Direction } from "./Direction";
 import { TableCacheManager } from "./TableCacheManager";
 import { IFormatterContext } from "./IFormatterContext";
 import { MarkdownTableContent } from "./MarkdownTableContent";
-import { IAppContext, ICommand } from "@mde/markdown-core";
-import { ChangeAlignmentCommand, ColumnSelectCommand, DeleteCommentCommand, FillCellsCommand, FocusCommand, InsertColumnCommand, InsertRowCommand, MoveColumnCommand, MoveRowCommand, RemoveColumnCommand, RemoveRowCommand, ScrollCommand, TextSortCommand } from "../commands";
-import { FormatCommand } from "../commands/FormatCommand";
-import { SelectType } from "../commands/ColumnSelectCommand";
-import { SortCommand } from "../commands/SortCommand";
-
+import { IAppContext, ICommand } from "@kurage/markdown-core";
+import { ChangeAlignmentCommand, ColumnSelectCommand, DeleteCommentCommand, FillCellsCommand, FocusCommand, FormatCommand, InsertColumnCommand, InsertRowCommand, MoveColumnCommand, MoveRowCommand, RemoveColumnCommand, RemoveRowCommand, ScrollCommand, SelectType, SortCommand, TextSortCommand } from "./commands";
 
 export class DefaultCommandFactory
 {

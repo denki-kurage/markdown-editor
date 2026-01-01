@@ -1,4 +1,4 @@
-﻿import { IMarkdownContentParser, TextReader } from "@mde/markdown-core";
+﻿import { IMarkdownContentParser, TextReader } from "@kurage/markdown-core";
 import { MarkdownLineContent } from "./MarkdownLineContent";
 
 export class MarkdownLineParser implements IMarkdownContentParser<MarkdownLineContent>
