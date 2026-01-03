@@ -6,5 +6,6 @@ export type ISettings =
     adminTheme: string;
     prismTheme: string;
     monacoTheme: string;
+    previewInterval: number;
     configurations: {[key: string]: any}
 }

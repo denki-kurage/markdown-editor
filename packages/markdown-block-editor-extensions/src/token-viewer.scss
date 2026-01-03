@@ -1,60 +1,14 @@
 
-$left: 1.2em;
+$left: .5em;
 
-.token-viewer
+.token-scrollbar
 {
     height: 25em;
     width: 100%;
-    overflow: scroll;
-
-    ul
-    {
-        margin: 0
-    }
-
-    ul li
-    {
-        list-style: none;
-        padding: 2px 0px 0px 0px;
-        margin: 0;
-    }
-
-    ul li div { padding-left: $left * 0; }
-    ul li ul li div { padding-left: $left * 1; }
-    ul li ul li ul li div { padding-left: $left * 2; }
-    ul li ul li ul li ul li div { padding-left: $left * 3; }
-    ul li ul li ul li ul li ul li div { padding-left: $left * 4; }
-    ul li ul li ul li ul li ul li ul li div { padding-left: $left * 5; }
-    ul li ul li ul li ul li ul li ul li ul li div { padding-left: $left * 6; }
-    ul li ul li ul li ul li ul li ul li ul li ul li div { padding-left: $left * 7; }
-
-
-    .token-explorer-current
-    {
-        > div
-        {
-            background-color: #e0ffe0;
-            border: 1px solid green;
-        }
-    }
-
-    .token-explorer-ancestor
-    {
-        > div
-        {
-            border: 1px solid green;
-        }
-    }
-
-    button
-    {
-        font-size: 1.2em;
-        width: 100%;
-    }
-
+    overflow: scroll !important;
 }
 
-.token-deps
+.token-hierarchical-padding
 {
     .left-0 { padding-left: $left * 0; }
     .left-1 { padding-left: $left * 1; }
@@ -74,12 +28,110 @@ $left: 1.2em;
     .left-15 { padding-left: $left * 15; }
 }
 
-body
+.token-tree-view
 {
-    background-color: red;
+
+    @extend .token-hierarchical-padding;
+
+    font-family: monospace;
+    font-size: 1.2em;
+    margin: .2em 0;
+
+    div
+    {
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+        
+
+
+        &.token-explorer-current
+        {
+            background-color: #e0ffe0;
+            border: 1px solid green;
+        }
+
+        &.token-explorer-ancestor
+        {
+            border: 1px solid green;
+        }
+
+        &.token-leaf > em
+        {
+            background-color: #67bd67;
+        }
+
+        > em
+        {
+            border-radius: .2em;
+            padding: .2em;
+            font-size: .8em;
+            background-color: rgb(141, 141, 141);
+            color: white;
+        }
+
+        > span
+        {
+            position: absolute;
+            padding: 0em .5em;
+            right: 0;
+            background-color: rgb(230, 68, 68);
+            border-radius: .6em;
+            opacity: 0.8;
+            font-size: .9em;
+            color: white;
+        }
+
+    }
+
+    &.navigation-bar
+    {
+        border: 1px solid rgb(26, 83, 26);
+
+        > div.navigation-bar-label
+        {
+            font-size: .8em;
+            font-weight: bold;
+            color: white;
+            padding: .2em;
+            text-align: center;
+            background-color: #1d921d;
+        }
+    }
 }
 
-div
+.token-checker
 {
-    font-size: 3em;
+
+    @extend .token-hierarchical-padding;
+    
+    table
+    {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    tr
+    {
+        border-bottom: 1px solid #ccc;
+    }
+    td, th
+    {
+        padding: .2em .5em;
+    }
+
+    .enable-selection
+    {
+        background-color: #e0ffe0;
+        cursor: pointer;
+
+        &:hover
+        {
+            background-color: #c0ffc0;
+        }
+    }
+    
+    .components-base-control__field
+    {
+        margin-bottom: 0;
+    }
 }

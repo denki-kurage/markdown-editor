@@ -27,7 +27,7 @@ export const OthreSettings = ({}) =>
 const OtherSettingsDialog = ({}) =>
 {
     const { settings, settingOptions } = useMarkdownAppContext();
-    const { monacoTheme, prismTheme, frontTheme, adminTheme } = settings;
+    const { monacoTheme, prismTheme, frontTheme, adminTheme, previewInterval } = settings;
     const { frontThemes, adminThemes, prismThemes, monacoThemes } = settingOptions;
 
     const { createSuccessNotice, createErrorNotice } = useDispatch(noticeStore);
@@ -47,6 +47,14 @@ const OtherSettingsDialog = ({}) =>
         <div>
             
             <p>{recentCodeLanguages.join(', ')}</p>
+
+            <RangeControl
+                label={__('Preview Interval', 'markdown-block-editor')}
+                value={previewInterval}
+                onChange={v => updateSettings({previewInterval: v})}
+                max={5000}
+                min={500}
+                />
 
             <SelectControl
                 label={__('Front Theme', 'markdown-block-editor')}

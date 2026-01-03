@@ -2,9 +2,9 @@
 /**
  * Plugin Name:       Markdown with Block Editor
  * Description:       You can edit markdown in a VSCode-like editor on the block editor.
- * Version:           0.3.0
+ * Version:           0.1.0
  * Requires at least: 6.8
- * Requires PHP:      8.0.30-dev
+ * Requires PHP:      8.0.30
  * Author:            denkikurage
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -17,44 +17,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-add_filter('pre_load_script_translations2', function($x, $file, $handle, $domain){
-	if($domain === 'markdown-block-editor')
-	{
-	$pdir = plugin_dir_path(__FILE__);
-	
-		$f = __('undo') . __("You can edit markdown in a VSCode-like editor on the block editor.");
-		echo $f;
-		echo "<br>";
-		echo $x;
-		echo "<br />";
-		echo $file;
-		echo "<br />";
-		echo $handle;
-		echo "<br />";
-		echo $domain;
-		
-
-    #WP_Scripts#print_translations()
-
-
-    #load_script_translations()
-
-
-	exit;
-	}
-	return $x;
-}, 10, 4);
 
 add_action( 'init', function(){
 	$pdir = plugin_dir_path(__FILE__);
 
-
+/*
 	load_plugin_textdomain(
 		'markdown-block-editor',
 		false,
 		'markdown-block-editor/languages'
 	);
-
+*/
 
 	$x = register_block_type( __DIR__ . '/build/kurage' );
 	//$handle = $x->editor_script_hadn
@@ -64,12 +37,13 @@ add_action( 'init', function(){
 
 	$handle = generate_block_asset_handle('denkikurage/markdown-block-editor', 'editorScript');
 
-
 	wp_set_script_translations(
 		$handle,
 		'markdown-block-editor',
 		$pdir . 'languages'
 	);
+
+
 
 });
 
@@ -127,6 +101,7 @@ add_action('init', function(){
 		'monacoTheme' => 'vs-dark',
 		'frontTheme' => 'default',
 		'adminTheme' => 'default',
+		"previewInterval" => 1000,
 		'configurations' => new stdClass
 	];
 	$pluginPath = plugin_dir_url(__FILE__);
@@ -157,6 +132,21 @@ add_action('init', function(){
 		//wp_enqueue_style('markdown-block-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.css");
 		//wp_enqueue_script('markdown-block-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.js");
 	//});
+
+	function checkNonce()
+	{
+		$nonce1 = isset($_REQUEST['_wpnonce']) ? sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])) : null;
+		$nonce2 = isset($_SERVER['HTTP_X_WP_NONCE']) ? sanitize_text_field(wp_unslash(($_SERVER['HTTP_X_WP_NONCE']))) : null;
+		$nonce = $nonce1 ?? $nonce2 ?? '';
+
+		if(!wp_verify_nonce( $nonce, 'wp_rest' ))
+		{
+			return new WP_Error( 'rest_cookie_invalid_nonce', 'nonce error!', array( 'status' => 403 ) );
+		}
+
+		return true;
+	}
+
 	
 	add_action('rest_api_init', function() use($defaultOptions){
 
@@ -171,7 +161,7 @@ add_action('init', function(){
 						$data = get_option('markdown-block-editor-settings', $defaultOptions);
 						return rest_ensure_response($data);
 					},
-					'permission_callback' => fn() => current_user_can('manage_options')
+					'permission_callback' => fn() => current_user_can('manage_options'),
 				],
 				[
 					'methods' => WP_REST_Server::CREATABLE,
@@ -187,6 +177,7 @@ add_action('init', function(){
 						return rest_ensure_response($data);
 					},
 					'permission_callback' => fn() => current_user_can('manage_options'),
+					'validate_callback' => fn() => checkNonce(),
 					'args' => json_decode(file_get_contents('schema.json', true), true)['properties']
 				]
 			]

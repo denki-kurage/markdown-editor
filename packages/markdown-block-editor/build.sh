@@ -1,0 +1,1 @@
+wp-scripts plugin-zip --exclude

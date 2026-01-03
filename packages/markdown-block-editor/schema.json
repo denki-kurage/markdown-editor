@@ -21,6 +21,12 @@
         "monacoTheme": {
             "enum": ["vs", "vs-dark", "hc-black", "hc-light"]
         },
+        "previewInterval": {
+            "type": "integer",
+            "maximum": 5000,
+            "minimum": 500,
+            "default": 1000
+        },
         "configurations": {
             "type": "object",
             "additionalProperties": {

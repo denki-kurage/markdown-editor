@@ -1,6 +1,5 @@
 import apiFetch from "@wordpress/api-fetch"
 import { IMarkdownBlockEditorState, IStoreState } from "./type";
-import { store } from "."
 import { ISettings } from "./ISettings";
 
 export const setInfoVersion = (version: string) =>
@@ -51,17 +50,21 @@ export const updateSettings = (settings: Partial<ISettings>) => async (p: any) =
     {
         let preSettings: any;
         let current: any;
+        let counter = 0;
 
         while(preSettings !== (current = select.getSettings()))
         {
-            const result = await apiFetch({
+            await apiFetch({
                 path: '/markdown-block-editor/v1/settings',
                 method: 'POST',
                 data: current
             });
+
+            if(++counter > 3)
+            {
+                break;
+            }
             
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-            console.log(result)
             await sleep(3000);
 
             preSettings = current;
@@ -71,7 +74,7 @@ export const updateSettings = (settings: Partial<ISettings>) => async (p: any) =
     }
     catch(ex: any)
     {
-        dispatch.setStoreLoading({ isLoading: false, faultMessage: ex.message ?? '' } as IStoreState);
+        dispatch.setStoreState({ isLoading: false, faultMessage: ex.message ?? '' } as IStoreState);
     }
 }
 

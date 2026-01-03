@@ -4,6 +4,7 @@ import { store } from "../store";
 import { IMarkdownBlockEditorState } from "../store/type";
 import { EventUpdateManager } from "@kurage/markdown-core";
 import { useMarkdownContext } from "./markdown-context";
+import { useMarkdownAppContext } from "./markdown-app-context";
 
 export type MarkdownEditorContextProps =
 {
@@ -30,23 +31,26 @@ export const MarkdownEditorContextProviderWrapper = ({children, clientId, ...blo
     const { setEditorState, deleteEditorState } = useDispatch(store);
     const editorState = useSelect(select => select(store).getEditorState(clientId), [clientId]);
     const [isEditing, setIsEditing] = useState(false);
+    const { settings } = useMarkdownAppContext();
+    const previewInterval = settings.previewInterval ?? 1000;
 
-    const [updater] = useState<EventUpdateManager>(() => {
-        const updater = new EventUpdateManager(5000);
+
+    const updater = useMemo<EventUpdateManager>(() => {
+        const updater = new EventUpdateManager(previewInterval);
         updater.updated.push(() => setIsEditing(false));
         updater.lazyUpdate();
         return updater;
-    });
+    }, [previewInterval]);
 
     useEffect(() => {
         return () => updater.dispose();
-    }, []);
+    }, [updater]);
 
 
     useEffect(() => {
         updater.lazyUpdate();
         setIsEditing(true);
-    }, [markdown]);
+    }, [markdown, updater]);
 
     const ctx = useMemo(() => ({
         blockEditorProps,

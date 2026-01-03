@@ -18,7 +18,6 @@ import { ControlPanel } from './components/ControlPanel';
 //import Prism from 'prismjs'
 
 import './editor.scss';
-import './components/token-viewer.scss'
 import { EditorSettings } from './components/EditorSettings';
 import { MarkdownViewer } from './components/MarkdownViewer';
 import { __ } from '@wordpress/i18n';
