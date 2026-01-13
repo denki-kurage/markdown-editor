@@ -6,8 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -b",
-    "build:editor-core": "pnpm --filter @kurage/markdown-block-editor build",
-    "build:editor-core-extensions": "pnpm --filter @kurage/markdown-block-editor-extensions build",
+    "build:editor": "pnpm --filter @kurage/markdown-block-editor build",
+    "build:editor-extensions": "pnpm --filter @kurage/markdown-block-editor-extensions build",
+    "build:core": "pnpm --filter @kurage/markdown-core build",
+    "build:core-extensions": "pnpm --filter @kurage/markdown-core-extensions build",
+    "dev:editor-extensions": "pnpm --filter @kurage/markdown-block-editor-extensions dev",
+    "now": "pnpm --filter @kurage/markdown-block-editor now",
     "resources": "pnpm --filter @kurage/markdown-core cp && pnpm --filter @kurage/markdown-core-extensions cp",
     "make-pot": "pnpm dlx @wp-blocks/make-pot ./packages/markdown-block-editor ./packages/markdown-block-editor/languages"
   },

@@ -13,15 +13,15 @@
 		"front-themes",
 		"languages",
 		"schema.json",
-		"readme.txt"
+		"README.txt",
+		"README.md",
+		"THIRD-PARTY-NOTICES.txt"
 	],
 	"scripts": {
 		"build": "wp-scripts build",
-		
 		"dev": "wp-scripts build --mode development",
 		"typing": "tsc -p tsconfig-types.json",
-		"now": "npx wp-now start",
-		"now2": "pnpm dlx @wp-now/wp-now start",
+		"now": "pnpm dlx @wp-now/wp-now start",
 		"build:types": "rm tsconfig.tsbuildinfo && tsc --emitDeclarationOnly --declaration --outDir build/",
 		"all": "../build.sh",
 		"format": "wp-scripts format",
@@ -48,7 +48,6 @@
 		"@wordpress/notices": "^5.21.0",
 		"eastasianwidth": "^0.3.0",
 		"monaco-editor": "^0.55.1",
-		"po2json": "^0.4.5",
 		"react-shadow": "^20.6.0",
 		"redux": "^5.0.1"
 	},
@@ -60,7 +59,7 @@
 		"@types/wordpress__i18n": "^3.11.0",
 		"@wordpress/scripts": "^30.11.0",
 		"@wp-blocks/make-pot": "^1.6.3",
-		"raw-loader": "^4.0.2",
+		"css-loader": "^7.1.2",
 		"ts-loader": "^9.5.4",
 		"url-loader": "^4.1.1"
 	}

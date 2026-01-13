@@ -1,4 +1,4 @@
-﻿import { IDocumentPosition, ISelection, IStringCounter, MarkdownContentBase, MarkdownRange} from '@kurage/markdown-core';
+﻿import {  IDocumentPosition, ISelection, IStringCounter, MarkdownContentBase, MarkdownRange} from '@kurage/markdown-core';
 import { TablePosition } from './TablePosition';
 import { Direction } from './Direction';
 import { MarkdownAlignments } from './MarkdownAlignments';
@@ -364,6 +364,11 @@ export class TableCellInfo
 	{
 		TableCellInfo.count();
 		this.serial = TableCellInfo.cnt;
+	}
+
+	public getStringCounter(): IStringCounter
+	{
+		return str => str.length;
 	}
 
 	public static createInstance(table: MarkdownTableContent, docPosition: IDocumentPosition): TableCellInfo | undefined
@@ -814,9 +819,9 @@ export abstract class TableRowBase<TCell extends TableCell>
 	}
 
 
-	public getCellRangeFromCell(cell: TableCell, strCounter?: IStringCounter): MarkdownRange | null
+	public getCellRangeFromCell(cell: TableCell): MarkdownRange | null
 	{
-		for (const r of this.getCellInfomations(strCounter))
+		for (const r of this.getCellInfomations())
 		{
 			if (cell === r.cell)
 			{
@@ -834,9 +839,9 @@ export abstract class TableRowBase<TCell extends TableCell>
 	 * @param charIndex 
 	 * @param strCount 
 	 */
-	public getCellInfomationFromCharacterIndex(charIndex: number, strCounter?: IStringCounter): CellRangeInfo | undefined
+	public getCellInfomationFromCharacterIndex(charIndex: number): CellRangeInfo | undefined
 	{
-		for (const r of this.getCellInfomations(strCounter))
+		for (const r of this.getCellInfomations())
 		{
 			if (r.range.internalOrZero(charIndex))
 			{
@@ -845,9 +850,9 @@ export abstract class TableRowBase<TCell extends TableCell>
 		}	
 	}
 
-	public getCellInfomationFromColumnIndex(columnIndex: number, strCounter?: IStringCounter): CellRangeInfo | undefined
+	public getCellInfomationFromColumnIndex(columnIndex: number): CellRangeInfo | undefined
 	{
-		for(const r of this.getCellInfomations(strCounter))
+		for(const r of this.getCellInfomations())
 		{
 			const ci = r.columnIndex;
 			if(ci !== -1 && ci === columnIndex)
@@ -857,13 +862,14 @@ export abstract class TableRowBase<TCell extends TableCell>
 		}
 	}
 
-	public *getCellInfomations(strCounter: IStringCounter = str => str.length): IterableIterator<CellRangeInfo>
+	public *getCellInfomations(): IterableIterator<CellRangeInfo>
 	{
 		let cp = 0;
 
 		for (const cell of this)
 		{
-			let len = strCounter(cell.word);
+			//let len = DefaultStringCounter.getStringCounter()(cell.word);
+			let len = cell.word.length;
 
 			yield new CellRangeInfo(this, cell,  MarkdownRange.fromLength(cp, len));
 			cp++;
@@ -986,7 +992,7 @@ export class MarkdownTableAlignments extends TableRowBase<TableAlignmentCell>
 
 	public static createInstance(line: string): MarkdownTableAlignments | undefined
 	{
-		const row = MarkdownTableRows.createInstance(line);
+		const row = MarkdownTableRows.createInstance(line, undefined);
 
 		if (row)
 		{

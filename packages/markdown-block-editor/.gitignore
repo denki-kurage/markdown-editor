@@ -15,7 +15,7 @@ build/Release
 node_modules/
 build/
 dist/
-extensions.js
+extensions/
 tsconfig.tsbuildinfo
 
 # Optional npm cache directory

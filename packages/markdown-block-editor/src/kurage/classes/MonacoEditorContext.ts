@@ -2,9 +2,9 @@ import { Monaco } from "@monaco-editor/react";
 import { editor, IRange, ISelection as IMonacoSelection, languages, Position, Selection } from 'monaco-editor';
 import { IAppContext, IDisposable, IDocumentPosition, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, ISelection as IMdeSelection, IStringCounter, ITextSource, IConfigurationStorage, ConfigurationHelper, IEditControl } from "@kurage/markdown-core"
 import { MonacoDecorator } from "./MonacoDecorator";
-import { codeLanguages, sortedCodeLanguages } from "./CodeLanguages";
+import { sortedCodeLanguages } from "./CodeLanguages";
 import { __ } from "@wordpress/i18n";
-import { eastAsianWidth } from "eastasianwidth";
+import * as eaw from "eastasianwidth";
 
 
 class Utils
@@ -298,10 +298,8 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
 
     public getStringCounter(): IStringCounter
     {
-        return (str: string) => {
-            const m = eastAsianWidth(str);
-            return 'FW'.includes(m) ? 2 : 1;
-        }
+        //return str => str.length;
+        return str => eaw.length(str);
     }
 
     public getAppConfig()
@@ -425,6 +423,19 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                     this.editor.setSelections(computedSelections);
                 }
                 this.editor.focus();
+            },
+            rewrite: (items: IReplaceText[]) =>
+            {
+                const edits: editor.IIdentifiedSingleEditOperation[] = items.map(item => {
+                    const { area, text } = item;
+                    const range: IRange = Utils.toMonacoRange(area);
+                    return ({
+                        range,
+                        text
+                    })
+                });
+
+                this.model.applyEdits(edits)
             },
             getText: (pos) =>
             {

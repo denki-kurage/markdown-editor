@@ -9,6 +9,11 @@ export class EventCollection<TEvent> implements IMethodSelector<TEvent>
 {
 	private events: Array<Partial<TEvent>> = [];
 
+    public [Symbol.iterator]()
+    {
+        return this.events.values();
+    }
+
 	public add(e: Partial<TEvent>): IDisposable
 	{
 		this.events.push(e);

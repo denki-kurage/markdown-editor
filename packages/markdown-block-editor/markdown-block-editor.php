@@ -234,7 +234,7 @@ add_action('init', function(){
 #
 #
 #
-#add_action('admin_enqueue_scripts', fn() => wp_enqueue_script('markdown-block-editor-extensions', plugin_dir_url(__FILE__) . 'extensions.js'));
+#include('extensions/markdown-block-editor-extensions.php');
 #
 #
 #

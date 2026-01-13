@@ -42,7 +42,7 @@ export class TableDecorator
         const stringCounter = this.appContext.getStringCounter();
         const docIndex = docPos.docIndex;
 
-        const rows = [...tableInfo.row.getCellInfomations(stringCounter)].filter(ci => !tableInfo.row.isFirstOrLast(ci.cell)).map(ci => ci)
+        const rows = [...tableInfo.row.getCellInfomations()].filter(ci => !tableInfo.row.isFirstOrLast(ci.cell)).map(ci => ci)
         const columns = [...table.rows.entries()].map(([, row]) => row.getCellInfomationFromColumnIndex(tableInfo.columnIndex)).filter(ci => !!ci)
         //.filter(c => c.cell !== centerCell); // 縦はcenterを外す
 

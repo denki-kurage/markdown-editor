@@ -1,12 +1,9 @@
 ﻿import { MarkdownTableContent, TableCell, TableAlignmentCell, MarkdownTableRows, MarkdownTableAlignments } from "./MarkdownTableContent";
 import { MarkdownAlignments } from "./MarkdownAlignments";
 import { ITableConverter } from "./ITableConverter";
+import { DefaultStringCounter } from "@kurage/markdown-core";
 
 
-/**
- * TODO: 変更する
- */
-import { StringCounter } from "@kurage/markdown-core/src/StringCounter";
 
 export interface IColumnRenderSizeInfo
 {
@@ -154,10 +151,10 @@ export class MarkdownTableFormatter implements IMarkdownTableFormatter
 		return table.headers.cells.map<IColumnRenderSizeInfo>((value, index) =>
 		{
 			// 存在する縦のセルの文字数をすべて取得
-			const vc = [...table.getVerticalOnlyTableRows(index)].map(_ => StringCounter.stringCount(_.cell.word.trim()));
+			const vc = [...table.getVerticalOnlyTableRows(index)].map(_ => DefaultStringCounter.getStringCounter()(_.cell.word.trim()));
 
 			// ヘッダ文字数を含め、その中で最大値を取得
-			const max = Math.max(...vc, StringCounter.stringCount(table.headers.cells[index].word.trim()));
+			const max = Math.max(...vc, DefaultStringCounter.getStringCounter()(table.headers.cells[index].word.trim()));
 
 			// アライメントのセルを取得
 			const cell = table.alignments.getCell(index);
@@ -191,7 +188,7 @@ export class CellFormatter
 		const word = cell.word.trim();
 
 		// 空白の合計サイズを計算。ワードから余白と文字列サイズを引いたもの。
-		const spaceCount = Math.max(0, columnInfo.width - StringCounter.stringCount(word) - config.leftSpaceLength - config.rightSpaceLength);
+		const spaceCount = Math.max(0, columnInfo.width - DefaultStringCounter.getStringCounter()(word) - config.leftSpaceLength - config.rightSpaceLength);
 
 		// 左右の空白のサイズを計算
 		const [l, r] = this.getSpace(spaceCount, columnInfo.align);

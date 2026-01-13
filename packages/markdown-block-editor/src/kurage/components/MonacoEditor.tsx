@@ -9,6 +9,8 @@ import { MonacoEditorContext } from '../classes/MonacoEditorContext';
 import { useSelect } from '@wordpress/data';
 import { store } from '../store';
 import { IConfigurationStorage } from '@kurage/markdown-core';
+import { applyFilters } from '@wordpress/hooks';
+import monacoStyle from './editor.main.xcss';
 
 export const useMarkdownApp = (
         configurationStorage: IConfigurationStorage,
@@ -42,13 +44,12 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
     const { markdown, onMarkdownChanged: onValueChanged } = useMarkdownContext();
     const settings = useSelect(select => select(store).getSettings(), []);
 
-    const domRef = useRef<HTMLDivElement>(null);
-
     const params = useMarkdownApp(configurationStorage, editor, monaco);
     useEffect(() => initializedMarkdownCore(params), [params])
 
     
     const family = editor?.getOption(monacoEditor.EditorOption.fontFamily);
+    const styles: string[] = useMemo(() => applyFilters('extensionsEditorStyles', []), []) as string[];
 
     /*
     AABBCCDDEE
@@ -78,37 +79,27 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
     }, [settings, editor]);
 
 
-    /**
-     * TODO: IMEの座標がズレる問題。DIVをInput要素にしている部分を取得しているが、ブラウザの実装依存のため対策が見つからない。
-     * 
-    useEffect(() => {
-        const handle = setInterval(() => {
-            const shadow = domRef?.current?.ownerDocument?.getElementsByClassName('monaco-shadow-dom')[0]?.shadowRoot;
-            const active = shadow?.activeElement;
-            const contentEditable = active?.getAttribute('contenteditable');
-
-            console.log(shadow, active, contentEditable);            
-        }, 8000);
-
-        return () => clearInterval(handle);
-    }, [domRef.current]);
-
-    */
-
     return (
         <>
-        
-            <root.div className="monaco-shadow-dom">
+            {/* */}
+             <root.div className="monaco-shadow-dom">
 
-                <link
+                {/*<link
                     rel="stylesheet"
                     type="text/css"
                     data-name="vs/editor/editor.main"
                     href="https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs/editor/editor.main.css"
                     />
+                */}
+                
+                <style>{ monacoStyle }</style>
+                
+                {
+                    styles.map(style => <style>{ style }</style>)
+                }
 
-                {/* <div ref={domRef} className="mark-editor-container" style={{position: 'absolute', bottom: 0}}>abcdefg</div> */}
-
+                {/*  */}
+                
                 <Editor
                     width="100%"
                     height="100%"
@@ -123,10 +114,15 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
 
                     
                     />
-                
-            </root.div>
+                </root.div>
+            {/*  */}
 
         </>
     )
 
 }
+
+
+
+
+

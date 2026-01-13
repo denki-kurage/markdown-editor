@@ -46,7 +46,7 @@ export const TableTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 }
 
 
-const headingItems = [...Array(7).keys()].map(v => v + 1).map(v => ({ value: '#'.repeat(v), label: `${'#'.repeat(v)} ${v}` }))
+const headingItems = [...Array(6).keys()].map(v => v + 1).map(v => ({ value: '#'.repeat(v), label: `${'#'.repeat(v)} ${v}` }))
 export const HeadingTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 {
     const { tokenContext, appContext } = contexts;

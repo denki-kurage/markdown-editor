@@ -9,6 +9,8 @@ import { store } from "../store";
 import { useMarkdownAppContext } from "../context/markdown-app-context";
 
 import { ISettings } from "../store/ISettings";
+import { applyFilters } from "@wordpress/hooks";
+import { useExtensionContexts } from "./hooks";
 
 
 
@@ -27,13 +29,15 @@ export const OthreSettings = ({}) =>
 const OtherSettingsDialog = ({}) =>
 {
     const { settings, settingOptions } = useMarkdownAppContext();
-    const { monacoTheme, prismTheme, frontTheme, adminTheme, previewInterval } = settings;
+    const { monacoTheme, prismTheme, frontTheme, adminTheme, previewInterval, configurations } = settings;
     const { frontThemes, adminThemes, prismThemes, monacoThemes } = settingOptions;
 
     const { createSuccessNotice, createErrorNotice } = useDispatch(noticeStore);
     const { updateSettings } = useDispatch(store);
     const { markdownCore } = useMarkdownAppContext();
     const recentCodeLanguages = markdownCore.getConfigurationHelper().getRecentCodeLanguages();
+
+    const ctxs = useExtensionContexts();
 
     const { frontThemeOptions, adminThemeOptions, prismThemeOptions, monacoThemeOptions } = useMemo(() => {
         const frontThemeOptions = frontThemes.map(t => ({ value: t.key, label: t.name }));
@@ -42,6 +46,9 @@ const OtherSettingsDialog = ({}) =>
         const monacoThemeOptions = monacoThemes.map(t => ({ value: t.key, label: t.name }));
         return { frontThemeOptions, adminThemeOptions, prismThemeOptions, monacoThemeOptions };
     }, [settingOptions]);
+
+
+    const extensionSettings: any[] = useMemo(() => applyFilters('extensionSettings', []), []) as any;
 
     return (
         <div>
@@ -85,6 +92,10 @@ const OtherSettingsDialog = ({}) =>
             />
 
             <p>{ __('This will update the options used globally, but you will need to reload the page for the changes to take effect.', 'markdown-block-editor') }</p>
+
+
+            { extensionSettings.map(Control => <Control configurations={configurations} extensionContexts={ctxs} />) }
+
 
         </div>
     )

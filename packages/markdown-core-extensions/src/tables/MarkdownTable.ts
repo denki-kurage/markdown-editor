@@ -17,7 +17,6 @@ export class MarkdownTable implements ICommandsMapRoot
 	protected readonly appHelper: AppHelper;
 	protected readonly cache: TableCacheManager;
 
-	protected readonly configuration: MarkdownConfigurations;
 	private readonly commands: Map<string, ICommand>;
 	private readonly commandItem: ICommandItem;
 	private enableCommandNames: string[] = [];
@@ -40,7 +39,7 @@ export class MarkdownTable implements ICommandsMapRoot
 	public constructor(
 		public readonly editorContext: IAppContext,
 		public readonly eventCollection: MarkdownEventCollection,
-		public readonly storage: IConfigurationStorage)
+		protected readonly configurations: MarkdownConfigurations)
 	{
 		this.appHelper = new AppHelper(this.editorContext);
 		this.cache = new TableCacheManager(() => this.appHelper.getTable());
@@ -53,10 +52,6 @@ export class MarkdownTable implements ICommandsMapRoot
 		this.registerRecievers(eventCollection, this.cache);
 		this.commands = this.createCommands(this.editorContext, this.cache);
 		this.commandItem = createDefaultCommandItem(this, this.commands, 'light');
-		this.configuration = this.createSwitcher(eventCollection, storage, this.editorContext);
-
-		// TODO: 実験
-		this.configuration.decorator.on();
 
 	}
 
@@ -80,10 +75,6 @@ export class MarkdownTable implements ICommandsMapRoot
 	}
 
 
-	protected createSwitcher(eventCollection: MarkdownEventCollection, storage: IConfigurationStorage, editorContext: IAppContext)
-	{
-		return new MarkdownConfigurations(eventCollection, storage, editorContext);
-	}
 
 	/**
 	 * @param nv 
@@ -98,7 +89,7 @@ export class MarkdownTable implements ICommandsMapRoot
 		this.currentContent = nv;
 		this.enableCommandNames = this.checkEnabledCommandNames();
 		//this.configuration.decoratorSwitcher.decorate(nv);
-		this.configuration.decorator.decorate(nv);
+		this.configurations.decorator.decorate(nv);
 		this.currentTableChanged.emit(nv);
 	}
 
@@ -113,7 +104,7 @@ export class MarkdownTable implements ICommandsMapRoot
 	 */
 	protected onFormatRequest(): void
 	{
-        const cmd = this.commands.get('format:beautiful');
+        const cmd = this.commands.get('markdown:table:format:beautiful');
         cmd?.execute();
 
 		this.formatRequest.emit();

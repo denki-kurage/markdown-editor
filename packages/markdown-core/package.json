@@ -10,9 +10,10 @@
   "scripts": {
     "build": "tsc && pnpm run cp && pnpm run build:types",
     "cp": "cp ./src/icons ./dist -r",
-		"build:types": "rm tsconfig.tsbuildinfo && tsc --emitDeclarationOnly --declaration --outDir dist"
+    "build:types": "rm tsconfig.tsbuildinfo && tsc --emitDeclarationOnly --declaration --outDir dist"
   },
   "dependencies": {
+    "eastasianwidth": "^0.3.0",
     "rehype-stringify": "^10.0.1",
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",

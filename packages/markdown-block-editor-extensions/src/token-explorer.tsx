@@ -2,11 +2,12 @@ import React, { createContext, memo, useCallback, useContext, useEffect, useMemo
 import { Button, CheckboxControl, Modal, SelectControl, ToggleControl } from "@wordpress/components";
 
 import { IToken, Utils } from "@kurage/markdown-core";
-import { createFilter, filterTokenTreeFromBottom, flatItem, flatLeafTokenSet, getAncestorsByToken, TokenSet, TokenTypes } from "@kurage/markdown-core-extensions";
+import { createFilter, ExMarkdownCore, ExtensionConfigStorageHelper, filterTokenTreeFromBottom, flatItem, flatLeafTokenSet, getAncestorsByToken, TokenSet, TokenTypes } from "@kurage/markdown-core-extensions";
 import './token-viewer.scss';
 import { TokenCheckerModal } from "./token-checker-modal";
 import { __ } from "@wordpress/i18n";
 import { ExtensionContexts } from "@kurage/markdown-block-editor";
+import { useLocalExtensionsCotnext, Context } from "./useLocalExtensionsCotnext";
 
 
 
@@ -18,9 +19,6 @@ const TokenTypeOptions = [...TokenTypes.entries()].map(t => {
     return ({ label, value })
 })
 
-
-const Context = createContext<ExtensionContexts>(null as any);
-const useLocalCotnext = () => useContext(Context);
 
 type ComponentContextProps =
 {
@@ -34,7 +32,7 @@ const useComponentContext = () => useContext(ComponentContext);
 const TokenFilter = ({ tokenTypes, tokenTypesChanged }: any) =>
 {
     // 後で変更
-    const { editorContext } = useLocalCotnext();
+    const { editorContext } = useLocalExtensionsCotnext();
     const { editorState, setEditorState } = editorContext;
     const { enabledSelectionsFilter, enabledSelectionsFilterFillMode } = editorState;
 
@@ -80,7 +78,7 @@ const TokenFilter = ({ tokenTypes, tokenTypesChanged }: any) =>
 
 const TokenChecker = () =>
 {
-    const { tokenContext, markdownContext } = useLocalCotnext();
+    const { tokenContext, markdownContext } = useLocalExtensionsCotnext();
     const { setSelections } = tokenContext;
     const { markdown } = markdownContext;
     const { filter, filteredTokenTree } = useComponentContext();
@@ -163,10 +161,12 @@ const TokenChecker = () =>
 
 export const TokenExplorer = memo(({ contexts }: { contexts: ExtensionContexts }) =>
 {
-    const { tokenContext, editorContext } = contexts;
+    const { tokenContext, editorContext, appContext } = contexts;
     const { rootToken, singleToken, selections } = tokenContext;
     const { editorState, setEditorState } = editorContext;
     const { enabledSelectionsFilter, enabledSelectionsFilterFillMode, tokenTypes } = editorState;
+    const { configurationStorage } = appContext;
+    const enabledTokenExplorer = (new ExtensionConfigStorageHelper(configurationStorage)).getEnabledTokenExplorer();
 
     const setTokenTypes = (tokenTypes: string[]) =>
     {
@@ -189,6 +189,11 @@ export const TokenExplorer = memo(({ contexts }: { contexts: ExtensionContexts }
 
     const { filteredTokenTree } = componentContext;
     const ancestors = useMemo(() => (singleToken && filteredTokenTree) ? getAncestorsByToken(singleToken, filteredTokenTree) : [], [singleToken, filteredTokenTree]);
+
+    if(!enabledTokenExplorer)
+    {
+        return <></>
+    }
 
     return (
         <Context.Provider value={contexts}>

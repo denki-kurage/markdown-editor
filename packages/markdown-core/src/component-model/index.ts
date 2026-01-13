@@ -1,8 +1,6 @@
 export { MovableArray } from './MovableArray';
 export { IMovableCollection } from './IMovableCollection';
 
-export { BooleanConfigValue, ConfigValue, IConfigValue, NumberConfigValue, StringConfigValue } from './IConfigValue';
-
 export { EventCollection } from './EventCollection';
 export { EventListeners} from './EventListeners';
 export { IDisposable } from './IDisposable';

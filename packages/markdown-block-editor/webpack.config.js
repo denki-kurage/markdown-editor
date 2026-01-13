@@ -6,6 +6,17 @@ const path = require('path');
 
 module.exports = {
     ...defaultConfig,
+    module:
+    {
+        ...defaultConfig.module,
+        rules: [
+            {
+                test: /editor\.main\.xcss$/i,
+                type: 'asset/source'
+            },
+            ...defaultConfig.module.rules
+        ]
+    },
     resolve: {
         ...defaultConfig.resolve,
         alias: {

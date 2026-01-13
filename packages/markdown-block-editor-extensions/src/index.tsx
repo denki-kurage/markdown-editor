@@ -14,6 +14,39 @@ registerBlockType( metadata.name, {
 import './style.scss';
 import './token-viewer.scss';
 
+
+const tableStyle = `
+.wp-kurage {
+  box-sizing: border-box;
+  border-width: 1px;
+  border-color: green;
+  background-color: rgba(128, 128, 128, 0.5);
+}
+.wp-kurage.row {
+  border-style: solid none solid none;
+}
+.wp-kurage.column {
+  border-style: none solid none solid;
+}
+.wp-kurage.left {
+  border-style: solid none solid none;
+}
+.wp-kurage.right {
+  border-style: solid none solid none;
+}
+.wp-kurage.top {
+  border-style: solid solid none solid !important;
+}
+.wp-kurage.bottom {
+  border-style: none solid solid solid !important;
+}
+.wp-kurage.center {
+  border-style: solid;
+}
+`
+
+console.log("★★★★★★★★★★★★★★★★★★★★★★★★★★", tableStyle)
+
 import { IAppContext, ICommandItem, IConfigurationStorage, IToken, MarkdownCore } from '@kurage/markdown-core'
 
 import { ExMarkdownCore } from '@kurage/markdown-core-extensions'
@@ -21,6 +54,7 @@ import { addAction, addFilter } from '@wordpress/hooks';
 import TokenExplorer from './token-explorer';
 import { ExtensionComponentInfo,  ExtensionContexts,  TokenEditorComponentInfo } from "@kurage/markdown-block-editor"
 import { ListItemEditor } from './token-editors';
+import { ExtensionSettings } from './ExtensionSettings';
 
 
 addFilter(
@@ -146,5 +180,18 @@ addFilter(
 	}
 )
 
+addFilter(
+	'extensionSettings',
+	'kurage/markdown-block-editor',
+	(settings: JSX.Element[]) => [...settings, ExtensionSettings]
+)
 
 
+addFilter(
+	'extensionsEditorStyles',
+	'kurage/markdown-block-editor',
+	(styles: string[]) =>
+	{
+		return [...styles, tableStyle]
+	}
+)

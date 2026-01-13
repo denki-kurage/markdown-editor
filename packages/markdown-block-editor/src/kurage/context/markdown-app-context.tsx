@@ -33,6 +33,7 @@ const appContext: IAppContext =
             getSelections: () => [],
             setSelections: (selections) => {},
             replaces: (items) => {},
+            rewrite: (items) => {},
             scroll: (docIndex) => {},
             indexToPosition: (docIndex) => ({ charIndex: 0, docIndex: 0}),
             positionToIndex: (position) => 0
@@ -99,23 +100,26 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
         return { settings: s.getSettings(), settingOptions: s.getSettingOptions() };
     }, []);
 
-    const configStorage = useMemo<IConfigurationStorage>(() => {
-
-        return {
-            getValue: <T,>(name: string) =>
+    const configStorageRef = useRef<IConfigurationStorage|undefined>(undefined);
+    configStorageRef.current = {
+        getValue: <T,>(name: string) =>
+        {
+            return settings?.configurations?.[name] as T;
+        },
+        setValue: <T,>(name: string, value: T) =>
+        {
+            if(settings)
             {
-                return settings?.configurations?.[name] as T;
-            },
-            setValue: <T,>(name: string, value: T) =>
-            {
-                if(settings)
-                {
-                    const configurations = { ...settings.configurations, [name]: value };
-                    updateSettings({ configurations });
-                }
+                const configurations = { ...settings.configurations, [name]: value };
+                updateSettings({ configurations });
             }
         }
-    }, [settings]);
+    };
+
+    const configStorage: IConfigurationStorage = {
+        getValue: name => configStorageRef.current?.getValue(name)!,
+        setValue: (name, value) => configStorageRef.current?.setValue(name, value)
+    }
 
     const defaultMarkdownCore = useMemo(() => new MarkdownCore(appContext, configStorage), []);
     const [markdownCore, setMarkdownCore] = useState<MarkdownCore>(defaultMarkdownCore);

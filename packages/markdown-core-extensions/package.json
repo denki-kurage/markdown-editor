@@ -13,7 +13,7 @@
     "@kurage/markdown-core": "workspace:^"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Kurage Origin License",
   "devDependencies": {
     "@types/node": "^24.5.2"
   }

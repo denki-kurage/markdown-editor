@@ -6,9 +6,8 @@
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"scripts": {
-		"build": "wp-scripts build --blocks-manifest",
-		"build3": "wp-scripts build && cp ./build/index.js ../markdown-block-editor/extensions.js",
-		"dev": "wp-scripts build --mode development && cp ./build/index.js ../markdown-block-editor/extensions.js",
+		"build": "wp-scripts build && ./build.sh",
+		"dev": "wp-scripts build --mode development && ./build.sh",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
@@ -22,9 +21,9 @@
 		"@wordpress/scripts": "^30.24.0"
 	},
 	"dependencies": {
+		"@kurage/markdown-block-editor": "workspace:^",
 		"@kurage/markdown-core": "workspace:^",
 		"@kurage/markdown-core-extensions": "workspace:^",
-		"@kurage/markdown-block-editor": "workspace:^",
 		"@svgr/webpack": "^8.1.0",
 		"@wordpress/components": "^30.6.0",
 		"@wordpress/element": "^6.37.0",

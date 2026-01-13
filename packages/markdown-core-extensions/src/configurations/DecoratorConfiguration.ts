@@ -1,23 +1,39 @@
-import { BooleanConfigValue, IAppContext, IConfigurationStorage } from "@kurage/markdown-core";
+import { IAppContext } from "@kurage/markdown-core";
 import { MarkdownTableContent } from "../tables";
 import { TableDecorator } from "../tables/TableDecorator";
+import { BaseConfiguration, IBoolConfiguration } from "./Configurations";
+import { ExtensionConfigStorageHelper } from "../ExtensionConfigStorageHelper";
 
 
 
-export class DecoratorConfiguration extends BooleanConfigValue
+export class DecoratorConfiguration extends BaseConfiguration implements IBoolConfiguration
 {
-	public constructor(private readonly editorContext: IAppContext, storage: IConfigurationStorage) {
-		super('markdown:decorator', true, storage);
+	public constructor(private readonly editorContext: IAppContext, helper: ExtensionConfigStorageHelper)
+	{
+		super(helper);
 	}
 
-	protected onValueChanged(value: boolean): void {
-		if (!this.getValue()) {
-			this.editorContext.getDecorator().clearDecorate();
-		}
+	public on(): void
+	{
+		this.helper.setEnabledTableDecoration(true);
 	}
 
-	public decorate(nv?: MarkdownTableContent): void {
-		if (this.getValue()) {
+	public off(): void
+	{
+		this.editorContext.getDecorator().clearDecorate();
+		this.helper.setEnabledTableDecoration(false);
+	}
+
+	public getValue(): boolean
+	{
+		return this.helper.getEnabledTableDecoration();
+	}
+
+	public decorate(nv?: MarkdownTableContent): void
+	{
+
+		if (this.getValue())
+		{
 			const ctx = this.editorContext;
 			ctx.getDecorator().clearDecorate();
 
