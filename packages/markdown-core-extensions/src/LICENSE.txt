@@ -1,0 +1,6 @@
+
+このライブラリはUNLICENSEです。
+
+@kurageの他のパッケージ(@kurage/markdown-block-editor-extensions)からのみMITとして利用できます。
+
+

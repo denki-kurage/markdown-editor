@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "licenses": [
+    {
+      "type": "UNLICENSED"
+    },
+    {
+      "type": "Kurage Origin License",
+      "url": "https://kurage.dev/license"
+    }
+  ],
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc && pnpm run cp && pnpm run build:types",
