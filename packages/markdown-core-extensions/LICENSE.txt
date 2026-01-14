@@ -1,0 +1,5 @@
+
+
+このパッケージは`@kurage/markdown-block-editor-extensions`でのみMITを適用します。
+
+
