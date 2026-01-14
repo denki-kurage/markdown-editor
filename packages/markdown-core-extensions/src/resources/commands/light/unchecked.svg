@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-     width="512" height="512" viewBox="0 0 512 512"
-     aria-label="checkbox unchecked (white on black)">
-  <rect width="512" height="512" fill="#ffffffff"/>
-  <rect x="96" y="96" width="320" height="320"
-        rx="32" ry="32"
-        fill="none" stroke="#000000ff" stroke-width="32"/>
-</svg>
