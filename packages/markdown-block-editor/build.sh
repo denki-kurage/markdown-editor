@@ -1,1 +1,1 @@
-wp-scripts plugin-zip --exclude
+pnpm wp-scripts plugin-zip --exclude --root-folder=markdown-block-editor

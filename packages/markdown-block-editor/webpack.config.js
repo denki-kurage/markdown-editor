@@ -17,6 +17,18 @@ module.exports = {
             ...defaultConfig.module.rules
         ]
     },
+
+      // チャンク分割を無効にする設定
+  optimization: {
+    runtimeChunk: false,
+    splitChunks: {
+      cacheGroups: {
+        default: false,
+        vendors: false,
+      },
+    },
+  },
+  
     resolve: {
         ...defaultConfig.resolve,
         alias: {

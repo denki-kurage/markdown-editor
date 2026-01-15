@@ -48,7 +48,7 @@ const OtherSettingsDialog = ({}) =>
     }, [settingOptions]);
 
 
-    const extensionSettings: any[] = useMemo(() => applyFilters('extensionSettings', []), []) as any;
+    const extensionSettings: any[] = useMemo(() => applyFilters('markdown_block_editor_settings', []), []) as any;
 
     return (
         <div>

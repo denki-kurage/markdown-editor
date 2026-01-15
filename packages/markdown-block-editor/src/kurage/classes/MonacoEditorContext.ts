@@ -194,7 +194,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
 
                         if(line === '#')
                         {
-                            const items = [...Array(7).keys()].map((i) => {
+                            const items = [...Array(6).keys()].map((i) => {
                                 const index = i + 1;
                                 const Heading = '#'.repeat(index - 1);
                                 const isCurrent = index === currentDeps;

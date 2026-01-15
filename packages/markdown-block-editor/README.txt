@@ -14,7 +14,8 @@ You can edit markdown in a VSCode-like editor on the block editor.
 == Description ==
 
 You can write Markdown using a VSCode-like editor. 
-including adding images, code highlighting, and table formatting.
+It provides minimal functionality for editing Markdown.
+for example. (add bold, strikethrough, text decorations, adding images, code highlighting, and table formatting, etc...)
 
 
 == Screenshots ==
@@ -34,7 +35,40 @@ including adding images, code highlighting, and table formatting.
 
 == Frequently Asked Questions == 
 
-= What about foo bar? =
+
+= What can this plugin do? =
+
+You can edit Markdown while viewing a preview in the block editor.
+Please see the link below for detailed instructions on how to use it.
+
+https://github.com/denki-kurage/markdown-editor/blob/master/packages/markdown-block-editor/document/readme.en.md
+
+
+= The IME display position is shifted. =
+
+We are aware of this bug.
+The Monaco Editor used internally does not take IFrame into account,
+which is why the misalignment occurs.
+We cannot address this issue until the Monaco Editor is fixed.
+
+
+= Can I see the source code? =
+
+The source code is here.
+
+https://github.com/denki-kurage/markdown-editor/tree/master/packages/markdown-block-editor
+
+
+This software uses the following packages:
+
+https://github.com/denki-kurage/markdown-editor/blob/master/packages/markdown-block-editor/THIRD-PARTY-NOTICES.txt
+https://github.com/denki-kurage/markdown-editor/blob/master/packages/markdown-core/THIRD-PARTY-NOTICES.txt
+
+
+
+
+
+
 
 == Changelog ==
 
@@ -46,11 +80,6 @@ including adding images, code highlighting, and table formatting.
 
 = 0.1.0 =
 * Release
-
-== Arbitrary section ==
-
-1. When maximizing the editor, it is easier to see if you pin the top toolbar.
-2. The problem of coordinates being misaligned when using IME input has not been resolved. There is an issue where coordinates are misaligned when using the block editor canvas (within an IFrame).
 
 
 

@@ -18,9 +18,7 @@
   "private": true,
   "workspaces": [
     "packages/markdown-core",
-    "packages/markdown-core-extensions",
-    "packages/markdown-block-editor",
-    "packages/markdown-block-editor-extensions"
+    "packages/markdown-block-editor"
   ],
   "author": "",
   "license": "ISC",

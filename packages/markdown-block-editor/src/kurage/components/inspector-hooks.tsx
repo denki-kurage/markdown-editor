@@ -53,7 +53,7 @@ export const useTokenEditorComponents = (type: string) =>
 			{ type: 'tableRow', label: 'Table Row', component: TableTokenEditor },
 			{ type: 'tableCell', label: 'Table Cell', component: TableTokenEditor },
         ];
-        return applyFilters('getTokenEditorComponents', defaults) as TokenEditorComponentInfo[];
+        return applyFilters('markdown_block_editor_get_token_editor_components', defaults) as TokenEditorComponentInfo[];
     }, []);
 
     return components.filter(c => c.type === type);
@@ -62,7 +62,7 @@ export const useTokenEditorComponents = (type: string) =>
 export const useExtensionComponents = () =>
 {
     return useMemo(() => {
-        return applyFilters('getExtensionComponents', []) as ExtensionComponentInfo[];
+        return applyFilters('markdown_block_editor_get_extension_components', []) as ExtensionComponentInfo[];
     }, []);
 }
 
@@ -87,7 +87,7 @@ export const useInspectorActiveCommands = (context: ExtensionContexts) =>
     }
 
     const ci = useMemo(() => {
-        return applyFilters('getInspectorCommands', rootCommandItem, context) as ICommandItem;
+        return applyFilters('markdown_block_editor_get_inspector_commands', rootCommandItem, context) as ICommandItem;
     }, [context.appContext.markdownCore]);
 
     return ci.children?.filter(ci => !ci.command || ci.command.canExecute()) ?? [];

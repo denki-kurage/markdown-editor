@@ -49,7 +49,7 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
 
     
     const family = editor?.getOption(monacoEditor.EditorOption.fontFamily);
-    const styles: string[] = useMemo(() => applyFilters('extensionsEditorStyles', []), []) as string[];
+    const styles: string[] = useMemo(() => applyFilters('markdown_block_editor_editor_styles', []), []) as string[];
 
     /*
     AABBCCDDEE

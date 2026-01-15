@@ -57,7 +57,7 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
             // @ts-ignore
             window.Prism?.highlightAllUnder(doc);
 
-            doAction('extensionDomChanged', doc, markdown, () => tokenContext);
+            doAction('markdown_block_editor_dom_changed', doc, markdown, () => tokenContext);
         }
     
     }, [tokenContext]);
@@ -102,7 +102,7 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
             }
             
 
-            doAction('extensionHeaderInitalize', doc);
+            doAction('markdown_block_editor_header_initalize', doc);
         }
     }, [adminTheme, prismTheme, prismMap, adminMap]);
 
@@ -135,7 +135,7 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
         {
             const { doc } = getDoms(frameRef.current);
             const execute = applyFilters(
-                'extensionSingleTokenChanged',
+                'markdown_block_editor_single_token_changed',
                 (token: IToken, doc: Document) => () => {}
             ) as any;
 

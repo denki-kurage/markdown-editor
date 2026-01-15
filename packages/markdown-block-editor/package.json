@@ -14,7 +14,7 @@
 		"languages",
 		"schema.json",
 		"README.txt",
-		"README.md",
+		"LICENSE.txt",
 		"THIRD-PARTY-NOTICES.txt"
 	],
 	"scripts": {
@@ -33,7 +33,6 @@
 	},
 	"dependencies": {
 		"@kurage/markdown-core": "workspace:^",
-		"@kurage/markdown-core-extensions": "workspace:^",
 		"@monaco-editor/react": "^4.7.0",
 		"@wordpress/api-fetch": "^7.21.0",
 		"@wordpress/block-editor": "^14.14.0",
@@ -48,8 +47,7 @@
 		"@wordpress/notices": "^5.21.0",
 		"eastasianwidth": "^0.3.0",
 		"monaco-editor": "^0.55.1",
-		"react-shadow": "^20.6.0",
-		"redux": "^5.0.1"
+		"react-shadow": "^20.6.0"
 	},
 	"devDependencies": {
 		"@svgr/webpack": "^8.1.0",

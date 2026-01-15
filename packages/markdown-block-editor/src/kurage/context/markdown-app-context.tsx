@@ -138,7 +138,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
             const { appContext } = params;
 
             const core = applyFilters(
-                'extensionAppContext',
+                'markdown_block_editor_app_context',
                 new MarkdownCore(appContext, configStorage),
                 appContext,
                 configStorage

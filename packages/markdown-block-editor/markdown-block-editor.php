@@ -18,6 +18,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
+
+
+#define( 'WP_DEBUG', true );
+
+
+
+
+
+
 add_action( 'init', function(){
 	$pdir = plugin_dir_path(__FILE__);
 
@@ -54,14 +63,14 @@ add_action( 'after_setup_theme', function(){
 
 
 
-add_filter('markdownBlcokEditorFrontThemes', function($themes){
+add_filter('markdown_block_editor_front_themes', function($themes){
 	$pluginPath = plugin_dir_url(__FILE__);
 	$themes['none'] = ['なし', ''];
 	$themes['default'] = ['デフォルト', $pluginPath . "front-themes/default.css"];
 	return $themes;
 });
 
-add_filter('markdownBlcokEditorAdminThemes', function($themes){
+add_filter('markdown_block_editor_admin_themes', function($themes){
 	$pluginPath = plugin_dir_url(__FILE__);
 	$themes['none'] = ['なし', ''];
 	$themes['default'] = ['デフォルト', $pluginPath . "front-themes/default.css"];
@@ -69,7 +78,7 @@ add_filter('markdownBlcokEditorAdminThemes', function($themes){
 });
 
 
-add_filter('markdownBlcokEditorPrismThemes', function($themes){
+add_filter('markdown_block_editor_prism_themes', function($themes){
 	$pluginPath = plugin_dir_url(__FILE__);
 	$themes['coy'] = ['Coy', $pluginPath . "prismjs/coy/prism"];
 	$themes['dark'] = ['Dark', $pluginPath . "prismjs/dark/prism"];
@@ -82,7 +91,7 @@ add_filter('markdownBlcokEditorPrismThemes', function($themes){
 	return $themes;
 });
 
-add_filter('markdownBlcokEditorMonacoEditorThemes', function($themes){
+add_filter('markdown_block_editor_monaco_themes', function($themes){
 	$themes['vs'] = 'VS Light';
 	$themes['vs-dark'] = 'VS Dark';
 	$themes['hc-black'] = 'High Contrast Black';
@@ -106,13 +115,13 @@ add_action('init', function(){
 	];
 	$pluginPath = plugin_dir_url(__FILE__);
 
-	$settings = get_option('markdown-block-editor-settings', $defaultOptions);
+	$settings = get_option('markdown_block_editor_settings', $defaultOptions);
 
 	$frontTheme = $settings['frontTheme'] ?? $defaultOptions['frontTheme'];
 	$prismTheme = $settings['prismTheme'] ?? $defaultOptions['prismTheme'];
 
-	$frontMap = apply_filters('markdownBlcokEditorFrontThemes', []);
-	$adminMap = apply_filters('markdownBlcokEditorAdminThemes', []);
+	$frontMap = apply_filters('markdown_block_editor_front_themes', []);
+	$adminMap = apply_filters('markdown_block_editor_admin_themes', []);
 
 	$frontCss = $frontMap[$frontTheme] ?? ['', ''];
 	$adminCss = $adminMap[$frontTheme] ?? ['', ''];
@@ -121,19 +130,13 @@ add_action('init', function(){
 		$frontCss = $frontCss[1] ?? '';
 		if($frontCss)
 		{
-			wp_enqueue_style('markdown-block-editor-front-css', $frontCss);
+			wp_enqueue_style('markdown_block_editor_front_css', $frontCss);
 		}
-		wp_enqueue_style('markdown-block-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.css");
-		wp_enqueue_script('markdown-block-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.js");
+		wp_enqueue_style('markdown_block_editor_prism_theme', $pluginPath . "prismjs/{$prismTheme}/prism.css");
+		wp_enqueue_script('markdown_block_editor_prism_theme', $pluginPath . "prismjs/{$prismTheme}/prism.js");
 	});
 
-	//add_action('admin_enqueue_scripts', function() use($adminCss, $pluginPath, $prismTheme){
-		//wp_enqueue_style('markdown-block-editor-admin-css', $adminCss);
-		//wp_enqueue_style('markdown-block-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.css");
-		//wp_enqueue_script('markdown-block-editor-prism-theme', $pluginPath . "prismjs/{$prismTheme}/prism.js");
-	//});
-
-	function checkNonce()
+	function markdown_block_editor_check_nonce()
 	{
 		$nonce1 = isset($_REQUEST['_wpnonce']) ? sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])) : null;
 		$nonce2 = isset($_SERVER['HTTP_X_WP_NONCE']) ? sanitize_text_field(wp_unslash(($_SERVER['HTTP_X_WP_NONCE']))) : null;
@@ -158,7 +161,7 @@ add_action('init', function(){
 					'methods' => WP_REST_Server::READABLE,
 					'callback' => function(WP_REST_Request $request) use($defaultOptions)
 					{
-						$data = get_option('markdown-block-editor-settings', $defaultOptions);
+						$data = get_option('markdown_block_editor_settings', $defaultOptions);
 						return rest_ensure_response($data);
 					},
 					'permission_callback' => fn() => current_user_can('manage_options'),
@@ -173,13 +176,14 @@ add_action('init', function(){
 							$data[$k] = $request->get_param($k) ?? $v;
 						}
 
-						update_option('markdown-block-editor-settings', $data);
+						update_option('markdown_block_editor_settings', $data);
 						return rest_ensure_response($data);
 					},
 					'permission_callback' => fn() => current_user_can('manage_options'),
-					'validate_callback' => fn() => checkNonce(),
+					'validate_callback' => fn() => markdown_block_editor_check_nonce(),
 					'args' => json_decode(file_get_contents('schema.json', true), true)['properties']
-				]
+				],
+				'permission_callback' => fn() => current_user_can('manage_options'),
 			]
 		);
 
@@ -191,10 +195,10 @@ add_action('init', function(){
 					'methods' => WP_REST_Server::READABLE,
 					'callback' => function(WP_REST_Request $request) use($defaultOptions)
 					{
-						$frontThemes = apply_filters('markdownBlcokEditorFrontThemes', []);
-						$adminThemes = apply_filters('markdownBlcokEditorAdminThemes', []);
-						$prismThemes = apply_filters('markdownBlcokEditorPrismThemes', []);
-						$monacoThemes = apply_filters('markdownBlcokEditorMonacoEditorThemes', []);
+						$frontThemes = apply_filters('markdown_block_editor_front_themes', []);
+						$adminThemes = apply_filters('markdown_block_editor_admin_themes', []);
+						$prismThemes = apply_filters('markdown_block_editor_prism_themes', []);
+						$monacoThemes = apply_filters('markdown_block_editor_monaco_themes', []);
 						$themeUrl = get_template_directory_uri();
 
 						$frontThemes = array_map(fn($v, $k) => ['key' => $k, 'name' => $v[0], 'url' => $v[1]], $frontThemes, array_keys($frontThemes));
@@ -214,7 +218,8 @@ add_action('init', function(){
 						return rest_ensure_response($data);
 					},
 					'permission_callback' => fn() => current_user_can('manage_options')
-				]
+				],
+				'permission_callback' => fn() => current_user_can('manage_options'),
 			]
 		);
 
@@ -234,7 +239,7 @@ add_action('init', function(){
 #
 #
 #
-#include('extensions/markdown-block-editor-extensions.php');
+include('extensions/markdown-block-editor-extensions.php');
 #
 #
 #
