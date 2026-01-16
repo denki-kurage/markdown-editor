@@ -36,7 +36,7 @@ const ImageUploadEditor = ({ onExecuted }: { onExecuted: () => void}) =>
     const img = useSelect(select => select('core').getEntityRecord('postType', 'attachment', imageId), [imageId]);
     const de = img?.media_details;
 
-    console.log(img)
+    //console.log(img)
 
     
     /**
@@ -53,7 +53,7 @@ const ImageUploadEditor = ({ onExecuted }: { onExecuted: () => void}) =>
 
     const acceptImage = (img: any) =>
     {
-        console.log(img);
+        //console.log(img);
         setImageId(img.id);
     }
 

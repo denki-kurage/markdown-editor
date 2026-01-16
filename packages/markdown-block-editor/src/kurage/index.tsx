@@ -26,7 +26,7 @@ registerBlockType( metadata.name, {
 
 
 
-console.log("x222")
+//console.log("x222")
 
 
 export const x = 3;

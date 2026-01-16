@@ -30,7 +30,7 @@ MIT Licensed Software
 ============================================================
 
 @monaco-editor/react  
-Copyright (c) contributors  
+Copyright (c) 2018 Suren Atoyan
 Licensed under the MIT License.
 
 ------------------------------------------------------------
@@ -54,7 +54,7 @@ Licensed under the MIT License.
 ------------------------------------------------------------
 
 react-shadow  
-Copyright (c) contributors  
+Copyright (c) 2015 Adam Timberlake
 Licensed under the MIT License.
 
 ------------------------------------------------------------

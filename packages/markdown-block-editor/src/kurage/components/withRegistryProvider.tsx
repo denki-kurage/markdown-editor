@@ -30,7 +30,7 @@ export const withRegistryProvider = createHigherOrderComponent(Wrapper => ({ sto
 
 
 export const withEditorRegistryProvider = createHigherOrderComponent(Wrapper => ({children, ...props}: any) => {
-	console.log("withEditorRegistryProvider")
+	//console.log("withEditorRegistryProvider")
 	return (
 		<Wrapper {...props} storeName={store.name} storeConfig={storeConfig}>
 			{children}

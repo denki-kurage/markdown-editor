@@ -183,7 +183,7 @@ const parseTable = (md: string) =>
 
     if(table)
     {
-        console.log(table);
+        //console.log(table);
 
 
         const tableHeader = table.children.shift();

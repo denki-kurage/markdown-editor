@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Markdown with Block Editor
  * Description:       You can edit markdown in a VSCode-like editor on the block editor.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Requires at least: 6.8
  * Requires PHP:      8.0.30
  * Author:            denkikurage
@@ -230,18 +230,5 @@ add_action('init', function(){
 	});
 
 });
-
-
-
-#
-#
-#
-#
-#
-#
-include('extensions/markdown-block-editor-extensions.php');
-#
-#
-#
 
 

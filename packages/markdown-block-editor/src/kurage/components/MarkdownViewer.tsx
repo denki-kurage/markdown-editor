@@ -71,7 +71,7 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
 
             if(prismPath || adminPath)
             {
-                console.log("####################### Head Reloading #########################");
+                //console.log("####################### Head Reloading #########################");
                 doc.head.innerHTML = '';
             }
 
@@ -85,10 +85,10 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
 
                 const script = createJsScriptElement(`${prismPath}.js`);
 
-                console.log("####################### Prism Loading #########################");
+                //console.log("####################### Prism Loading #########################");
                 script.onload = () =>
                 {
-                    console.log("####################### @@ Prism Loaded #########################");
+                    //console.log("####################### @@ Prism Loaded #########################");
                     // @ts-ignore
                     window.Prism.highlightAllUnder(doc);
                 }

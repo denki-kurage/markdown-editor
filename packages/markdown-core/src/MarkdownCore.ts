@@ -33,7 +33,7 @@ export class MarkdownCore implements ICommandsMapRoot, IDisposable, IMarkdownEve
 				textChanged: s.select(x => x.textChanged),
 			}
 		})
-console.log("■■■■■■■■■■■■■■■■■■■■ Constructor", this)
+//console.log("■■■■■■■■■■■■■■■■■■■■ Constructor", this)
 		this.disposables.push(
 			this.eventCollection.add(this),
 			appContext.getEventsInitializer().initializeEvents(deliver)
@@ -45,7 +45,7 @@ console.log("■■■■■■■■■■■■■■■■■■■■ Constr
 
 	public dispose(): void
 	{
-console.log("■■■■■■■■■■■■■■■■■■■■ Dispose", this)
+//console.log("■■■■■■■■■■■■■■■■■■■■ Dispose", this)
 		this.disposables.forEach(d => d.dispose());
 	}
 

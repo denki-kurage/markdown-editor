@@ -92,7 +92,7 @@ export class CodeHoldTextCommand extends HoldTextCommand
 
     protected override onReplaced(replaceItems: { area: ISelection; text: string; }[]): void
     {
-        console.log("wwwwwwwwwxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        //console.log("wwwwwwwwwxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
         this.appContext.getEditControl().openSuggest();
     }
 

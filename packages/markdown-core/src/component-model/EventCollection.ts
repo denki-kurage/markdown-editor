@@ -60,17 +60,17 @@ class MyTest implements IMyEvent
 
 	public test()
 	{
-		console.log(this.a);
+		//console.log(this.a);
 	}
 
     public click()
     {
-        console.log(`My Test click ${this.a}`)
+        //console.log(`My Test click ${this.a}`)
     }
 
     public focus()
     {
-        console.log(`My Test focus ${this.a}`)
+        //console.log(`My Test focus ${this.a}`)
     }
 }
 
@@ -80,17 +80,17 @@ class YouTest implements IMyEvent
 
 	public test()
 	{
-		console.log(this.a);
+		//console.log(this.a);
 	}
 
     public click()
     {
-        console.log(`You Test click ${this.a}`)
+        //console.log(`You Test click ${this.a}`)
     }
 
     public focus()
     {
-        console.log(`You Test focus ${this.a}`)
+        //console.log(`You Test focus ${this.a}`)
     }
 }
 
@@ -107,7 +107,7 @@ const trigger = ec.deliver(r => {
 })
 
 trigger.click();
-console.log("---------------")
+//console.log("---------------")
 trigger.focus()
 
 */

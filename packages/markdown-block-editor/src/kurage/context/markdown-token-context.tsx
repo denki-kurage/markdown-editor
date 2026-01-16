@@ -177,8 +177,8 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
 
         if(s !== tokenStates)
         {
-            console.log("wwwwwwwwwwwwwwwwwwwwwwwwwww update states wwwwwwwwwwwwwwwwwwwwwwwww")
-            console.log(s)
+            //console.log("wwwwwwwwwwwwwwwwwwwwwwwwwww update states wwwwwwwwwwwwwwwwwwwwwwwww")
+            //console.log(s)
             setTokenStates(s);
             return s;
         }
@@ -186,12 +186,12 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
         return tokenStates;
     }
 
-    console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
-    console.log("::::::::::::::::::::::: Token Context ReRender :::::::::::::::::::::")
+    //console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+    //console.log("::::::::::::::::::::::: Token Context ReRender :::::::::::::::::::::")
     
 
     const setRootToken = useCallback(() => {
-        console.log(" >>>>>>>>>>>>>> RootChanged()")
+        //console.log(" >>>>>>>>>>>>>> RootChanged()")
         const { markdown, markdownCore } = contextPropertyRef.current;
         const rootToken = new MarkdownParser().parseTokenTree(markdown);
         const { newSelections, newSingleToken } = selectionsAndTokenAction(markdownCore, markdown, rootToken, null);
@@ -200,7 +200,7 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
 
 
     const setSelectionsAndToken = useCallback((selections: [number, number][] | null, singleToken?: IToken) => {
-        console.log(" >> >> >> >> >> >> >> Context Selection and Token Changed()")
+        //console.log(" >> >> >> >> >> >> >> Context Selection and Token Changed()")
         const { markdown, markdownCore, tokenStates } = contextPropertyRef.current;
         const { newSelections, newSingleToken } = selectionsAndTokenAction(markdownCore, markdown, tokenStates.rootToken, selections, singleToken);
         updateTokenStatesRef.current({ selections: newSelections, singleToken: newSingleToken});
@@ -241,7 +241,7 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
     }, [tokenStates]);
 
     useEffect(() => console.log("-------------------------> context changed <--------------------------"), [tokenStates])
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", ctx.selections)
+    //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", ctx.selections)
     
     useEffect(() => {
         if(!isEditing)
@@ -250,21 +250,21 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
         }
     }, [isEditing])
 
-    console.log(contextPropertyRef.current.tokenStates.selections)
+    //console.log(contextPropertyRef.current.tokenStates.selections)
 
     useEffect(() => {
         const ec = markdownCore.eventCollection.add({
             selectChanged: (e) => {
                 if(!isEditing)
                 {
-                    console.log(" >>>>>>>>>>>>>> SelectChanged()");
+                    //console.log(" >>>>>>>>>>>>>> SelectChanged()");
                     try
                     {
                         ctx.setSelectionsAndToken(null);
                     }
                     catch(ex)
                     {
-                        console.log("######################################", ex);
+                        //console.log("######################################", ex);
                     }
                 }
             }

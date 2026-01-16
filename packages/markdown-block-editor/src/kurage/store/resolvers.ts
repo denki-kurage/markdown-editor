@@ -14,7 +14,7 @@ export const getSettings = () => async (p: any) =>
     }
     catch(ex: any)
     {
-        console.log(ex)
+        //console.log(ex)
     }
 }
 
@@ -32,6 +32,6 @@ export const getSettingOptions = () => async (p: any) =>
     }
     catch(ex: any)
     {
-        console.log(ex)
+        //console.log(ex)
     }
 }
