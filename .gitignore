@@ -12,3 +12,5 @@ markdown-core-extensions/node_modules
 markdown-core-extensions/dist
 
 node_modules
+vendor
+composer*

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="Custom Standard">
+    <rule ref="WordPress">
+        <!-- 配列の短縮構文 [] を許可する -->
+        <exclude name="Universal.Arrays.DisallowShortArraySyntax" />
+        <!-- ファイル名が class- で始まっていなくてもエラーにしない -->
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+    </rule>
+</ruleset>

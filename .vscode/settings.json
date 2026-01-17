@@ -1,4 +1,9 @@
 {
     "npm.packageManager": "npm",
-    "npm.scriptRunner": "npm"
+    "npm.scriptRunner": "npm",
+
+  "phpcs.enable": true,
+  "phpcs.standard": "WordPress",
+  "phpcs.executablePath": "/root/.config/composer/vendor/bin/phpcs"
+
 }
