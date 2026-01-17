@@ -18,9 +18,32 @@ export class MarkdownParser
             .use(remarkBreaks)
             .use(remarkGfm)
             .use(remarkRehype, { allowDangerousHtml: true })
+            .use(this.rewriteElements())
             .use(rehypeStringify, { allowDangerousHtml: true })
             .processSync(markdown)
             .toString();
+    }
+
+    private rewriteElements()
+    {
+        return () => (tree: any) =>
+        {
+            visit(tree, (node, index, parent) => {
+                const { tagName } = node;
+                if(tagName === 'a')
+                {
+                    node.properties = {
+                        ...node.properties,
+                        target: '_blank',
+                    };
+                }
+            })
+        }
+    }
+
+    private remarkRehypeHandler()
+    {
+        
     }
 
     public parseEditMarkdown(markdown: string): string
@@ -28,6 +51,7 @@ export class MarkdownParser
         const rec = () => (tree: any) =>
         {
             visit(tree, (node, index, parent) => {
+                const { tagName } = node;
                 const position = node?.position;
                 const flag = [
                     parent?.tagName === 'pre' && node?.tagName === 'code'
@@ -43,13 +67,7 @@ export class MarkdownParser
                         "data-offset": true
                     };
                 }
-            });
-        }
 
-        const addTextElement = () =>(tree: any) => {
-            
-            visit(tree, 'element', (node) => {
-                const { tagName } = node;
     
                 if(['td', 'th', 'li', 'strong', 'paragraph'].includes(tagName))
                 {
@@ -70,6 +88,7 @@ export class MarkdownParser
                     }
 
                 }
+
             })
         }
 
@@ -79,8 +98,8 @@ export class MarkdownParser
             .use(remarkBreaks)
             .use(remarkGfm)
             .use(remarkRehype, { allowDangerousHtml: true })
-            .use(addTextElement)
             .use(rec)
+            .use(this.rewriteElements())
             .use(rehypeStringify, { allowDangerousHtml: true })
             .processSync(markdown)
             .toString();
