@@ -3,7 +3,7 @@
  * Plugin Name:       Markdown with Block Editor
  * Description:       You can edit markdown in a VSCode-like editor on the block editor.
  * Version:           0.1.1
- * Requires at least: 6.
+ * Requires at least: 6.8
  * Requires PHP:      8.0.30
  * Author:            denkikurage
  * License:           GPL-2.0-or-later
@@ -16,11 +16,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
-
-
-
-
 
 add_action(
 	'init',
@@ -71,14 +66,14 @@ add_filter(
 	'markdown_block_editor_prism_themes',
 	function ( $themes ) {
 		$p                   = plugin_dir_url( __FILE__ );
-		$themes['coy']       = [ 'Coy', $p . 'prismjs/coy/prism.js' ];
-		$themes['dark']      = [ 'Dark', $p . 'prismjs/dark/prism.js' ];
-		$themes['default']   = [ 'Default', $p . 'prismjs/default/prism.js' ];
-		$themes['funkey']    = [ 'Funkey', $p . 'prismjs/funkey/prism.js' ];
-		$themes['okaidia']   = [ 'Okaidia', $p . 'prismjs/okaidia/prism.js' ];
-		$themes['solarized'] = [ 'Solarized', $p . 'prismjs/solarized/prism.js' ];
-		$themes['tommorow']  = [ 'Tommorow', $p . 'prismjs/tommorow/prism.js' ];
-		$themes['twilight']  = [ 'Twilight', $p . 'prismjs/twilight/prism.js' ];
+		$themes['coy']       = [ 'Coy', $p . 'prismjs/coy/prism' ];
+		$themes['dark']      = [ 'Dark', $p . 'prismjs/dark/prism' ];
+		$themes['default']   = [ 'Default', $p . 'prismjs/default/prism' ];
+		$themes['funkey']    = [ 'Funkey', $p . 'prismjs/funkey/prism' ];
+		$themes['okaidia']   = [ 'Okaidia', $p . 'prismjs/okaidia/prism' ];
+		$themes['solarized'] = [ 'Solarized', $p . 'prismjs/solarized/prism' ];
+		$themes['tommorow']  = [ 'Tommorow', $p . 'prismjs/tommorow/prism' ];
+		$themes['twilight']  = [ 'Twilight', $p . 'prismjs/twilight/prism' ];
 		return $themes;
 	}
 );
@@ -134,8 +129,8 @@ add_action(
 				if ( $front_css ) {
 					wp_enqueue_style( 'markdown_block_editor_front_css', $front_css, [], 1 );
 				}
-				wp_enqueue_style( 'markdown_block_editor_prism_theme', $p . "prismjs/{$prism}/prism.css", [], 1 );
-				wp_enqueue_script( 'markdown_block_editor_prism_theme', $p . "prismjs/{$prism}/prism.js", [], 1, false );
+				wp_enqueue_style( 'markdown_block_editor_prism_theme', $p . "prismjs/{$prism}/prism.css", []);
+				wp_enqueue_script( 'markdown_block_editor_prism_theme', $p . "prismjs/{$prism}/prism.js", []);
 			}
 		);
 
