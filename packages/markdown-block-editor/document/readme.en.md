@@ -76,3 +76,21 @@ Prism.js is used for source code highlighting.
 ![](./md-13.png)
 
 Once you've written this far, let's take a look at the front-end display.
+
+
+## Maximization
+
+![](./wp-x1.png)
+
+You can maximize the editor.
+However, the toolbar may sometimes get in the way.
+
+![](./wp-x2.png)
+
+Using the WordPress feature to pin the toolbar can make it easier to use.
+
+![](./wp-x3.png)
+
+
+
+

@@ -20,9 +20,9 @@ for example. (add bold, strikethrough, text decorations, adding images, code hig
 
 == Screenshots ==
 
-1. add Markdown block editor.
-2. Supports code (```, ~~~), heading (#), and table (n*n) suggestions.
-3. You can apply B (bold), I (italic), and S (strikethrough) from the toolbar.
+1. You can edit the markdown while checking the display screen.
+2. Editing the source code.
+3. The screen seen from the front.
 
 
 == Installation ==
