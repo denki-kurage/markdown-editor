@@ -153,10 +153,9 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                     triggerCharacters: ['`', '~'],
                     provideCompletionItems: (model: any, pos: any, context: any, token: any) =>
                     {
-                        if(['`', '~'].includes(context.triggerCharacter))
-                        {
-                            const line = model.getLineContent(pos.lineNumber);
+                            const line = model.getLineContent(pos.lineNumber).trim();
 
+                            // pos.column === 4
                             if(line.length === 3 && ['```', '~~~'].includes(line))
                             {
                                 // ツールバーやCtrl+Spaceで呼び出された場合は改行追加させない。
@@ -181,7 +180,6 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
 
                                 return { suggestions: items };
                             }
-                        }
                     }
                 }
             ),
