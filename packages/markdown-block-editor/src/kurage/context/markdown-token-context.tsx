@@ -240,7 +240,7 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
         }
     }, [tokenStates]);
 
-    useEffect(() => console.log("-------------------------> context changed <--------------------------"), [tokenStates])
+    //useEffect(() => console.log("-------------------------> context changed <--------------------------"), [tokenStates])
     //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", ctx.selections)
     
     useEffect(() => {

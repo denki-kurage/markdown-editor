@@ -10,6 +10,7 @@
     "build:editor-extensions": "pnpm --filter @kurage/markdown-block-editor-extensions build",
     "build:core": "pnpm --filter @kurage/markdown-core build",
     "build:core-extensions": "pnpm --filter @kurage/markdown-core-extensions build",
+    "dev:editor": "pnpm --filter @kurage/markdown-block-editor dev",
     "dev:editor-extensions": "pnpm --filter @kurage/markdown-block-editor-extensions dev",
     "now": "pnpm --filter @kurage/markdown-block-editor now",
     "resources": "pnpm --filter @kurage/markdown-core cp && pnpm --filter @kurage/markdown-core-extensions cp",

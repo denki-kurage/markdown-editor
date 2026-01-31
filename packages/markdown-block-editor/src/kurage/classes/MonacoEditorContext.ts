@@ -7,6 +7,8 @@ import { __ } from "@wordpress/i18n";
 import * as eaw from "eastasianwidth";
 
 
+
+
 class Utils
 {
     public static fromMonaco(selection: IMonacoSelection): IMdeSelection
@@ -85,7 +87,17 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
 
     private initInternalRegister()
     {
+
+        // [] の終了括弧が閉じるかどうかを捕捉するために必要。
+        let previousContent = this.editor.getValue();
+        let currentContent = previousContent;
+
+
         return [
+            this.editor.onDidChangeModelContent(e => {
+                previousContent = currentContent;
+                currentContent = this.editor.getValue();
+            }),
             this.monaco.languages.registerCompletionItemProvider(
                 'markdown',
                 {
@@ -141,36 +153,83 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                     triggerCharacters: ['`', '~'],
                     provideCompletionItems: (model: any, pos: any, context: any, token: any) =>
                     {
-                        const line: string = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
-
-                        if(line.indexOf('```') === 0 || line.indexOf('~~~') === 0)
+                        if(['`', '~'].includes(context.triggerCharacter))
                         {
-                            // ツールバーやCtrl+Spaceで呼び出された場合は改行追加させない。
-                            // 文字でサジェストが呼び出された場合のみ追加時に改行を加える。
-                            const chr = context.triggerCharacter;
-                            const triple = chr ? chr.repeat(3) : '```';
-                            const breaks = chr ? `\n$0\n${triple}\n` : '';
-                            
-                            const languages = sortedCodeLanguages(this.configurationHelper.getRecentCodeLanguages());
-                            const items = languages.map((lang, index) => {
-                                return <languages.CompletionItem>{
-                                    sortText: index.toString().padStart(3, '0'),
-                                    label: { label: lang.name, detail: ` (${lang.label})`},
-                                    kind: this.monaco.languages.CompletionItemKind.Snippet,
-                                    detail: __(`Insert code block for ${lang.label}.`, 'markdown-block-editor') as string,
-                                    insertText: `${lang.name}${breaks}`,
-                                    insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                                    command: { id: 'markdown.code.changed', arguments: [lang.name] },
-                                    documentation: `${triple}${lang.name}\n${__('Your code here...', 'markdown-block-editor')}\n${triple}`,
-                                };
-                            });
+                            const line = model.getLineContent(pos.lineNumber);
 
-                            return { suggestions: items };
+                            if(line.length === 3 && ['```', '~~~'].includes(line))
+                            {
+                                // ツールバーやCtrl+Spaceで呼び出された場合は改行追加させない。
+                                // 文字でサジェストが呼び出された場合のみ追加時に改行を加える。
+                                const chr = context.triggerCharacter;
+                                const triple = chr ? chr.repeat(3) : '```';
+                                const breaks = chr ? `\n$0\n${triple}\n` : '';
+                                
+                                const languages = sortedCodeLanguages(this.configurationHelper.getRecentCodeLanguages());
+                                const items = languages.map((lang, index) => {
+                                    return <languages.CompletionItem>{
+                                        sortText: index.toString().padStart(3, '0'),
+                                        label: { label: lang.name, detail: ` (${lang.label})`},
+                                        kind: this.monaco.languages.CompletionItemKind.Snippet,
+                                        detail: __(`Insert code block for ${lang.label}.`, 'markdown-block-editor') as string,
+                                        insertText: `${lang.name}${breaks}`,
+                                        insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                        command: { id: 'markdown.code.changed', arguments: [lang.name] },
+                                        documentation: `${triple}${lang.name}\n${__('Your code here...', 'markdown-block-editor')}\n${triple}`,
+                                    };
+                                });
+
+                                return { suggestions: items };
+                            }
                         }
                     }
                 }
             ),
 
+            this.monaco.languages.registerCompletionItemProvider(
+                'markdown',
+                {
+                    triggerCharacters: ['!', '['],
+                    provideCompletionItems: (model: any, pos: any, context: any, token: any) =>
+                    {
+                        const triggerChar = context.triggerCharacter;
+                        
+                        if(!triggerChar)
+                        {
+                            return;
+                        }
+
+                        const snippet = `[$1]($0)`;
+                        const isImage = triggerChar === '!';
+                        const label = isImage ? __('add image', 'markdown-block-editor') + '![](url)' : __('add link', 'markdown-block-editor') + '[](url)';
+                        let range: IRange | undefined;
+                        
+                        if(!isImage)
+                        {
+                            const hasCloseBraket = currentContent.length === previousContent.length + 2;
+
+                            range = new this.monaco.Range(
+                                pos.lineNumber,
+                                pos.column - 1,
+                                pos.lineNumber,
+                                hasCloseBraket ? pos.column + 1 : pos.column
+                            );
+                        }
+
+                        return {
+                            suggestions: [{
+                                label,
+                                kind: this.monaco.languages.CompletionItemKind.Snippet,
+                                detail: label,
+                                insertText: snippet,
+                                insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                range
+                            } as any]
+                        }
+                    }
+                }
+            ),
+            
             this.monaco.editor.addEditorAction({
                 id: 'markdown.code.changed',
                 label: 'RECENT CODE',
@@ -184,28 +243,31 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                 'markdown',
                 {
                     triggerCharacters: ['#'],
-                    provideCompletionItems: (model: any, pos: any, content: any, token: any) =>
+                    provideCompletionItems: (model: any, pos: any, context: any, token: any) =>
                     {
-                        const text = "\n" + model.getLinesContent().slice(0, Math.max(0, pos.lineNumber - 1)).join("\n");
-                        const line = model.getLineContent(pos.lineNumber).substring(0, pos.column - 1);
-                        const lastSharps = text.match(/\n#+/g)?.pop()?.trim() || '';
-                        const currentDeps = lastSharps.length;
-
-
-                        if(line === '#')
+                        if(context.triggerCharacter === '#')
                         {
+                            const line = model.getLineContent(pos.lineNumber);
+                            const leadingHashes = line.match(/^#+/)?.[0]?.length ?? 0;
+                            const range = new this.monaco.Range(pos.lineNumber, 1, pos.lineNumber, leadingHashes + 1);
+                            const text = "\n" + model.getLinesContent().slice(0, Math.max(0, pos.lineNumber - 1)).join("\n");
+                            const lastSharps = text.match(/\n#+/g)?.pop()?.trim() || '';
+                            const currentDeps = lastSharps.length;
                             const items = [...Array(6).keys()].map((i) => {
                                 const index = i + 1;
-                                const Heading = '#'.repeat(index - 1);
+                                const Heading = '#'.repeat(index);
                                 const isCurrent = index === currentDeps;
                                 const isLower = index - 1 === currentDeps;
                                 const detail = isCurrent ? __('current level', 'markdown-block-editor') : isLower ? __('lower level', 'markdown-block-editor') : '';
-                                return <languages.CompletionItem>{
-                                    preselect: isLower,
-                                    label: `#${Heading} ${index} ${detail ? `- ${detail}` : ''}`,
+                                const preselect = index === Math.min(leadingHashes, 6);
+                                return <any>{
+                                    preselect,
+                                    label: `${Heading} ${index} ${detail ? `- ${detail}` : ''}`,
                                     kind: this.monaco.languages.CompletionItemKind.Snippet,
                                     detail: __('Insert Heading level ${index} ${detail}.', 'markdown-block-editor') as string,
-                                    insertText: `${Heading}`,
+                                    insertText: Heading,
+                                    additionalTextEdits: [{ range, text: '' }],
+                                    //range
                                 };
                             });
 
