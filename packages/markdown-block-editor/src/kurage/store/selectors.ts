@@ -21,6 +21,7 @@ export const getEditorState = (state: IMarkdownBlockEditor, id: string) =>
         extensionsData: {},
         enabledSelectionsFilter: false,
         enabledSelectionsFilterFillMode: false,
+        beginnerAssistOpened: false,
         selections: [],
         tokenTypes: [],
         maximized: false

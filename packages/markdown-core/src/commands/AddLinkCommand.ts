@@ -11,6 +11,7 @@ export interface AddLinkCommandParams
 export class AddLinkCommand extends MarkdownCommandBase<AddLinkCommandParams>
 {
     
+    
     protected getSelectedText(): string
     {
         const model = this.appContext.getEditorModel();

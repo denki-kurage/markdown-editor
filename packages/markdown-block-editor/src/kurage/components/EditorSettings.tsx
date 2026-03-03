@@ -44,7 +44,7 @@ export const EditorSettings = ({}) =>
                 />
             
             <InputBox
-                text="OK2"
+                text="Apply"
                 value={ff}
                 onChanged={setFf}
                 onClicked={() => updateSettings({ fontFamily: ff })} />

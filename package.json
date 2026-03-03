@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -b",
     "build:editor": "pnpm --filter @kurage/markdown-block-editor build",
+    "build:editor-rspack": "pnpm --filter @kurage/markdown-block-editor rs:build",
     "build:editor-extensions": "pnpm --filter @kurage/markdown-block-editor-extensions build",
     "build:core": "pnpm --filter @kurage/markdown-core build",
     "build:core-extensions": "pnpm --filter @kurage/markdown-core-extensions build",
@@ -24,6 +25,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@wp-blocks/make-pot": "^1.6.3"
+    "@rspack/cli": "^1.7.6",
+    "@rspack/core": "^1.7.6",
+    "@wp-blocks/make-pot": "^1.6.6"
   }
 }

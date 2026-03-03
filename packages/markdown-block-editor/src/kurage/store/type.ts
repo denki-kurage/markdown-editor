@@ -27,6 +27,7 @@ export interface IMarkdownBlockEditorState
     enabledSelectionsFilter: boolean;
     enabledSelectionsFilterFillMode: boolean;
     maximized: boolean;
+    beginnerAssistOpened: boolean;
     extensionsData: {[key: string]: any}
     settings: ISettings
 }

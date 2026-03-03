@@ -42,5 +42,22 @@ export const useInternalCommandItems = (appContext: IAppContext) =>
 }
 
 
+export const useThemes = () =>
+{
+    const { settings, settingOptions } = useMarkdownAppContext();
+
+    return useMemo(() => {
+        const { adminTheme, prismTheme, frontTheme } = settings;
+        const prismMap = new Map(settingOptions.prismThemes.map(p => [p.key, p.url]));
+        const adminMap = new Map(settingOptions.adminThemes.map(p => [p.key, p.url]));
+        const frontMap = new Map(settingOptions.frontThemes.map(p => [p.key, p.url]));
+        const prismPath = prismMap.get(prismTheme);
+        const adminPath = adminMap.get(adminTheme);
+        const frontPath = frontMap.get(frontTheme);
+
+        return { settings, settingOptions, adminPath, prismPath, frontPath, prismTheme, adminTheme, frontTheme };
+    }, [settings, settingOptions]);
+}
+
 
 

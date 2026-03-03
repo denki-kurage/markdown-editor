@@ -1,7 +1,7 @@
-import { Button, SelectControl } from "@wordpress/components"
+import { Button, SelectControl, TextControl } from "@wordpress/components"
 import { sortedCodeLanguages } from "../../classes/CodeLanguages"
 import { TokenEditorProps } from "../inspector-hooks"
-import { useState } from "@wordpress/element"
+import { useMemo, useState } from "@wordpress/element"
 import { IToken, MarkdownParser } from "@kurage/markdown-core"
 import { __ } from "@wordpress/i18n"
 
@@ -72,7 +72,7 @@ export const HeadingTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 }
 
 
-export const CodeEditor = ({ token, contexts }: TokenEditorProps) =>
+export const CodeTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 {
     const { tokenContext, appContext } = contexts;
     const { markdownCore } = appContext;
@@ -112,3 +112,61 @@ export const CodeEditor = ({ token, contexts }: TokenEditorProps) =>
     )
 }
 
+export const ResourceTokenEditor = ({ token, contexts }: TokenEditorProps) =>
+{
+    const { tokenContext } = contexts;
+    const { onEdits } = tokenContext;
+    const text = tokenContext.getSingleText() || '';
+
+    // TODO: tokenから取得するように変更
+    const [, l, u, t] = useMemo(() => text.match(/^\[([^\]]*)\]\(([^ "\)]+)(?: "([^"]*)")?\)/) || [, '', '', '', ''], [text]);
+
+    const [linkText, setLinkText] = useState(l);
+    const [url, setUrl] = useState(u);
+    const [title, setTitle] = useState(t);
+
+    const { start, end } = token.getPosition();
+
+    const changedLinkText = (e: string) =>
+    {
+        setLinkText(e)
+    }
+
+    const changedUrl = (e: string) =>
+    {
+        setUrl(e);
+    }
+
+    const changedTitle = (e: string) =>
+    {
+        setTitle(e);
+    }
+
+    const update = () =>
+    {
+        onEdits([[`[${linkText}](${url}${title ? ` "${title}"` : ''})`, start, end]]);
+    }
+
+
+    return (
+        <div>
+            <TextControl
+                label={__('Link Text', 'markdown-block-editor')}
+                value={linkText}
+                onChange={changedLinkText}
+                />
+            <TextControl
+                label={__('URL', 'markdown-block-editor')}
+                value={url}
+                onChange={changedUrl}
+                />
+            <TextControl
+                label={__('Title', 'markdown-block-editor')}
+                value={title ?? ''}
+                onChange={changedTitle}
+                />
+            
+            <Button variant="primary" onClick={() => update()}>Update</Button>
+        </div>
+    )
+}

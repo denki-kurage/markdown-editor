@@ -1,12 +1,11 @@
 import { Monaco } from "@monaco-editor/react";
-import { editor, IRange, ISelection as IMonacoSelection, languages, Position, Selection } from 'monaco-editor';
+import { editor as editorType, ISelection as IMonacoSelection, IRange } from "monaco-editor/esm/vs/editor/editor.api.d.js";
+import { editor as editorVar, Position, Selection, languages } from 'monaco-editor';
 import { IAppContext, IDisposable, IDocumentPosition, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, ISelection as IMdeSelection, IStringCounter, ITextSource, IConfigurationStorage, ConfigurationHelper, IEditControl } from "@kurage/markdown-core"
 import { MonacoDecorator } from "./MonacoDecorator";
 import { sortedCodeLanguages } from "./CodeLanguages";
 import { __ } from "@wordpress/i18n";
 import * as eaw from "eastasianwidth";
-
-
 
 
 class Utils
@@ -75,8 +74,8 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
 
     public constructor(
         private readonly monaco: Monaco,
-        private readonly model: editor.ITextModel,
-        private readonly editor: editor.IStandaloneCodeEditor,
+        private readonly model: editorType.ITextModel,
+        private readonly editor: editorType.IStandaloneCodeEditor,
         private readonly configurationStorage: IConfigurationStorage)
     {
         this.decorator = new MonacoDecorator(editor);
@@ -395,7 +394,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                 if(lineNumber !== ln)
                 {
                     const pos = this.editor.getTopForPosition(lineNumber + 1, 1);
-                    this.editor.setScrollTop(pos, editor.ScrollType.Immediate);
+                    this.editor.setScrollTop(pos, editorVar.ScrollType.Immediate);
                 }
             },
             addScrollEventListener: (scrolled: (lineNumber: number) => void) =>
@@ -464,7 +463,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                 });
 
                 //this.model.applyEdits(edits);
-                const r: undefined | editor.ICursorStateComputer  = reselect ? options => {
+                const r: undefined | editorType.ICursorStateComputer  = reselect ? options => {
                         return options.map((opt, idx) => {
                             const { range, text } = opt;
                             const newSelection = reselect(text, Utils.fromMonacoRange(range));
@@ -486,7 +485,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
             },
             rewrite: (items: IReplaceText[]) =>
             {
-                const edits: editor.IIdentifiedSingleEditOperation[] = items.map(item => {
+                const edits: editorType.IIdentifiedSingleEditOperation[] = items.map(item => {
                     const { area, text } = item;
                     const range: IRange = Utils.toMonacoRange(area);
                     return ({
@@ -521,7 +520,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
             },
             scroll: (docIndex: number) =>
             {
-                this.editor.revealLine(docIndex + 1, editor.ScrollType.Smooth);
+                this.editor.revealLine(docIndex + 1, editorVar.ScrollType.Smooth);
             }
         }
     }

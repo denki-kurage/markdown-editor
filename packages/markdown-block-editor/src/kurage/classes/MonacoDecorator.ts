@@ -1,12 +1,16 @@
 import { IDocumentPosition, IEditorDecorateSelection, } from "@kurage/markdown-core";
-import { editor, IDisposable, Range } from "monaco-editor";
+import { editor as EditorType, IDisposable } from "monaco-editor/esm/vs/editor/editor.api.d.js";
 
+//import { Range } from 'monaco-editor/esm/vs/editor/editor.api';
+
+// @ts-ignore
+import { Range } from 'monaco-editor';
 
 export class MonacoDecorator implements IDisposable
 {
-    private decorations: editor.IEditorDecorationsCollection | undefined;
+    private decorations: EditorType.IEditorDecorationsCollection | undefined;
 
-    public constructor(private readonly editor: editor.IStandaloneCodeEditor)
+    public constructor(private readonly editor: EditorType.IStandaloneCodeEditor)
     {
 
     }
@@ -18,7 +22,7 @@ export class MonacoDecorator implements IDisposable
 
     public decorate(selections: IEditorDecorateSelection[])
     {
-        this.decorations = this.editor.createDecorationsCollection(selections.map<editor.IModelDeltaDecoration>(r =>
+        this.decorations = this.editor.createDecorationsCollection(selections.map<EditorType.IModelDeltaDecoration>(r =>
         {
             const { sPos, ePos } = r.selection;
             const cn = r.classes.join(' ')

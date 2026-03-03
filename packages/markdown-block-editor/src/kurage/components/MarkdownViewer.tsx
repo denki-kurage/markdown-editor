@@ -6,6 +6,7 @@ import { applyFilters, doAction } from "@wordpress/hooks";
 import { Loading } from "./Loading";
 import { useMarkdownEditorContext } from "../context/markdown-editor-context";
 import { useMarkdownAppContext } from "../context/markdown-app-context";
+import { useThemes } from "./hooks";
 
 const getDoms = (iframe: HTMLIFrameElement|undefined|null) =>
 {
@@ -33,17 +34,13 @@ const createJsScriptElement = (src: string) =>
 
 export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWindow: (win: Window) => void }) =>
 {
-    const { settings, settingOptions } = useMarkdownAppContext();
     const { isEditing } = useMarkdownEditorContext();
     const tokenContext = useMarkdownTokenContext();
     const { singleToken } = tokenContext;
-    const { adminTheme, prismTheme } = settings;
-    const { themeUrl } = settingOptions;
+    const { prismPath, adminPath } = useThemes();
 
     const frameRef = useRef<HTMLIFrameElement>(null);
 
-    const prismMap = useMemo(() => new Map(settingOptions.prismThemes.map(p => [p.key, p.url])), [settingOptions]);
-    const adminMap = useMemo(() => new Map(settingOptions.adminThemes.map(p => [p.key, p.url])), [settingOptions]);
 
     const renderHtml = useCallback((markdown: string, iframe?: HTMLIFrameElement) => {
         const parsedCode = parseEditMarkdown(markdown, true);
@@ -66,8 +63,6 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
         const { doc } = getDoms(iframe);
         if(doc)
         {
-            const prismPath = prismMap.get(prismTheme);
-            const adminPath = adminMap.get(adminTheme);
 
             if(prismPath || adminPath)
             {
@@ -101,7 +96,7 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
 
             doAction('markdown_block_editor_header_initalize', doc);
         }
-    }, [adminTheme, prismTheme, prismMap, adminMap]);
+    }, [adminPath, prismPath]);
 
 
 
@@ -114,7 +109,7 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
 
     useEffect(() => {
         reloadHead(frameRef.current || undefined);
-    }, [adminTheme, prismTheme]);
+    }, [prismPath, adminPath]);
 
     useEffect(() => {
         const { win } = getDoms(frameRef.current);

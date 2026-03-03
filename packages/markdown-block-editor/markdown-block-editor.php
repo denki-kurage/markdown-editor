@@ -42,6 +42,15 @@ add_action(
 );
 
 
+
+
+
+
+
+
+
+
+
 add_filter(
 	'markdown_block_editor_front_themes',
 	function ( $themes ) {

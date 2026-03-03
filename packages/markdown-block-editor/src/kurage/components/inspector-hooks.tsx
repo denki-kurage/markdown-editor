@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from "@wordpress/element";
 import { ICommandItem, IToken, MarkdownCore } from "@kurage/markdown-core";
 import { applyFilters } from "@wordpress/hooks";
 import { ExtensionContexts } from "./hooks";
-import { CodeEditor, HeadingTokenEditor, TableTokenEditor } from "./token-editor-forms/token-editors";
+import { CodeTokenEditor, HeadingTokenEditor, ResourceTokenEditor, TableTokenEditor } from "./token-editor-forms/token-editors";
 import { __ } from "@wordpress/i18n";
 
 
@@ -48,10 +48,12 @@ export const useTokenEditorComponents = (type: string) =>
         const defaults: TokenEditorComponentInfo[] = [
             { type: 'text', label: 'Text Editor', component: TextTokenEditor },
             { type: 'heading', label: 'Heading', component: HeadingTokenEditor },
-            { type: 'code', label: 'Code', component: CodeEditor },
+            { type: 'code', label: 'Code', component: CodeTokenEditor },
 			{ type: 'table', label: 'Table', component: TableTokenEditor },
 			{ type: 'tableRow', label: 'Table Row', component: TableTokenEditor },
 			{ type: 'tableCell', label: 'Table Cell', component: TableTokenEditor },
+            { type: 'link', label: 'Link', component: ResourceTokenEditor },
+            { type: 'image', label: 'Image', component: ResourceTokenEditor },
         ];
         return applyFilters('markdown_block_editor_get_token_editor_components', defaults) as TokenEditorComponentInfo[];
     }, []);

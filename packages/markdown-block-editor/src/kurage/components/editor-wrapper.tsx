@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "@wordpress/element";
 import { AppContextGenerateParams, useMarkdownAppContext } from "../context/markdown-app-context";
 import { MonacoEditor } from "./MonacoEditor";
-
 export const EditorGeneratorCollection: EditorGenerator[] = [];
 
 export type MarkdownEditorProps =

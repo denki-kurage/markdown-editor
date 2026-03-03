@@ -1,5 +1,7 @@
 import { Editor, Monaco, } from '@monaco-editor/react';
-import { editor as monacoEditor } from 'monaco-editor';
+import type { editor as editorType } from "monaco-editor/esm/vs/editor/editor.api.d.js";
+import { editor as editorVar } from 'monaco-editor';
+
 import { useEffect, useMemo, useRef, useState } from "@wordpress/element";
 import root from 'react-shadow';
 import { useMarkdownContext } from "../context/markdown-context";
@@ -12,9 +14,12 @@ import { IConfigurationStorage } from '@kurage/markdown-core';
 import { applyFilters } from '@wordpress/hooks';
 import monacoStyle from './editor.main.xcss';
 
+
+
+
 export const useMarkdownApp = (
         configurationStorage: IConfigurationStorage,
-        editor?: monacoEditor.IStandaloneCodeEditor,
+        editor?: editorType.IStandaloneCodeEditor,
         monaco?: Monaco
     ) =>
 {
@@ -39,7 +44,7 @@ export const useMarkdownApp = (
 export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =>
 {
     const [monaco, setMonaco] = useState<Monaco|undefined>();
-    const [editor, setEditor] = useState<monacoEditor.IStandaloneCodeEditor|undefined>();
+    const [editor, setEditor] = useState<editorType.IStandaloneCodeEditor|undefined>();
     const { configurationStorage } = useMarkdownAppContext();
     const { markdown, onMarkdownChanged: onValueChanged } = useMarkdownContext();
     const settings = useSelect(select => select(store).getSettings(), []);
@@ -48,22 +53,10 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
     useEffect(() => initializedMarkdownCore(params), [params])
 
     
-    const family = editor?.getOption(monacoEditor.EditorOption.fontFamily);
+    const family = editor?.getOption(editorVar.EditorOption.fontFamily);
     const styles: string[] = useMemo(() => applyFilters('markdown_block_editor_editor_styles', []), []) as string[];
 
-    /*
-    AABBCCDDEE
-    あいうえお
-    
 
-| fruits     | price | color  | pr |
-|------------|-------|--------|----|
-| abcdefghij | 200   | red    | 1  |
-| あいうえお | 1200  | purple | 22 |
-| banana     | 160   | yellow | 3  |ff
-| melon      | 2000  | green  | 51 |
-
-    */
     useEffect(() => {
         if(settings && editor)
         {
@@ -81,16 +74,7 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
 
     return (
         <>
-            {/* */}
-             <root.div className="monaco-shadow-dom">
-
-                {/*<link
-                    rel="stylesheet"
-                    type="text/css"
-                    data-name="vs/editor/editor.main"
-                    href="https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs/editor/editor.main.css"
-                    />
-                */}
+             <root.div className="monaco-shadow-dom2">
                 
                 <style>{ monacoStyle }</style>
                 
@@ -98,7 +82,6 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
                     styles.map(style => <style>{ style }</style>)
                 }
 
-                {/*  */}
                 
                 <Editor
                     width="100%"
@@ -115,13 +98,13 @@ export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =
                     
                     />
                 </root.div>
-            {/*  */}
 
         </>
     )
 
 }
 
+/**/
 
 
 
