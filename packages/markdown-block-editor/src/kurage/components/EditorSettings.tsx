@@ -4,6 +4,7 @@ import { Button, Flex, FlexItem, SelectControl, Spinner, TextControl } from "@wo
 import { OthreSettings } from "./OtherSettings";
 import { __ } from "@wordpress/i18n";
 import { useState } from "react";
+import { SnippetsSettings } from "./SnippetSettings";
 
 const fontFamilies = [
     { label: '', value: '' },
@@ -55,6 +56,8 @@ export const EditorSettings = ({}) =>
                 options={fontSizes}
                 value={(fontSize || 12).toString()}
                 onChange={e => updateSettings({ fontSize: parseInt(e) })} />
+
+            <SnippetsSettings />
 
             <OthreSettings />
             

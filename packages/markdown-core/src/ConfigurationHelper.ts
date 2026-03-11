@@ -1,5 +1,5 @@
 import { IConfigurationStorage } from "./component-model";
-
+import { ISnippet } from "./ISnippet";
 
 export class ConfigurationHelper
 {
@@ -12,7 +12,7 @@ export class ConfigurationHelper
     
     public updateRecentCodeLanguage(language: string, maxLength: number = 10)
     {
-        const languages = this.getter.createArrayString('Core.RecentCodeLanguages') ?? [];
+        const languages = this.getter.createArrayOfString('Core.RecentCodeLanguages') ?? [];
         const idx = languages.indexOf(language);
         if(idx >= 0)
         {
@@ -26,11 +26,20 @@ export class ConfigurationHelper
         this.configurationStorage.setValue('Core.RecentCodeLanguages', languages);
     }
 
+    public updateSnippets(snippets: ISnippet[]): void
+    {
+        this.configurationStorage.setValue('Core.Snippets', snippets);
+    }
+    
     public getRecentCodeLanguages(): string[]
     {
-        return this.getter.createArrayString('Core.RecentCodeLanguages') ?? [];
+        return this.getter.createArrayOfString('Core.RecentCodeLanguages') ?? [];
     }
 
+    public getSnippets(): ISnippet[]
+    {
+        return this.getter.createArrayOfObject<ISnippet>('Core.Snippets') ?? [];
+    }
 
 }
 
@@ -51,14 +60,19 @@ export class ConfigurationValueGetter
         }
     }
 
-    public createArrayString(key: string): string[] | undefined
+    public createArrayOfString(key: string): string[] | undefined
     {
         return this.createArray<string>(key, "string");
     }
 
-    public createArrayNumner(key: string): number[] | undefined
+    public createArrayOfNumner(key: string): number[] | undefined
     {
         return this.createArray<number>(key, "number");
+    }
+
+    public createArrayOfObject<T>(key: string): T[] | undefined
+    {
+        return this.createArray<T>(key, "object");
     }
 
 }

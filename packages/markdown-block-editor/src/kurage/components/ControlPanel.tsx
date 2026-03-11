@@ -64,7 +64,7 @@ export const BeginnerAssistModal = ({}) =>
     return (
         <>
             <Button variant="tertiary" style={{width: '100%'}} onClick={() => setIsOpen(true)}>{__('Open Beginner Assist', 'markdown-block-editor')}</Button>
-            { isOpen && <Modal title={__('Beginner Assist', 'markdown-block-editor')} onRequestClose={e => setIsOpen(false)}><BeginnerAssist close={() => setIsOpen(false)} /></Modal>}
+            { isOpen && <Modal title={__('Beginner Assist(Experimental Feature)', 'markdown-block-editor')} onRequestClose={e => setIsOpen(false)}><BeginnerAssist close={() => setIsOpen(false)} /></Modal>}
         </>
     )
 }

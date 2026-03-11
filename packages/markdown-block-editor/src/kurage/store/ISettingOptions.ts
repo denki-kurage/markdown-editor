@@ -1,3 +1,5 @@
+import { ISnippet } from "@kurage/markdown-core";
+
 export interface ISettingOptions
 {
     frontThemes: {key: string, name: string, url: string}[];
@@ -5,5 +7,6 @@ export interface ISettingOptions
     prismThemes: {key: string, name: string, url: string}[];
     monacoThemes: {key: string, name: string}[];
     themeUrl: string;
+    snippets: ISnippet[];
 }
 

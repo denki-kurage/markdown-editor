@@ -34,7 +34,7 @@ export { IToken } from './IToken';
 export { ConfigurationHelper } from './ConfigurationHelper';    
 export { IEditControl } from './IEditControl'
 export { DefaultStringCounter } from './DefaultStringCounter';
-
+export { ISnippet } from './ISnippet';
 
 export * from './component-model';
 export * from './commands';

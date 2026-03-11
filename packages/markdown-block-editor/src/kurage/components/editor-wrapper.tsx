@@ -1,11 +1,12 @@
 import { useEffect, useMemo } from "@wordpress/element";
-import { AppContextGenerateParams, useMarkdownAppContext } from "../context/markdown-app-context";
+import { useMarkdownAppContext } from "../context/markdown-app-context";
 import { MonacoEditor } from "./MonacoEditor";
+import { IAppContext } from "@kurage/markdown-core";
 export const EditorGeneratorCollection: EditorGenerator[] = [];
 
 export type MarkdownEditorProps =
 {
-    initializedMarkdownCore: (markdownCore?: AppContextGenerateParams) => void;
+    initializedAppContext: (context?: IAppContext) => void;
 }
 
 export type EditorGenerator =
@@ -26,12 +27,8 @@ EditorGeneratorCollection.push({
 
 export function useMarkdownEditorGenerator(name: string): EditorGenerator
 {
-    const { updateAppContext } = useMarkdownAppContext();
 
     return useMemo(() => {
-
-        // エディタのコンテキスト解除。
-        updateAppContext(undefined);
 
         return EditorGeneratorCollection.find(g => g.name === name) ?? ({ name: 'default', EditorComponent: props => <p>Has not Editor</p>})
 

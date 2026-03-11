@@ -5,7 +5,7 @@ import { editor as editorVar } from 'monaco-editor';
 import { useEffect, useMemo, useRef, useState } from "@wordpress/element";
 import root from 'react-shadow';
 import { useMarkdownContext } from "../context/markdown-context";
-import { AppContextGenerateParams, useMarkdownAppContext } from '../context/markdown-app-context';
+import { useMarkdownAppContext } from '../context/markdown-app-context';
 import { MarkdownEditorProps } from './editor-wrapper';
 import { MonacoEditorContext } from '../classes/MonacoEditorContext';
 import { useSelect } from '@wordpress/data';
@@ -13,14 +13,16 @@ import { store } from '../store';
 import { IConfigurationStorage } from '@kurage/markdown-core';
 import { applyFilters } from '@wordpress/hooks';
 import monacoStyle from './editor.main.xcss';
+import { ISettingOptions } from '../store/ISettingOptions';
 
 
 
 
 export const useMarkdownApp = (
         configurationStorage: IConfigurationStorage,
+        options: ISettingOptions,
         editor?: editorType.IStandaloneCodeEditor,
-        monaco?: Monaco
+        monaco?: Monaco,
     ) =>
 {
     return useMemo(() => {
@@ -34,23 +36,22 @@ export const useMarkdownApp = (
             // LFにしないと、文字列数が正確にカウントできないなどいろいろ不都合なので
             model.setEOL(monaco.editor.EndOfLineSequence.LF)
 
-            const appContext = new MonacoEditorContext(monaco, model, editor, configurationStorage);
-            const x:  AppContextGenerateParams = { appContext };
-            return x;
+            return new MonacoEditorContext(monaco, model, editor, configurationStorage, options.snippets);
         }
     }, [editor, monaco]);
 }
 
-export const MonacoEditor = ({ initializedMarkdownCore }: MarkdownEditorProps) =>
+export const MonacoEditor = ({ initializedAppContext }: MarkdownEditorProps) =>
 {
     const [monaco, setMonaco] = useState<Monaco|undefined>();
     const [editor, setEditor] = useState<editorType.IStandaloneCodeEditor|undefined>();
     const { configurationStorage } = useMarkdownAppContext();
     const { markdown, onMarkdownChanged: onValueChanged } = useMarkdownContext();
     const settings = useSelect(select => select(store).getSettings(), []);
+    const options = useSelect(select => select(store).getSettingOptions(), []);
 
-    const params = useMarkdownApp(configurationStorage, editor, monaco);
-    useEffect(() => initializedMarkdownCore(params), [params])
+    const appContext = useMarkdownApp(configurationStorage, options, editor, monaco);
+    useEffect(() => initializedAppContext(appContext), [appContext])
 
     
     const family = editor?.getOption(editorVar.EditorOption.fontFamily);

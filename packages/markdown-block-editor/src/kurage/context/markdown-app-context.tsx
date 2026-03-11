@@ -1,7 +1,7 @@
 import { IAppContext, IConfigurationStorage, IEditorModel, IEventsInitializer, IMarkdownEvents, MarkdownCore } from "@kurage/markdown-core"
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from "@wordpress/element";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "@wordpress/element";
 import { MarkdownEventCollection } from "@kurage/markdown-core";
-import { applyFilters } from '@wordpress/hooks'
+import { addFilter, applyFilters } from '@wordpress/hooks'
 import { useDispatch, useSelect } from "@wordpress/data";
 import { store } from "../store";
 import { ISettings } from "../store/ISettings";
@@ -9,10 +9,6 @@ import { ISettingOptions } from "../store/ISettingOptions";
 import { Spinner } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 
-export type AppContextGenerateParams =
-{
-    appContext: IAppContext;
-}
 export type MarkdownAppContextProps =
 {
     appContext: IAppContext;
@@ -21,10 +17,10 @@ export type MarkdownAppContextProps =
     settings: ISettings;
     settingOptions: ISettingOptions;
     markdownCore: MarkdownCore;
-    updateAppContext: (params?: AppContextGenerateParams) => void;
+    updateAppContext: (appContext?: IAppContext) => void;
 }
 
-const appContext: IAppContext =
+const defaultAppContext: IAppContext =
 {
     getEditorModel: () => {
         return {
@@ -86,7 +82,14 @@ const appContext: IAppContext =
     returnKey: () => 'none'
 }
 
-
+addFilter(
+    'markdown_block_editor_create_markdown_core',
+    'kurage/markdown-block-editor',
+    ({ appContext, settings, settingOptions, configStorage }: { appContext: IAppContext; settings: ISettings; settingOptions: ISettingOptions; configStorage: IConfigurationStorage }) =>
+    {
+        return new MarkdownCore(appContext, configStorage);
+    }
+)
 
 const Context = createContext<MarkdownAppContextProps>(null as any);
 export const { Provider: AppContextProvider } = Context;
@@ -94,6 +97,8 @@ export const useMarkdownAppContext = () => useContext(Context);
 
 export const MarkdownAppContextWrapper = ({ children }: any) =>
 {
+    const [appContext, setAppContext] = useState<IAppContext|undefined>();
+    const [context, setContext] = useState<MarkdownAppContextProps>();
     const { updateSettings } = useDispatch(store);
     const { settings, settingOptions } = useSelect(select => {
         const s = select(store);
@@ -121,54 +126,37 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
         setValue: (name, value) => configStorageRef.current?.setValue(name, value)
     }
 
-    const defaultMarkdownCore = useMemo(() => new MarkdownCore(appContext, configStorage), []);
-    const [markdownCore, setMarkdownCore] = useState<MarkdownCore>(defaultMarkdownCore);
+    useEffect(() => {
 
-    const generateAppContext = useCallback((params?: AppContextGenerateParams) =>
-    {
-
-        // TODO: 調査
-        if(markdownCore !== defaultMarkdownCore)
+        if(settings && settingOptions)
         {
-            markdownCore?.dispose();
-        }
-        
-        if(params)
-        {
-            const { appContext } = params;
-
-            const core = applyFilters(
-                'markdown_block_editor_app_context',
-                new MarkdownCore(appContext, configStorage),
-                appContext,
-                configStorage
+            const markdownCore = applyFilters(
+                'markdown_block_editor_create_markdown_core',
+                { appContext: appContext ?? defaultAppContext, configStorage, settings, settingOptions }
             ) as any;
 
-            setMarkdownCore(core);
-        }
-        else
-        {
-            setMarkdownCore(defaultMarkdownCore);
-        }
-    }, [configStorage, defaultMarkdownCore, markdownCore]);
+            const context: MarkdownAppContextProps = {
+                appContext: markdownCore.appContext,
+                eventCollection: markdownCore.eventCollection,
+                markdownCore,
+                settings,
+                settingOptions,
+                configurationStorage: configStorage,
+                updateAppContext: setAppContext
+            }
 
-    const ctx = useMemo<MarkdownAppContextProps>(() =>
-    {
-        return {
-            appContext: markdownCore.appContext,
-            eventCollection: markdownCore.eventCollection,
-            markdownCore,
-            settings,
-            settingOptions,
-            configurationStorage: configStorage,
-            updateAppContext: generateAppContext
+            console.log(`xxxxxxxxxxxxxxxxxxxxxxx`, context)
+            setContext(context);
+
+            return () => markdownCore?.dispose();            
         }
-    }, [markdownCore, settings, settingOptions, configStorage]);
+
+    }, [appContext, settings, settingOptions]);
 
     return (
         <>
-        { settings && settingOptions ? (
-            <AppContextProvider value={ctx}>
+        { context ? (
+            <AppContextProvider value={context}>
                 { children }
             </AppContextProvider>
         ) : <div><Spinner />{__('Loading settings information...', 'markdown-block-editor')}</div> }

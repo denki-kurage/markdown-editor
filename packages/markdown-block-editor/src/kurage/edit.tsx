@@ -115,7 +115,7 @@ const MainEditor = ({ editorName }: any) =>
 	return (
 		<SplitPanel height={editHeight}>
 			<Panel style={styles[0]}>
-				<EditorComponent initializedMarkdownCore={updateAppContext} />
+				<EditorComponent initializedAppContext={updateAppContext} />
 			</Panel>
 			<Panel style={styles[1]}>
 				<MarkdownViewer markdown={markdown} setWindow={setWin} />

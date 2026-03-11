@@ -1,5 +1,5 @@
 import apiFetch from "@wordpress/api-fetch";
-import { Button, CheckboxControl, Modal, RangeControl, SelectControl, Spinner, TextControl } from "@wordpress/components";
+import { Button, CheckboxControl, Modal, RangeControl, SelectControl, Spinner, TextareaControl, TextControl } from "@wordpress/components";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 
@@ -8,7 +8,6 @@ import { useCallback, useEffect, useMemo, useState } from "@wordpress/element";
 import { store } from "../store";
 import { useMarkdownAppContext } from "../context/markdown-app-context";
 
-import { ISettings } from "../store/ISettings";
 import { applyFilters } from "@wordpress/hooks";
 import { useExtensionContexts } from "./hooks";
 
@@ -35,7 +34,8 @@ const OtherSettingsDialog = ({}) =>
     const { createSuccessNotice, createErrorNotice } = useDispatch(noticeStore);
     const { updateSettings } = useDispatch(store);
     const { markdownCore } = useMarkdownAppContext();
-    const recentCodeLanguages = markdownCore.getConfigurationHelper().getRecentCodeLanguages();
+    const configurationHelper = markdownCore.getConfigurationHelper();
+    const recentCodeLanguages = configurationHelper.getRecentCodeLanguages();
 
     const ctxs = useExtensionContexts();
 
@@ -91,6 +91,7 @@ const OtherSettingsDialog = ({}) =>
                 onChange={value => updateSettings({ prismTheme: value })}
             />
 
+
             <p>{ __('This will update the options used globally, but you will need to reload the page for the changes to take effect.', 'markdown-block-editor') }</p>
 
 
@@ -100,3 +101,4 @@ const OtherSettingsDialog = ({}) =>
         </div>
     )
 }
+

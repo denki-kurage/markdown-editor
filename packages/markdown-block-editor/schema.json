@@ -36,7 +36,13 @@
                     { "type": "boolean" },
                     { "type": "array", "items": { "anyOf": [
                         { "type": "string" },
-                        { "type": "number" }
+                        { "type": "number" },
+                        { "type": "object", "additionalProperties": { "anyOf": [
+                            { "type": "string" },
+                            { "type": "number" },
+                            { "type": "boolean" }
+                        ] } },
+                        { "type": "boolean" }
                     ] } }
                 ]
             }

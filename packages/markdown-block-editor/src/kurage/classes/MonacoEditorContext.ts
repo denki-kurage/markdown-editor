@@ -1,11 +1,13 @@
 import { Monaco } from "@monaco-editor/react";
 import { editor as editorType, ISelection as IMonacoSelection, IRange } from "monaco-editor/esm/vs/editor/editor.api.d.js";
 import { editor as editorVar, Position, Selection, languages } from 'monaco-editor';
-import { IAppContext, IDisposable, IDocumentPosition, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, ISelection as IMdeSelection, IStringCounter, ITextSource, IConfigurationStorage, ConfigurationHelper, IEditControl } from "@kurage/markdown-core"
+import { IAppContext, IDisposable, IDocumentPosition, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, ISelection as IMdeSelection, IStringCounter, ITextSource, IConfigurationStorage, ConfigurationHelper, IEditControl, ISnippet } from "@kurage/markdown-core"
 import { MonacoDecorator } from "./MonacoDecorator";
 import { sortedCodeLanguages } from "./CodeLanguages";
 import { __ } from "@wordpress/i18n";
 import * as eaw from "eastasianwidth";
+
+
 
 
 class Utils
@@ -76,7 +78,9 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
         private readonly monaco: Monaco,
         private readonly model: editorType.ITextModel,
         private readonly editor: editorType.IStandaloneCodeEditor,
-        private readonly configurationStorage: IConfigurationStorage)
+        private readonly configurationStorage: IConfigurationStorage,
+        private readonly snippets: ISnippet[] = []
+    )
     {
         this.decorator = new MonacoDecorator(editor);
         this.configurationHelper = new ConfigurationHelper(configurationStorage);
@@ -92,7 +96,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
         let currentContent = previousContent;
 
 
-        return [
+        const disposables = [
             this.editor.onDidChangeModelContent(e => {
                 previousContent = currentContent;
                 currentContent = this.editor.getValue();
@@ -152,33 +156,33 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                     triggerCharacters: ['`', '~'],
                     provideCompletionItems: (model: any, pos: any, context: any, token: any) =>
                     {
-                            const line = model.getLineContent(pos.lineNumber).trim();
+                        const line = model.getLineContent(pos.lineNumber).trim();
 
-                            // pos.column === 4
-                            if(line.length === 3 && ['```', '~~~'].includes(line))
-                            {
-                                // ツールバーやCtrl+Spaceで呼び出された場合は改行追加させない。
-                                // 文字でサジェストが呼び出された場合のみ追加時に改行を加える。
-                                const chr = context.triggerCharacter;
-                                const triple = chr ? chr.repeat(3) : '```';
-                                const breaks = chr ? `\n$0\n${triple}\n` : '';
-                                
-                                const languages = sortedCodeLanguages(this.configurationHelper.getRecentCodeLanguages());
-                                const items = languages.map((lang, index) => {
-                                    return <languages.CompletionItem>{
-                                        sortText: index.toString().padStart(3, '0'),
-                                        label: { label: lang.name, detail: ` (${lang.label})`},
-                                        kind: this.monaco.languages.CompletionItemKind.Snippet,
-                                        detail: __(`Insert code block for ${lang.label}.`, 'markdown-block-editor') as string,
-                                        insertText: `${lang.name}${breaks}`,
-                                        insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                                        command: { id: 'markdown.code.changed', arguments: [lang.name] },
-                                        documentation: `${triple}${lang.name}\n${__('Your code here...', 'markdown-block-editor')}\n${triple}`,
-                                    };
-                                });
+                        // pos.column === 4
+                        if(line.length === 3 && ['```', '~~~'].includes(line))
+                        {
+                            // ツールバーやCtrl+Spaceで呼び出された場合は改行追加させない。
+                            // 文字でサジェストが呼び出された場合のみ追加時に改行を加える。
+                            const chr = context.triggerCharacter;
+                            const triple = chr ? chr.repeat(3) : '```';
+                            const breaks = chr ? `\n$0\n${triple}\n` : '';
+                            
+                            const languages = sortedCodeLanguages(this.configurationHelper.getRecentCodeLanguages());
+                            const items = languages.map((lang, index) => {
+                                return <languages.CompletionItem>{
+                                    sortText: index.toString().padStart(3, '0'),
+                                    label: { label: lang.name, detail: ` (${lang.label})`},
+                                    kind: this.monaco.languages.CompletionItemKind.Snippet,
+                                    detail: __(`Insert code block for ${lang.label}.`, 'markdown-block-editor') as string,
+                                    insertText: `${lang.name}${breaks}`,
+                                    insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                    command: { id: 'markdown.code.changed', arguments: [lang.name] },
+                                    documentation: `${triple}${lang.name}\n${__('Your code here...', 'markdown-block-editor')}\n${triple}`,
+                                };
+                            });
 
-                                return { suggestions: items };
-                            }
+                            return { suggestions: items };
+                        }
                     }
                 }
             ),
@@ -296,7 +300,34 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                     
                 }
             )
-        ]
+        ];
+
+        const configSnippets = this.configurationHelper.getSnippets();
+        const snippetCollection = [...this.snippets, ...configSnippets];
+        if(snippetCollection.length)
+        {
+            disposables.push(this.monaco.languages.registerCompletionItemProvider(
+                'markdown',
+                {
+                    provideCompletionItems: (model: any, pos: any, context: any, token: any) =>
+                    {
+                        const items = snippetCollection.map(s => {
+                            return <languages.CompletionItem>{
+                                label: s.prefix,
+                                kind: this.monaco.languages.CompletionItemKind.Snippet,
+                                detail: s.description,
+                                insertText: s.body,
+                                insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                            };
+                        });
+
+                        return { suggestions: items };
+                    }
+                }
+            ));
+        }
+
+        return disposables;
     }
 
     public initializeEvents(events: IMarkdownEvents): IDisposable

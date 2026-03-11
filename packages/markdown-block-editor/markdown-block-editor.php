@@ -99,6 +99,26 @@ add_filter(
 );
 
 
+add_filter(
+	'markdown_block_editor_snippets',
+	function ( $snippets ) {
+		$snippets[] = [
+			'prefix'      => 'details',
+			'body'        => implode(
+				"\n",
+				[
+					'<details>',
+					'	<summary>${1:summary}</summary>',
+					'	${2:content}',
+					'</details>',
+				]
+			),
+			'description' => '折り畳みのマークダウンスニペット',
+		];
+		return $snippets;
+	}
+);
+
 
 
 
@@ -138,8 +158,8 @@ add_action(
 				if ( $front_css ) {
 					wp_enqueue_style( 'markdown_block_editor_front_css', $front_css, [], 1 );
 				}
-				wp_enqueue_style( 'markdown_block_editor_prism_theme', $p . "prismjs/{$prism}/prism.css", []);
-				wp_enqueue_script( 'markdown_block_editor_prism_theme', $p . "prismjs/{$prism}/prism.js", []);
+				wp_enqueue_style( 'markdown_block_editor_prism_theme', $p . "prismjs/{$prism}/prism.css", [] );
+				wp_enqueue_script( 'markdown_block_editor_prism_theme', $p . "prismjs/{$prism}/prism.js", [] );
 			}
 		);
 
@@ -205,7 +225,7 @@ add_action(
 								$admin_themes  = apply_filters( 'markdown_block_editor_admin_themes', [] );
 								$prism_themes  = apply_filters( 'markdown_block_editor_prism_themes', [] );
 								$monaco_themes = apply_filters( 'markdown_block_editor_monaco_themes', [] );
-
+								$snippets      = apply_filters( 'markdown_block_editor_snippets', [] );
 								$theme_url     = get_template_directory_uri();
 								$front_themes  = array_map( fn( $v, $k )  => [ 'key' => $k, 'name' => $v[0], 'url' => $v[1] ], $front_themes, array_keys( $front_themes ) );
 								$admin_themes  = array_map( fn( $v, $k )  => [ 'key' => $k, 'name' => $v[0], 'url' => $v[1] ], $admin_themes, array_keys( $admin_themes ) );
@@ -217,6 +237,7 @@ add_action(
 									'prismThemes'  => $prism_themes,
 									'monacoThemes' => $monaco_themes,
 									'themeUrl'     => get_template_directory_uri(),
+									'snippets'      => $snippets,
 								];
 
 								return rest_ensure_response( $data );
