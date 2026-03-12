@@ -302,18 +302,17 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
             )
         ];
 
-        const configSnippets = this.configurationHelper.getSnippets();
-        const snippetCollection = [...this.snippets, ...configSnippets];
-        if(snippetCollection.length)
+        
+        if(this.snippets.length)
         {
             disposables.push(this.monaco.languages.registerCompletionItemProvider(
                 'markdown',
                 {
                     provideCompletionItems: (model: any, pos: any, context: any, token: any) =>
                     {
-                        const items = snippetCollection.map(s => {
+                        const items = this.snippets.map(s => {
                             return <languages.CompletionItem>{
-                                label: s.prefix,
+                                label: `snippet: ${s.prefix}`,
                                 kind: this.monaco.languages.CompletionItemKind.Snippet,
                                 detail: s.description,
                                 insertText: s.body,

@@ -85,7 +85,7 @@ const defaultAppContext: IAppContext =
 addFilter(
     'markdown_block_editor_create_markdown_core',
     'kurage/markdown-block-editor',
-    ({ appContext, settings, settingOptions, configStorage }: { appContext: IAppContext; settings: ISettings; settingOptions: ISettingOptions; configStorage: IConfigurationStorage }) =>
+    (core: MarkdownCore|undefined, { appContext, settings, settingOptions, configStorage }: { appContext: IAppContext; settings: ISettings; settingOptions: ISettingOptions; configStorage: IConfigurationStorage }) =>
     {
         return new MarkdownCore(appContext, configStorage);
     }
@@ -132,6 +132,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
         {
             const markdownCore = applyFilters(
                 'markdown_block_editor_create_markdown_core',
+                undefined,
                 { appContext: appContext ?? defaultAppContext, configStorage, settings, settingOptions }
             ) as any;
 
@@ -145,13 +146,12 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
                 updateAppContext: setAppContext
             }
 
-            console.log(`xxxxxxxxxxxxxxxxxxxxxxx`, context)
             setContext(context);
 
             return () => markdownCore?.dispose();            
         }
 
-    }, [appContext, settings, settingOptions]);
+    }, [appContext, settings, settingOptions, configStorage]);
 
     return (
         <>

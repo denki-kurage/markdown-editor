@@ -115,6 +115,96 @@ add_filter(
 			),
 			'description' => '折り畳みのマークダウンスニペット',
 		];
+		$snippets[] = [
+			'prefix'      => 'table',
+			'body'        => implode(
+				"\n",
+				[
+					'| ${1:Header} | ${2:Header} |',
+					'| --- | --- |',
+					'| ${3:Content} | ${4:Content} |',
+				]
+			),
+			'description' => 'テーブルのマークダウンスニペット',
+		];
+		$snippets[] = [
+			'prefix'      => 'codeblock',
+			'body'        => implode(
+				"\n",
+				[
+					'``` ${1:language}',
+					'${2:code}',
+					'```',
+				]
+			),
+			'description' => 'コードブロックのマークダウンスニペット',
+		];
+		$snippets[] = [
+			'prefix'      => 'blockquote',
+			'body'        => implode(
+				"\n",
+				[
+					'> ${1:quote}',
+					'> ${2:quote}',
+				]
+			),
+			'description' => '引用のマークダウンスニペット',
+		];
+		$snippets[] = [
+			'prefix'      => 'list',
+			'body'        => implode(
+				"\n",
+				[
+					'- ${1:item}',
+					'- ${2:item}',
+					'- ${3:item}',
+				]
+			),
+			'description' => 'リストのマークダウンスニペット',
+		];
+		$snippets[] = [
+			'prefix'      => 'link',
+			'body'        => implode(
+				"\n",
+				[
+					'[${1:text}](${2:url})',
+				]
+			),
+			'description' => 'リンクのマークダウンスニペット',
+		];
+		$snippets[] = [
+			'prefix'      => 'image',
+			'body'        => implode(
+				"\n",
+				[
+					'![${1:alt}](${2:url})',
+				]
+			),
+			'description' => '画像のマークダウンスニペット',
+		];
+		$snippets[] = [
+			'prefix'      => 'heading',
+			'body'        => implode(
+				"\n",
+				[
+					'# ${1:Heading 1}',
+					'## ${2:Heading 2}',
+					'### ${3:Heading 3}',
+				]
+			),
+			'description' => '見出しのマークダウンスニペット',
+		];
+		$snippets[] = [
+			'prefix'      => 'checkbox',
+			'body'        => implode(
+				"\n",
+				[
+					'- [ ] ${1:Task}',
+					'- [x] ${2:Completed Task}',
+				]
+			),
+			'description' => 'チェックボックスのマークダウンスニペット',
+		];
 		return $snippets;
 	}
 );
@@ -250,3 +340,7 @@ add_action(
 		);
 	}
 );
+
+
+
+// require_once 'extensions/markdown-block-editor-extensions.php';

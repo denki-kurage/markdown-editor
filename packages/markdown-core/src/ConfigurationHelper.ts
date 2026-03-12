@@ -26,19 +26,9 @@ export class ConfigurationHelper
         this.configurationStorage.setValue('Core.RecentCodeLanguages', languages);
     }
 
-    public updateSnippets(snippets: ISnippet[]): void
-    {
-        this.configurationStorage.setValue('Core.Snippets', snippets);
-    }
-    
     public getRecentCodeLanguages(): string[]
     {
         return this.getter.createArrayOfString('Core.RecentCodeLanguages') ?? [];
-    }
-
-    public getSnippets(): ISnippet[]
-    {
-        return this.getter.createArrayOfObject<ISnippet>('Core.Snippets') ?? [];
     }
 
 }

@@ -10,21 +10,31 @@ import { MarkdownEditorProps } from './editor-wrapper';
 import { MonacoEditorContext } from '../classes/MonacoEditorContext';
 import { useSelect } from '@wordpress/data';
 import { store } from '../store';
-import { IConfigurationStorage } from '@kurage/markdown-core';
+import { ConfigurationHelper, IConfigurationStorage, ISnippet, MarkdownCore } from '@kurage/markdown-core';
 import { applyFilters } from '@wordpress/hooks';
 import monacoStyle from './editor.main.xcss';
 import { ISettingOptions } from '../store/ISettingOptions';
 
 
 
+export const useSnippets = (options: ISettingOptions,core: MarkdownCore) =>
+{
+    return useMemo(() => {
+        const snippets = options.snippets;
+        const customSnippets = applyFilters('markdown_block_editor_custom_snippets', [], core) as ISnippet[];
+        const mergeSnippets = [...customSnippets, ...snippets];
+        return mergeSnippets;
+    }, [options, core]);
+}
 
 export const useMarkdownApp = (
         configurationStorage: IConfigurationStorage,
-        options: ISettingOptions,
         editor?: editorType.IStandaloneCodeEditor,
         monaco?: Monaco,
+        snippets: ISnippet[] = []
     ) =>
 {
+
     return useMemo(() => {
         const model = editor?.getModel();
 
@@ -34,9 +44,9 @@ export const useMarkdownApp = (
             // Monaco Editor は初期値に改行コードが含まれる場合はその改行コードが適用、
             // 無い場合はおそらくシステム依存。
             // LFにしないと、文字列数が正確にカウントできないなどいろいろ不都合なので
-            model.setEOL(monaco.editor.EndOfLineSequence.LF)
+            model.setEOL(monaco.editor.EndOfLineSequence.LF);
 
-            return new MonacoEditorContext(monaco, model, editor, configurationStorage, options.snippets);
+            return new MonacoEditorContext(monaco, model, editor, configurationStorage, snippets);
         }
     }, [editor, monaco]);
 }
@@ -45,16 +55,19 @@ export const MonacoEditor = ({ initializedAppContext }: MarkdownEditorProps) =>
 {
     const [monaco, setMonaco] = useState<Monaco|undefined>();
     const [editor, setEditor] = useState<editorType.IStandaloneCodeEditor|undefined>();
-    const { configurationStorage } = useMarkdownAppContext();
+    const { configurationStorage, markdownCore } = useMarkdownAppContext();
     const { markdown, onMarkdownChanged: onValueChanged } = useMarkdownContext();
     const settings = useSelect(select => select(store).getSettings(), []);
     const options = useSelect(select => select(store).getSettingOptions(), []);
+    const snippets = useSnippets(options, markdownCore);
 
-    const appContext = useMarkdownApp(configurationStorage, options, editor, monaco);
+
+    const appContext = useMarkdownApp(configurationStorage, editor, monaco, snippets);
     useEffect(() => initializedAppContext(appContext), [appContext])
 
+
     
-    const family = editor?.getOption(editorVar.EditorOption.fontFamily);
+    //const family = editor?.getOption(editorVar.EditorOption.fontFamily);
     const styles: string[] = useMemo(() => applyFilters('markdown_block_editor_editor_styles', []), []) as string[];
 
 
