@@ -88,7 +88,7 @@ export const MonacoEditor = ({ initializedAppContext }: MarkdownEditorProps) =>
 
     return (
         <>
-             <root.div className="monaco-shadow-dom2">
+             <root.div className="monaco-shadow-dom">
                 
                 <style>{ monacoStyle }</style>
                 

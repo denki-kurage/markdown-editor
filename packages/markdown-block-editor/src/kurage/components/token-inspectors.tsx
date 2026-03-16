@@ -2,17 +2,19 @@ import { PanelBody } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useExtensionComponents, useTokenEditorComponents } from "./inspector-hooks";
 import { InspectorControls } from "@wordpress/block-editor";
-import { useMemo, useRef } from "@wordpress/element";
+import { useEffect, useMemo, useRef, useState } from "@wordpress/element";
 import { LoadingPanel } from './Loading'
 import { useExtensionContexts } from "./hooks";
 
 
 export const TokenInspectors = () =>
 {
+    const [renderCount, setRenderCount] = useState(0);
     const contexts = useExtensionContexts();
     const { editorContext, tokenContext } = contexts;
     const { singleToken } = tokenContext;
     const { isEditing } = editorContext;
+
 
 
     /**
@@ -35,32 +37,37 @@ export const TokenInspectors = () =>
     const editorInfos = useTokenEditorComponents(tokenType);
     const extensionInfos = useExtensionComponents();
 
+    useEffect(() => {
+        if(singleToken)
+        {
+            setRenderCount(renderCount + 1);
+        }
+    }, [singleToken]);
+
+
     const tokenEditors = useMemo(() => editorInfos.map(({ label, component: TokenEditor }) => (
         <PanelBody title={label}>
-                <LoadingPanel isLoading={isEditing}>
-                    { singleToken && <TokenEditor token={singleToken} contexts={ctx} /> }
-                </LoadingPanel>
+            <LoadingPanel isLoading={isEditing}>
+                { singleToken && <TokenEditor key={renderCount} token={singleToken} contexts={ctx} /> }
+            </LoadingPanel>
         </PanelBody>
-    )), [ctx, isEditing, singleToken]);
+    )), [ctx, isEditing, renderCount]);
 
     const extensionEditors = useMemo(() => extensionInfos.map(({ label, component: ExtensionEditor }) => (
         <PanelBody title={label}>
-                <LoadingPanel isLoading={isEditing}>
-                    <ExtensionEditor contexts={ctx} />
-                </LoadingPanel>
+            <LoadingPanel isLoading={isEditing}>
+                { singleToken && <ExtensionEditor key={renderCount} token={singleToken} contexts={ctx} /> }
+            </LoadingPanel>
         </PanelBody>
-    )), [ctx, isEditing, singleToken])
+    )), [ctx, isEditing, renderCount])
 
     
-    return useMemo(() => {
-        return (
-            <InspectorControls>
-                    { tokenEditors }
-                    { extensionEditors }
-            </InspectorControls>
-        )
-
-    }, [contexts, isEditing])
+    return (
+        <InspectorControls>
+            { tokenEditors }
+            { extensionEditors }
+        </InspectorControls>
+    )
 }
 
 export default TokenInspectors;

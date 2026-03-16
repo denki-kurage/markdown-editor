@@ -1,5 +1,5 @@
 import { Button, TextareaControl } from "@wordpress/components";
-import { useCallback, useMemo, useState } from "@wordpress/element";
+import { useCallback, useEffect, useMemo, useState } from "@wordpress/element";
 import { ICommandItem, IToken, MarkdownCore } from "@kurage/markdown-core";
 import { applyFilters } from "@wordpress/hooks";
 import { ExtensionContexts } from "./hooks";
@@ -21,14 +21,11 @@ export type TokenEditorComponentInfo =
     component: (props: TokenEditorProps) => JSX.Element
 }
 
-export type ExtensionEditorProps =
-{
-    contexts: ExtensionContexts;
-}
+
 export type ExtensionComponentInfo =
 {
     label: string;
-    component: (props: ExtensionEditorProps) => JSX.Element
+    component: (props: TokenEditorProps) => JSX.Element
 }
 
 export type TokenCommandsInfo =
@@ -101,11 +98,7 @@ export const TextTokenEditor = ({ token, contexts }: TokenEditorProps) =>
     const { start, end } = token.getPosition();
     const [value, setValue] = useState(tokenContext.getSingleText() ?? '');
 
-
-    const edit = useCallback(() =>
-    {
-        tokenContext.onEdits([[value, start, end]]);
-    }, [value]);
+    const edit = () => tokenContext.onEdits([[value, start, end]]);
 
     return (
         <div className="text-token-editor">
@@ -120,3 +113,5 @@ export const TextTokenEditor = ({ token, contexts }: TokenEditorProps) =>
         </div>
     )
 };
+
+

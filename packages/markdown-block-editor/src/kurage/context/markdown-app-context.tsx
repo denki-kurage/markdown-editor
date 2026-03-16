@@ -105,6 +105,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
         return { settings: s.getSettings(), settingOptions: s.getSettingOptions() };
     }, []);
 
+    /*
     const configStorageRef = useRef<IConfigurationStorage|undefined>(undefined);
     configStorageRef.current = {
         getValue: <T,>(name: string) =>
@@ -125,9 +126,27 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
         getValue: name => configStorageRef.current?.getValue(name)!,
         setValue: (name, value) => configStorageRef.current?.setValue(name, value)
     }
+    */
+
+    const configStorage: IConfigurationStorage = useMemo(() => {
+        return {
+            getValue: <T,>(name: string) =>
+            {
+                return settings?.configurations?.[name] as T;
+            },
+            setValue: <T,>(name: string, value: T) =>
+            {
+                if(settings)
+                {
+                    const configurations = { ...settings.configurations, [name]: value };
+                    updateSettings({ configurations });
+                }
+            }
+        }
+    }, [settings]);
 
     useEffect(() => {
-
+        
         if(settings && settingOptions)
         {
             const markdownCore = applyFilters(
@@ -152,6 +171,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
         }
 
     }, [appContext, settings, settingOptions, configStorage]);
+
 
     return (
         <>
