@@ -1,6 +1,6 @@
 import { PanelBody } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useExtensionComponents, useTokenEditorComponents } from "./inspector-hooks";
+import { useTokenEditorComponents } from "./inspector-hooks";
 import { InspectorControls } from "@wordpress/block-editor";
 import { useEffect, useMemo, useRef, useState } from "@wordpress/element";
 import { LoadingPanel } from './Loading'
@@ -14,8 +14,6 @@ export const TokenInspectors = () =>
     const { editorContext, tokenContext } = contexts;
     const { singleToken } = tokenContext;
     const { isEditing } = editorContext;
-
-
 
     /**
      * ＊重要。
@@ -34,8 +32,7 @@ export const TokenInspectors = () =>
 
     const ctx = contextsRef.current;
     const tokenType = singleToken?.getType() ?? '';
-    const editorInfos = useTokenEditorComponents(tokenType);
-    const extensionInfos = useExtensionComponents();
+    const { editorInfo, extensionInfos } = useTokenEditorComponents(tokenType);
 
     useEffect(() => {
         if(singleToken)
@@ -45,13 +42,21 @@ export const TokenInspectors = () =>
     }, [singleToken]);
 
 
-    const tokenEditors = useMemo(() => editorInfos.map(({ label, component: TokenEditor }) => (
-        <PanelBody title={label}>
-            <LoadingPanel isLoading={isEditing}>
-                { singleToken && <TokenEditor key={renderCount} token={singleToken} contexts={ctx} /> }
-            </LoadingPanel>
-        </PanelBody>
-    )), [ctx, isEditing, renderCount]);
+    const editorComponet = useMemo(() => {
+        if(!editorInfo || !singleToken)
+        {
+            return null;
+        }
+
+        const TokenEditor = editorInfo.component;
+        return (
+            <PanelBody title={editorInfo.label}>
+                <LoadingPanel isLoading={isEditing}>
+                    { singleToken && <TokenEditor key={renderCount} token={singleToken} contexts={ctx} /> }
+                </LoadingPanel>
+            </PanelBody>
+        )
+    }, [ctx, isEditing, renderCount])
 
     const extensionEditors = useMemo(() => extensionInfos.map(({ label, component: ExtensionEditor }) => (
         <PanelBody title={label}>
@@ -64,7 +69,7 @@ export const TokenInspectors = () =>
     
     return (
         <InspectorControls>
-            { tokenEditors }
+            { editorComponet }
             { extensionEditors }
         </InspectorControls>
     )

@@ -343,4 +343,3 @@ add_action(
 
 
 
-require_once 'extensions/markdown-block-editor-extensions.php';

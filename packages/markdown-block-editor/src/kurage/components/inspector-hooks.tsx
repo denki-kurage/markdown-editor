@@ -22,12 +22,6 @@ export type TokenEditorComponentInfo =
 }
 
 
-export type ExtensionComponentInfo =
-{
-    label: string;
-    component: (props: TokenEditorProps) => JSX.Element
-}
-
 export type TokenCommandsInfo =
 {
     isShow(type: string, contexts: ExtensionContexts): boolean;
@@ -39,31 +33,46 @@ export type TokenCommandsInfo =
     getCommandItems(type: string, contexts: ExtensionContexts): ICommandItem[];
 }
 
-export const useTokenEditorComponents = (type: string) =>
+const useTokenEditorComponentInfos = () =>
 {
-    const components = useMemo(() => {
-        const defaults: TokenEditorComponentInfo[] = [
-            { type: 'text', label: 'Text Editor', component: TextTokenEditor },
-            { type: 'heading', label: 'Heading', component: HeadingTokenEditor },
-            { type: 'code', label: 'Code', component: CodeTokenEditor },
-			{ type: 'table', label: 'Table', component: TableTokenEditor },
-			{ type: 'tableRow', label: 'Table Row', component: TableTokenEditor },
-			{ type: 'tableCell', label: 'Table Cell', component: TableTokenEditor },
-            { type: 'link', label: 'Link', component: ResourceTokenEditor },
-            { type: 'image', label: 'Image', component: ResourceTokenEditor },
-        ];
-        return applyFilters('markdown_block_editor_get_token_editor_components', defaults) as TokenEditorComponentInfo[];
-    }, []);
-
-    return components.filter(c => c.type === type);
+    const defaults: TokenEditorComponentInfo[] = [
+        { type: 'text', label: 'Text Editor', component: TextTokenEditor },
+        { type: 'heading', label: 'Heading', component: HeadingTokenEditor },
+        { type: 'code', label: 'Code', component: CodeTokenEditor },
+        { type: 'table', label: 'Table', component: TableTokenEditor },
+        { type: 'tableRow', label: 'Table Row', component: TableTokenEditor },
+        { type: 'tableCell', label: 'Table Cell', component: TableTokenEditor },
+        { type: 'link', label: 'Link', component: ResourceTokenEditor },
+        { type: 'image', label: 'Image', component: ResourceTokenEditor },
+    ];
+    return applyFilters('markdown_block_editor_get_token_editor_components', defaults) as TokenEditorComponentInfo[];
 }
 
-export const useExtensionComponents = () =>
+const useExtensionComponents = () =>
+{
+    return applyFilters('markdown_block_editor_get_extension_components', []) as TokenEditorComponentInfo[];
+}
+
+export const useComponentInfos = () =>
 {
     return useMemo(() => {
-        return applyFilters('markdown_block_editor_get_extension_components', []) as ExtensionComponentInfo[];
+        const editorInfos = useTokenEditorComponentInfos();
+        const extensionInfos = useExtensionComponents();
+        return { editorInfos, extensionInfos };
     }, []);
 }
+
+export const useTokenEditorComponents = (type: string) =>
+{
+    const { editorInfos, extensionInfos } = useComponentInfos();
+
+    return useMemo(() => {
+        const editorInfo = editorInfos.find(ei => ei.type === type);
+        return { editorInfo, extensionInfos };
+    }, [type])
+}
+
+
 
 export const useToolbarActiveCommands = (contexts: ExtensionContexts) =>
 {
