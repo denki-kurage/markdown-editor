@@ -94,3 +94,52 @@ Using the WordPress feature to pin the toolbar can make it easier to use.
 
 
 
+
+## Snippets
+
+
+Starting from version 0.1.2, snippets are available. You can also add
+your own custom snippets by using hooks.
+
+![](./sni-1.png)
+
+For example, when you type `list`, IntelliSense outputs a template for a
+Markdown list.
+
+![](./sni-2.png)
+
+Three list items are created. You can move to the next item by pressing
+the Tab key.
+
+![](./sni-hooks.png)
+
+```php
+add_filter(
+    'markdown_block_editor_snippets',
+    function ( $snippets ) {
+        $snippets[] = [
+            'prefix'      => 'mycustom',
+            'body'        => "<h1>\${1:title}</h1>\n<p>\${2:message}</p>\n",
+            'description' => 'カスタムHTMLのスニペット',
+        ];
+        return $snippets;
+    }
+);
+```
+
+By extending the hook, you can add custom snippets. You can add them in
+files such as `functions.php`. The example above registers a snippet
+named `mycustom` that inserts a "heading" and a "paragraph".
+
+
+![](./sni-3.png)
+
+
+If you can see `mycustom` in IntelliSense, the setup was successful.
+
+
+![](./sni-4.png)
+
+If it appears like this, the snippet has been added successfully.
+
+

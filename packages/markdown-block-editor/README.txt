@@ -2,7 +2,7 @@
 Contributors: denkikurage
 Tags: markdown, vscode
 Tested up to: 6.9
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.8
@@ -75,8 +75,11 @@ https://github.com/denki-kurage/markdown-editor/blob/master/packages/markdown-co
 = 0.1.0 =
 * Release
 
+
 == Upgrade Notice ==
 
+= 0.1.2 =
+* Snippets added. You can also add custom snippets using hooks.
 
 = 0.1.0 =
 * Release
