@@ -76,9 +76,11 @@ export const useTokenEditorComponents = (type: string) =>
 
 export const useToolbarActiveCommands = (contexts: ExtensionContexts) =>
 {
+    const core = contexts.appContext.markdownCore;
+
     const ci = useMemo(() => {
-        return contexts.appContext.markdownCore.getCommandsMap();
-    }, [contexts.appContext.markdownCore]);
+        return core.getCommandsMap();
+    }, [core]);
 
     return ci.children?.filter(ci => !ci.command || ci.command.canExecute()) ?? [];
 }
@@ -96,7 +98,7 @@ export const useInspectorActiveCommands = (context: ExtensionContexts) =>
 
     const ci = useMemo(() => {
         return applyFilters('markdown_block_editor_get_inspector_commands', rootCommandItem, context) as ICommandItem;
-    }, [context.appContext.markdownCore]);
+    }, [context.appContext.appContext]);
 
     return ci.children?.filter(ci => !ci.command || ci.command.canExecute()) ?? [];
 }

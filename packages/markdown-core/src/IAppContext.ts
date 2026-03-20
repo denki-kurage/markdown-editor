@@ -4,11 +4,11 @@ import { IEditorDecorator } from "./IEditorDecorator";
 import { IEditorModel } from "./IEditorModel";
 import { IAppConfig } from "./IAppConfig";
 import { IScrollSynchronizer } from "./IScrollSynchronizer";
-import { IEventsInitializer } from "./component-model";
+import { IDisposable, IEventsInitializer } from "./component-model";
 import { IMarkdownEvents } from "./IMarkdownEvents";
 import { IEditControl } from "./IEditControl";
 
-export interface IAppContext
+export interface IAppContext extends IDisposable
 {
 	getEditorName(): string;
 	getTextSource(): ITextSource;

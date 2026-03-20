@@ -28,7 +28,7 @@ const defaultAppContext: IAppContext =
             getCursor: () => undefined,
             getSelections: () => [],
             setSelections: (selections) => {},
-            replaces: (items) => {},
+            replaces: (items) => { },
             rewrite: (items) => {},
             scroll: (docIndex) => {},
             indexToPosition: (docIndex) => ({ charIndex: 0, docIndex: 0}),
@@ -79,7 +79,8 @@ const defaultAppContext: IAppContext =
             openReplaceDialog: () => {}
         }
     },
-    returnKey: () => 'none'
+    returnKey: () => 'none',
+    dispose: () => {}
 }
 
 addFilter(
@@ -103,6 +104,15 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
     const { settings, settingOptions } = useSelect(select => {
         const s = select(store);
         return { settings: s.getSettings(), settingOptions: s.getSettingOptions() };
+    }, []);
+
+
+    const updateAppContext = useCallback((newAppContext?: IAppContext) => {
+        appContext?.dispose();
+        setAppContext((prev) => {
+            prev?.dispose();
+            return newAppContext;
+        });
     }, []);
 
     /*
@@ -162,7 +172,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
                 settings,
                 settingOptions,
                 configurationStorage: configStorage,
-                updateAppContext: setAppContext
+                updateAppContext
             }
 
             setContext(context);
@@ -170,7 +180,7 @@ export const MarkdownAppContextWrapper = ({ children }: any) =>
             return () => markdownCore?.dispose();            
         }
 
-    }, [appContext, settings, settingOptions, configStorage]);
+    }, [appContext, settings, settingOptions, configStorage, updateAppContext]);
 
 
     return (

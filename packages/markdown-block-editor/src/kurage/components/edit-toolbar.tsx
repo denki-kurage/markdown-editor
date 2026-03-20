@@ -55,8 +55,9 @@ const toControl = (item: ICommandItem) =>
 export const CommandControl = ({ item }: { item: ICommandItem }) =>
 {
 	const canExecuteResult = item.command?.canExecute();
-	const cmd = useCallback(() => item.command?.execute(), []);
+	const cmd = useCallback(() => item.command?.execute(), [item]);
 	const icon = useMemo(() => toIcon(item) as any, [item]);
+
 
 	return (
 		<ToolbarButton

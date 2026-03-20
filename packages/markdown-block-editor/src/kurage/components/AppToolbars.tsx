@@ -1,7 +1,7 @@
 // @ts-ignore
 import { BlockControls } from "@wordpress/block-editor";
 import { Modal, ToolbarButton, ToolbarGroup } from "@wordpress/components";
-import { useMemo, useState } from "@wordpress/element";
+import { useEffect, useMemo, useState } from "@wordpress/element";
 import ImageUploadEditor from "./ImageUploadEditor";
 import BlogCardGenerator from "./BlogCardGenerator";
 import { __ } from "@wordpress/i18n";

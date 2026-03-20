@@ -17,7 +17,7 @@ import { ISettingOptions } from '../store/ISettingOptions';
 
 
 
-export const useSnippets = (options: ISettingOptions,core: MarkdownCore) =>
+export const useSnippets = (options: ISettingOptions, core: MarkdownCore) =>
 {
     return useMemo(() => {
         const snippets = options.snippets;
@@ -27,28 +27,25 @@ export const useSnippets = (options: ISettingOptions,core: MarkdownCore) =>
     }, [options, core]);
 }
 
-export const useMarkdownApp = (
+export const createAppContext = (
         configurationStorage: IConfigurationStorage,
         editor?: editorType.IStandaloneCodeEditor,
         monaco?: Monaco,
         snippets: ISnippet[] = []
     ) =>
 {
+    const model = editor?.getModel();
 
-    return useMemo(() => {
-        const model = editor?.getModel();
+    if(editor && model && monaco)
+    {
 
-        if(editor && model && monaco)
-        {
+        // Monaco Editor は初期値に改行コードが含まれる場合はその改行コードが適用、
+        // 無い場合はおそらくシステム依存。
+        // LFにしないと、文字列数が正確にカウントできないなどいろいろ不都合なので
+        model.setEOL(monaco.editor.EndOfLineSequence.LF);
 
-            // Monaco Editor は初期値に改行コードが含まれる場合はその改行コードが適用、
-            // 無い場合はおそらくシステム依存。
-            // LFにしないと、文字列数が正確にカウントできないなどいろいろ不都合なので
-            model.setEOL(monaco.editor.EndOfLineSequence.LF);
-
-            return new MonacoEditorContext(monaco, model, editor, configurationStorage, snippets);
-        }
-    }, [editor, monaco]);
+        return new MonacoEditorContext(monaco, model, editor, configurationStorage, snippets);
+    }
 }
 
 export const MonacoEditor = ({ initializedAppContext }: MarkdownEditorProps) =>
@@ -62,14 +59,16 @@ export const MonacoEditor = ({ initializedAppContext }: MarkdownEditorProps) =>
     const snippets = useSnippets(options, markdownCore);
 
 
-    const appContext = useMarkdownApp(configurationStorage, editor, monaco, snippets);
-    useEffect(() => initializedAppContext(appContext), [appContext])
-
 
     
     //const family = editor?.getOption(editorVar.EditorOption.fontFamily);
     const styles: string[] = useMemo(() => applyFilters('markdown_block_editor_editor_styles', []), []) as string[];
 
+    useEffect(() => {
+        const appContext = createAppContext(configurationStorage, editor, monaco, snippets);
+        initializedAppContext(appContext);
+        return () => initializedAppContext(undefined);
+    }, [monaco, editor, initializedAppContext]);
 
     useEffect(() => {
         if(settings && editor)
