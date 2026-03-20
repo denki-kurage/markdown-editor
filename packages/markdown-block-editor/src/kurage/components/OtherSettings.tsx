@@ -28,7 +28,7 @@ export const OthreSettings = ({}) =>
 const OtherSettingsDialog = ({}) =>
 {
     const { settings, settingOptions } = useMarkdownAppContext();
-    const { monacoTheme, prismTheme, frontTheme, adminTheme, previewInterval, configurations } = settings;
+    const { monacoTheme, prismTheme, frontTheme, adminTheme, previewInterval, configurations, useSnippets } = settings;
     const { frontThemes, adminThemes, prismThemes, monacoThemes } = settingOptions;
 
     const { createSuccessNotice, createErrorNotice } = useDispatch(noticeStore);
@@ -89,6 +89,12 @@ const OtherSettingsDialog = ({}) =>
                 options={prismThemeOptions}
                 value={prismTheme}
                 onChange={value => updateSettings({ prismTheme: value })}
+            />
+
+            <CheckboxControl
+                label={__('Use Snippets', 'markdown-block-editor')}
+                checked={useSnippets}
+                onChange={v => updateSettings({ useSnippets: v })}
             />
 
 

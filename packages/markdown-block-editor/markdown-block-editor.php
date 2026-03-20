@@ -221,6 +221,7 @@ add_action(
 			'monacoTheme'     => 'vs-dark',
 			'frontTheme'      => 'default',
 			'adminTheme'      => 'default',
+			'useSnippets'     => true,
 			'previewInterval' => 1000,
 			'configurations'  => new stdClass(),
 		];
@@ -277,7 +278,7 @@ add_action(
 							'methods'             => WP_REST_Server::READABLE,
 							'permission_callback' => fn() => current_user_can( 'manage_options' ),
 							'callback'            => function () use ( $op ) {
-								$data = get_option( 'markdown_block_editor_settings', $op );
+								$data = [ ...$op, ...get_option( 'markdown_block_editor_settings', $op ) ];
 								return rest_ensure_response( $data );
 							},
 						],

@@ -17,14 +17,15 @@ import { ISettingOptions } from '../store/ISettingOptions';
 
 
 
-export const useSnippets = (options: ISettingOptions, core: MarkdownCore) =>
+export const useSnippets = (options: ISettingOptions, core: MarkdownCore, useSnippets: boolean = true) =>
 {
     return useMemo(() => {
+        if(!useSnippets) return [];
         const snippets = options.snippets;
         const customSnippets = applyFilters('markdown_block_editor_custom_snippets', [], core) as ISnippet[];
         const mergeSnippets = [...customSnippets, ...snippets];
         return mergeSnippets;
-    }, [options, core]);
+    }, [options, core, useSnippets]);
 }
 
 export const createAppContext = (
@@ -56,7 +57,7 @@ export const MonacoEditor = ({ initializedAppContext }: MarkdownEditorProps) =>
     const { markdown, onMarkdownChanged: onValueChanged } = useMarkdownContext();
     const settings = useSelect(select => select(store).getSettings(), []);
     const options = useSelect(select => select(store).getSettingOptions(), []);
-    const snippets = useSnippets(options, markdownCore);
+    const snippets = useSnippets(options, markdownCore, settings.useSnippets);
 
 
 
