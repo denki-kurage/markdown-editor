@@ -1,0 +1,44 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "denkikurage/markdown-block-editor",
+	"version": "0.1.0",
+	"title": "Markdown with Block Editor",
+	"category": "text",
+	"icon": "smile",
+	"keywords": ["markdown", "vscode"],
+	"description": "You can edit markdown in a VSCode-like editor on the block editor.",
+	"example": {},
+	"supports": {
+		"html": false,
+		"align": true,
+		"alignWide": true
+	},
+	"attributes": {
+		"markdown": {
+			"type": "string",
+			"default": ""
+		},
+		"html": {
+			"type": "string",
+			"default": ""
+		},
+		"viewMode": {
+			"enum": ["code", "view", "both"],
+			"default": "both"
+		},
+		"splitSize": {
+			"type": "number",
+			"default": 50
+		},
+		"editHeight": {
+			"type": ["number", "null"],
+			"default": null
+		}
+	},
+	"textdomain": "markdown-block-editor",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js"
+}

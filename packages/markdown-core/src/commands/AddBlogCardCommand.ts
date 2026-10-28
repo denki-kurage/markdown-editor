@@ -1,0 +1,60 @@
+import { MarkdownRange } from "../MarkdownRange";
+import { MarkdownCommandBase } from "./MarkdownCommandBase";
+import { MarkdownEscapeHelper } from "./MarkdownEscapeHelper";
+import { sanitize } from "./sanitizer";
+
+export type AddBlogCardParams = 
+{
+    url: string;
+    title: string;
+    image: string;
+}
+
+export class AddBlogCardCommand extends MarkdownCommandBase<AddBlogCardParams>
+{
+    public execute(parameter?: AddBlogCardParams | undefined)
+    {
+        if(parameter)
+        {
+            const pos = this.appContext.getEditorModel().getCursor();
+            const replacer = this.appContext.getEditorModel();
+            const { url, title, image } = parameter;
+            const host = new URL(url).host;
+            
+            const u = MarkdownEscapeHelper.escapeHtmlAttributeText(url);
+            const t = MarkdownEscapeHelper.escapeHtmlText(title);
+            const i = MarkdownEscapeHelper.escapeHtmlAttributeText(image);
+            const h = MarkdownEscapeHelper.escapeHtmlText(host);
+
+            const blogCard = [
+                '<div class="blog-card">',
+                    `<a href="${u}" target="_blank">`,
+                        '<div>',
+                            `<div>${t}</div>`,
+                            `<span>${h}</span>`,
+                        '</div>',
+                        `<img src="${i}" />`,
+                    '</a>',
+                '</div>'
+            ].join('');
+
+
+            const p = pos?.docIndex ?? 0;
+            
+            this.getTextReplacer().replaceLines([{
+                area: new MarkdownRange(p, p + 1),
+                text: blogCard
+            }]);
+
+        }
+
+        
+    }
+
+    public canExecute(parameter?: AddBlogCardParams | undefined): boolean
+    {
+        return true;
+    }
+
+}
+

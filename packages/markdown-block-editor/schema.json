@@ -1,0 +1,55 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "settings",
+    "type": "object",
+    "properties": {
+        "fontSize": {
+            "type": "integer"
+        },
+        "fontFamily": {
+            "type": "string"
+        },
+        "frontTheme": {
+            "type": "string"
+        },
+        "adminTheme": {
+            "type": "string"
+        },
+        "prismTheme": {
+            "enum": ["coy", "dark", "default", "funkey", "okaidia", "solarized", "tommorow", "twilight"]
+        },
+        "monacoTheme": {
+            "enum": ["vs", "vs-dark", "hc-black", "hc-light"]
+        },
+        "useSnippets": {
+            "type": "boolean",
+            "default": true
+        },
+        "previewInterval": {
+            "type": "integer",
+            "maximum": 5000,
+            "minimum": 500,
+            "default": 1000
+        },
+        "configurations": {
+            "type": "object",
+            "additionalProperties": {
+                "anyOf": [
+                    { "type": "string" },
+                    { "type": "number" },
+                    { "type": "boolean" },
+                    { "type": "array", "items": { "anyOf": [
+                        { "type": "string" },
+                        { "type": "number" },
+                        { "type": "object", "additionalProperties": { "anyOf": [
+                            { "type": "string" },
+                            { "type": "number" },
+                            { "type": "boolean" }
+                        ] } },
+                        { "type": "boolean" }
+                    ] } }
+                ]
+            }
+        }
+    }
+}

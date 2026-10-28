@@ -1,0 +1,87 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.wp-block-kurage-worker-markdown-block-editor {
+  border: 1px solid #3773f9;
+}
+
+.wp-block-kurage-worker-markdown-block-editor-label {
+  padding: 0.1em;
+  background-color: #3371ff;
+  color: white;
+  font-size: 0.8em;
+}
+
+.scroll-commands-panel {
+  padding: 0.5em;
+}
+.scroll-commands-panel .scroll-command-item {
+  width: 100%;
+  overflow: hidden;
+  margin: 0.2em;
+}
+
+.split-panel {
+  display: flex;
+}
+
+.width-panel {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.width-panel > div {
+  height: 100%;
+}
+.width-panel section {
+  height: 100%;
+}
+
+.markdown-content table {
+  width: 100%;
+}
+
+.markdown-block-editor-button-group {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+.markdown-block-editor-button-group > button {
+  flex: 1;
+  margin: 0.1rem;
+  text-align: center;
+}
+
+.markdown-block-editor-margin-vertical {
+  margin: 0.3em 0;
+}
+
+.components-toolbar button.components-button {
+  min-width: 24px !important;
+}
+
+.block-editor-maximizer {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  z-index: 100 !important;
+  background-color: white;
+}
+
+.markdown-block-editor-button-vertical {
+  margin: 0.3em 0;
+  width: 100%;
+}
+
+.command-inspector {
+  max-height: 40em;
+  overflow: auto;
+}
+.command-inspector .components-toolbar {
+  margin-bottom: 0.6em !important;
+}/*# sourceMappingURL=editor.css.map */

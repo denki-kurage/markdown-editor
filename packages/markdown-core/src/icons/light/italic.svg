@@ -1,0 +1,15 @@
+<!-- 保存名例: bold-B.svg -->
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="512" height="512" viewBox="0 0 512 512"
+     role="img" aria-label="Bold B icon">
+     
+  <rect width="512" height="512" fill="#ffffffff"/>
+  <!-- 背景透明。必要なら <rect> を追加して背景色を入れてください -->
+  <text x="50%" y="50%"
+        text-anchor="middle" dominant-baseline="central"
+        font-family="Helvetica, Arial, sans-serif"
+        font-weight="800" font-size="420"
+        fill="#000">I</text>
+</svg>
+
+

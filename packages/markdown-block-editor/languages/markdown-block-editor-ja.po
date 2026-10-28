@@ -1,0 +1,155 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Markdown with Block Editor 0.3.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugins/markdown-block-editor\n"
+"Last-Translator: denkikurage <example@example.com>\n"
+"Language-Team: denkikurage <example@example.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-12-28T19:52:44.678Z\n"
+"PO-Revision-Date: 2025-MO-DA HO:MI+ZONE\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"X-Generator: @wp-blocks/make-pot 1.6.3\n"
+"X-Domain: markdown-block-editor\n"
+
+
+#: build/index.js
+msgctxt "block description"
+msgid "You can edit markdown in a VSCode-like editor on the block editor."
+msgstr "ブロックエディタ上でVSCode風エディタでマークダウンを編集できます。"
+
+
+#. Author of the plugin
+#: build/index.js
+msgid "denkikurage"
+msgstr ""
+
+#: build/index.js
+msgid "Control Panel"
+msgstr "コントロールパネル"
+
+#: build/index.js
+msgid "Settings Panel"
+msgstr "設定パネル"
+
+#: build/index.js
+msgid "Loading settings information..."
+msgstr "設定情報を読み込んでいます..."
+
+#: build/index.js
+msgid "Text Update"
+msgstr "テキスト更新"
+
+#: build/index.js
+msgid "Open Other Settings"
+msgstr "その他の設定を開く"
+
+#: build/index.js
+msgid "Front Theme"
+msgstr "フロントテーマ"
+
+#: build/index.js
+msgid "Admin Theme"
+msgstr "管理画面テーマ"
+
+#: build/index.js
+msgid "Monaco Editor Theme"
+msgstr "Monacoエディターテーマ"
+
+#: build/index.js
+msgid "Prism Theme"
+msgstr "Prismテーマ"
+
+#: build/index.js
+msgid "This will update the options used globally, but you will need to reload the page for the changes to take effect."
+msgstr "これらの設定は全体に適用されますが、変更を反映するにはページを再読み込みする必要があります。"
+
+#: build/index.js
+msgid "Accept"
+msgstr "確定"
+
+#: build/index.js
+msgid "Updating settings..."
+msgstr "設定を更新しています..."
+
+#: build/index.js
+msgid "Settings"
+msgstr "設定"
+
+#: build/index.js
+msgid "Font Family"
+msgstr "フォントファミリー"
+
+#: build/index.js
+msgid "Font Size"
+msgstr "フォントサイズ"
+
+#: build/index.js
+msgid "undo"
+msgstr "元に戻す"
+
+#: build/index.js
+msgid "redo"
+msgstr "やり直す"
+
+#: build/index.js
+msgid "find"
+msgstr "検索"
+
+#: build/index.js
+msgid "replace"
+msgstr "置換"
+
+#: build/index.js
+msgid "Restore the editor to normal size."
+msgstr "エディターを通常サイズに戻す"
+
+#: build/index.js
+msgid "Maximize the editor."
+msgstr "エディターを最大化する"
+
+#: build/index.js
+msgid "Add blog card"
+msgstr "ブログカードを追加"
+
+#: build/index.js
+msgid "Add Image"
+msgstr "画像を追加"
+
+#: build/index.js
+msgid "Add Blog Card"
+msgstr "ブログカードを追加"
+
+#: build/index.js
+msgid "Add Link"
+msgstr "リンクを追加"
+
+#: build/index.js
+msgid "Create a new table."
+msgstr "新しいテーブルを作成"
+
+#: build/index.js
+msgid "Your code here..."
+msgstr "ここにコードを入力..."
+
+#: build/index.js
+msgid "current level"
+msgstr "現在のレベル"
+
+#: build/index.js
+msgid "lower level"
+msgstr "下位レベル"
+
+#: build/index.js
+msgid "Insert Heading level ${index} ${detail}."
+msgstr "見出しレベル ${index}（${detail}）を挿入"
+
+#: build/index.js
+msgid "format table"
+msgstr "テーブルを整形"
+
+#: build/index.js
+msgid "Heading Level"
+msgstr "見出しレベル"

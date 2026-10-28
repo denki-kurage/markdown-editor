@@ -1,0 +1,128 @@
+import { Button, TextareaControl } from "@wordpress/components";
+import { useCallback, useEffect, useMemo, useState } from "@wordpress/element";
+import { ICommandItem, IToken, MarkdownCore } from "@kurage/markdown-core";
+import { applyFilters } from "@wordpress/hooks";
+import { ExtensionContexts } from "./hooks";
+import { CodeTokenEditor, HeadingTokenEditor, ResourceTokenEditor, TableTokenEditor } from "./token-editor-forms/token-editors";
+import { __ } from "@wordpress/i18n";
+
+
+
+export type TokenEditorProps =
+{
+    token: IToken;
+    contexts: ExtensionContexts;
+}
+
+export type TokenEditorComponentInfo =
+{
+    type: string;
+    label: string;
+    component: (props: TokenEditorProps) => JSX.Element
+}
+
+
+export type TokenCommandsInfo =
+{
+    isShow(type: string, contexts: ExtensionContexts): boolean;
+
+    /**
+     * 
+     * 極力キャッシュするようにしてください。
+     */
+    getCommandItems(type: string, contexts: ExtensionContexts): ICommandItem[];
+}
+
+const useTokenEditorComponentInfos = () =>
+{
+    const defaults: TokenEditorComponentInfo[] = [
+        { type: 'text', label: 'Text Editor', component: TextTokenEditor },
+        { type: 'heading', label: 'Heading', component: HeadingTokenEditor },
+        { type: 'code', label: 'Code', component: CodeTokenEditor },
+        { type: 'table', label: 'Table', component: TableTokenEditor },
+        { type: 'tableRow', label: 'Table Row', component: TableTokenEditor },
+        { type: 'tableCell', label: 'Table Cell', component: TableTokenEditor },
+        { type: 'link', label: 'Link', component: ResourceTokenEditor },
+        { type: 'image', label: 'Image', component: ResourceTokenEditor },
+    ];
+    return applyFilters('markdown_block_editor_get_token_editor_components', defaults) as TokenEditorComponentInfo[];
+}
+
+const useExtensionComponents = () =>
+{
+    return applyFilters('markdown_block_editor_get_extension_components', []) as TokenEditorComponentInfo[];
+}
+
+export const useComponentInfos = () =>
+{
+    return useMemo(() => {
+        const editorInfos = useTokenEditorComponentInfos();
+        const extensionInfos = useExtensionComponents();
+        return { editorInfos, extensionInfos };
+    }, []);
+}
+
+export const useTokenEditorComponents = (type: string) =>
+{
+    const { editorInfos, extensionInfos } = useComponentInfos();
+
+    return useMemo(() => {
+        const editorInfo = editorInfos.find(ei => ei.type === type);
+        return { editorInfo, extensionInfos };
+    }, [type])
+}
+
+
+
+export const useToolbarActiveCommands = ({ coreContext }: ExtensionContexts) =>
+{
+    const core = coreContext?.coreSession?.markdownCore;
+
+    const ci = useMemo(() => {
+        return core?.getCommandsMap();
+    }, [core]);
+
+    return ci?.children?.filter(ci => !ci.command || ci.command.canExecute()) ?? [];
+}
+
+export const useInspectorActiveCommands = ({ coreContext }: ExtensionContexts) =>
+{
+    const rootCommandItem: ICommandItem =
+    {
+        name: 'inspector root',
+        label: 'inspector root',
+        command: undefined,
+        icon: undefined,
+        children: []
+    }
+
+    const ci = useMemo(() => {
+        return applyFilters('markdown_block_editor_get_inspector_commands', rootCommandItem, coreContext) as ICommandItem;
+    }, [coreContext]);
+
+    return ci.children?.filter(ci => !ci.command || ci.command.canExecute()) ?? [];
+}
+
+export const TextTokenEditor = ({ token, contexts }: TokenEditorProps) =>
+{
+    const { tokenContext } = contexts;
+    const { start, end } = token.getPosition();
+    const [value, setValue] = useState(tokenContext.getSingleText() ?? '');
+
+    const edit = () => tokenContext.onEdits([[value, start, end]]);
+
+    return (
+        <div className="text-token-editor">
+
+            <TextareaControl
+                label={token.getType()}
+                value={value}
+                onChange={setValue}
+                rows={2}
+            />
+            <Button value={value} onClick={edit} variant="primary">{__('Text Update', 'markdown-block-editor')}</Button>
+        </div>
+    )
+};
+
+

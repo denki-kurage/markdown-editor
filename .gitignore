@@ -1,0 +1,43 @@
+# Node modules and build outputs
+node_modules/
+build/
+dist/
+
+# pnpm modules
+.pnpm-store/
+
+
+# Package specific builds
+packages/markdown-block-editor/node_modules
+packages/markdown-block-editor/build
+packages/markdown-block-editor-extensions/node_modules
+packages/markdown-block-editor-extensions/build
+packages/markdown-core/node_modules
+packages/markdown-core/dist
+packages/markdown-core-extensions/node_modules
+packages/markdown-core-extensions/dist
+
+# PHP related
+vendor/
+composer*
+
+# Config files
+pnpm-workspace.yaml
+tsconfig.tsbuildinfo
+
+# IDE and system files
+.vscode/
+.devcontainer/
+.git/
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Misc
+memo.md

@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "declaration": true,           // .d.ts ファイルを生成する
+    "emitDeclarationOnly": true,   // .js ファイルは生成せず、.d.ts のみ生成する
+    "outDir": "./types",           // .d.ts ファイルの出力先ディレクトリ
+
+    "module": "ESNext",            // モジュールシステムに合わせて設定
+    "target": "ESNext",            // JavaScriptのバージョンに合わせて設定
+    "moduleResolution": "node",
+
+    // 単一ファイルにする
+    "outFile": "./types/index.d.ts",
+    
+    // export default ... が無い場合
+    "allowSyntheticDefaultImports": true,
+
+    // node_modules内の警告は無視
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*"                     // 対象とするソースファイル
+  ],
+  "exclude": [
+    "node_modules/**/*"
+  ]
+}
