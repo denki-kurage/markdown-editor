@@ -1,11 +1,11 @@
 import { Button, TextControl } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import  { useCallback, useState } from "@wordpress/element";
-import { ogpGenerator } from "../classes/OgpManager";
+import { ogpGenerator } from "../../markdown-react-editor/OgpManager";
 import { store as noticesStore } from "@wordpress/notices";
 import { useDispatch } from "@wordpress/data";
 import { AddBlogCardParams, MarkdownCore } from "@kurage/markdown-core";
-import { useMarkdownCoreInstance } from "../context/markdown-core-context";
+import { useMarkdownCoreInstance } from "../../markdown-react-editor/context/markdown-core-context";
 
 
 

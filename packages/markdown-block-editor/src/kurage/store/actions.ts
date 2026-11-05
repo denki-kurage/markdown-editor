@@ -1,6 +1,6 @@
 import apiFetch from "@wordpress/api-fetch"
-import { IMarkdownBlockEditorState, IStoreState } from "./type";
-import { ISettings } from "./ISettings";
+import { IMarkdownBlockEditorState, IStoreState } from "../markdown-react-editor/type";
+import { ISettings } from "../markdown-react-editor/ISettings";
 
 export const setInfoVersion = (version: string) =>
 {

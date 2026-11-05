@@ -1,14 +1,21 @@
 import { InspectorControls } from "@wordpress/block-editor";
 import { PanelBody } from "@wordpress/components";
-import { useExtensionContexts } from "./hooks";
-import { useInspectorActiveCommands, } from "./inspector-hooks";
-import { CommandToolbarGroup } from "./edit-toolbar";
+import { useExtensionContexts } from "../markdown-react-editor/hooks";
+import { CommandToolbarGroup } from "./CommandToolbarGroup";
+import { useMarkdownEditorComponentAdapter } from "../markdown-react-editor/context/markdown-editor-component-adapter";
+import { useMemo } from "@wordpress/element";
+import { filterActiveCommands } from "../markdown-react-editor/IMarkdownEditorComponentAdapter";
 const iconDisabled = '.components-button[aria-disabled=true]{ opacity: 0.3; }';
 
 export const CommandsInspector = ({}) =>
 {
     const contexts = useExtensionContexts();
-    const activeCommandItems = useInspectorActiveCommands(contexts)
+    const editorComponentAdapter = useMarkdownEditorComponentAdapter();
+
+    const activeCommandItems = useMemo(() => {
+        const items = editorComponentAdapter.getSidebarCommandItems(contexts);
+        return filterActiveCommands(items);
+    }, [contexts, editorComponentAdapter]);
     
     return (
         <InspectorControls>

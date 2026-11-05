@@ -1,4 +1,4 @@
-import { IMarkdownBlockEditor } from "./type";
+import { IMarkdownBlockEditor } from "../markdown-react-editor/type";
 
 export const getVersion = (state: IMarkdownBlockEditor) =>
 {

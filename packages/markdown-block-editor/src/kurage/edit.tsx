@@ -2,31 +2,29 @@ import { useEffect, useState, memo, useMemo } from "@wordpress/element";
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, Spinner } from '@wordpress/components';
 
-import { useDispatch, useSelect } from '@wordpress/data';
-import { store } from './store';
+import { useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import AppToolbars from './components/AppToolbars';
-import TokenInspectors from './components/token-inspectors';
+import TokenInspectors from './components/TokenInspectors';
 import { useEditorInterlocking } from './useEditorInterlocking';
 
-import { ContextProviders } from './context/context-providers';
+import { ContextProviders } from './markdown-react-editor/context/context-providers';
 import { CommandsInspector } from './components/CommandsInspector';
-import { ControlPanel } from './components/ControlPanel';
 //import Prism from 'prismjs'
 
 import './editor.scss';
-import { EditorSettings } from './components/EditorSettings';
+import { ControlPanels, EditorSettings } from './components/GutenEditorSettings';
 import { MarkdownViewer } from './components/MarkdownViewer';
 import { __ } from '@wordpress/i18n';
-import { parseSaveMarkdown } from './components/parser';
-import { useWordPressComponentViewModels, useWordPressContextServices } from "./context/use-wordpress";
-import { useMarkdownEditorStateContext } from "./context/markdown-editor-state-context";
-import { useMarkdownEditorAttributeContext } from "./context/markdown-editor-attribute-context";
-import { MarkdownCoreReadyGuard, useMarkdownCoreContext, useMarkdownCoreInstance, useMarkdownCoreSessionInternal } from "./context/markdown-core-context";
+import { useWordPressComponentViewModels, useWordPressContextServices } from "./use-wordpress";
+import { useMarkdownEditorStateContext } from "./markdown-react-editor/context/markdown-editor-state-context";
+import { useMarkdownEditorAttributeContext } from "./markdown-react-editor/context/markdown-editor-attribute-context";
+import { MarkdownCoreReadyGuard, useMarkdownCoreContext, useMarkdownCoreSessionInternal } from "./markdown-react-editor/context/markdown-core-context";
 import { ISnippet } from "@kurage/markdown-core";
 import { applyFilters } from "@wordpress/hooks";
-import { MarkdownEditorComponent } from "./markdown-editor-components/components/Editor";
-import { MonacoEditor } from "./markdown-editor-components/components/MonacoEditor";
+import { MarkdownEditorComponent } from "./markdown-react-editor/components/EditorType";
+import { MonacoEditor } from "./markdown-react-editor/components/MonacoEditor";
+import { GutenMarkdownEditorComponentAdapter } from "./components/GutenMarkdownEditorComponentAdapter";
 
 
 const str = `
@@ -61,6 +59,7 @@ const Edit = ({ attributes, setAttributes, ...props }: any) =>
 	const { contextService, contextData } = contextServices;
 
 	console.log(`PPPPPPPPPPPPPPPPPPPPP {contextServices?.}`)
+	const componentAdapter = new GutenMarkdownEditorComponentAdapter();
 
 	return (
 		<ContextProviders
@@ -68,6 +67,7 @@ const Edit = ({ attributes, setAttributes, ...props }: any) =>
 			contextService={contextService}
 			contextData={contextData}
 			viewModels={componentViewModels}
+			componentAdapter={componentAdapter}
 			clientId={clientId}
 			blockEditorProps={props}
 			loadingComponent={() => <Spinner />} >
@@ -168,7 +168,7 @@ const ControlPanelInspector = () =>
 	return (
 		<InspectorControls>
 			<PanelBody title={__('Control Panel', 'markdown-block-editor')}>
-				<ControlPanel />
+				<ControlPanels />
 			</PanelBody>
 			<PanelBody title={__('Settings Panel', 'markdown-block-editor')}>
 				<EditorSettings />

@@ -1,5 +1,5 @@
 import { IAppContext, IDisposable } from '@kurage/markdown-core';
-import { registerMarkdownViewer, scrollToLineNumber } from './components/parser';
+import { registerMarkdownViewer, scrollToLineNumber } from './markdown-react-editor/parser';
 //import { EventBlocker } from './components/EventBlocker';
 
 

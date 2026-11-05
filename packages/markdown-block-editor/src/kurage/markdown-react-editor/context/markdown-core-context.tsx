@@ -1,7 +1,7 @@
 import { IAppContext, IConfigurationStorage, MarkdownCore } from "@kurage/markdown-core";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { ISettings } from "../store/ISettings";
-import { ISettingOptions } from "../store/ISettingOptions";
+import { ISettings } from "../ISettings";
+import { ISettingOptions } from "../ISettingOptions";
 import { ContextProviderData, IContextService } from "./context-service";
 
 

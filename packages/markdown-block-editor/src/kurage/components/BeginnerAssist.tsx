@@ -1,16 +1,14 @@
 import { useMemo, useEffect, memo } from "@wordpress/element";
-import { TokenEditorProps } from "./inspector-hooks";
-import { useMarkdownTokenContext } from "../context/markdown-token-context";
+import { useMarkdownTokenContext } from "../markdown-react-editor/context/markdown-token-context";
 import { useState } from "react";
 import * as React from "react";
-import { parseSaveMarkdown } from "./parser";
-import { useThemes } from "./hooks";
-import { Utils } from "@kurage/markdown-core";
+import { parseSaveMarkdown } from "../markdown-react-editor/parser";
+import { useThemes } from "../markdown-react-editor/hooks";
 import { createContext, useContext } from '@wordpress/element';
 import { Button, RadioControl, SelectControl, TextareaControl, TextControl } from "@wordpress/components";
 import { MarkdownEscapeHelper } from "@kurage/markdown-core/src/commands/MarkdownEscapeHelper";
 import { __ } from "@wordpress/i18n";
-import { useMarkdownEditorContext } from "../context/markdown-core-context";
+import { useMarkdownEditorContext } from "../markdown-react-editor/context/markdown-core-context";
 
 
 

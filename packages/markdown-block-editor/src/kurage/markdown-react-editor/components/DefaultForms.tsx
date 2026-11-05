@@ -1,10 +1,6 @@
-import { useEffect, useMemo, useState, type ComponentType } from "react";
-import { __ } from "@wordpress/i18n";
-import { applyFilters } from "@wordpress/hooks";
-import { useExtensionContexts } from "../../components/hooks";
-import { useMarkdownCoreContext } from "../../context";
-import { useMarkdownCoreInstance } from "../../context/markdown-core-context";
-import { useComponentViewModels } from "./ComponentViewModelContext";
+import { __ } from "../locale";
+import { ControlPanelTemplateProps, DialogTemplateProps, EditorSettingTemplateProps, OtherSettingTemplateProps } from "./FormTemplates";
+import { useState } from "react";
 
 const fontFamilies = [
     { label: "", value: "" },
@@ -85,27 +81,8 @@ const editorSettingFormStyles = `
     }
 `;
 
-export type EditorSettingFormProps =
+export const DefaultEditorSettingForm = ({ settings, fontFamily, fontSize, isLoading, errorMessage, onFontFamilyChange, onFontSizeChange }: EditorSettingTemplateProps) =>
 {
-
-}
-
-export const EditorSettingForm = ({}: EditorSettingFormProps) =>
-{
-    const { settings } = useMarkdownCoreContext();
-    const { fontFamily, fontSize } = settings;
-    const [customFontFamily, setCustomFontFamily] = useState(fontFamily);
-    const {
-        isLoading,
-        errorMessage,
-        updateFontFamily,
-        updateFontSize,
-    } = useComponentViewModels().settingsViewModel;
-
-    useEffect(() => {
-        setCustomFontFamily(fontFamily);
-    }, [fontFamily]);
-
     return (
         <div className="editor-setting-form">
             <style>{editorSettingFormStyles}</style>
@@ -121,8 +98,7 @@ export const EditorSettingForm = ({}: EditorSettingFormProps) =>
                     value={fontFamily}
                     onChange={event => {
                         const value = event.currentTarget.value;
-                        setCustomFontFamily(value);
-                        updateFontFamily(value);
+                        onFontFamilyChange(value);
                     }}
                 >
                     {fontFamilies.map(({ label, value }) => (
@@ -135,10 +111,10 @@ export const EditorSettingForm = ({}: EditorSettingFormProps) =>
                 <input
                     type="text"
                     aria-label={__("Custom Font Family", "markdown-block-editor")}
-                    value={customFontFamily}
-                    onChange={event => setCustomFontFamily(event.currentTarget.value)}
+                    value={fontFamily}
+                    onChange={event => onFontFamilyChange(event.currentTarget.value)}
                 />
-                <button type="button" onClick={() => updateFontFamily(customFontFamily)}>
+                <button type="button" onClick={() => onFontFamilyChange(fontFamily)}>
                     Apply
                 </button>
             </div>
@@ -147,7 +123,7 @@ export const EditorSettingForm = ({}: EditorSettingFormProps) =>
                 {__("Font Size", "markdown-block-editor")}
                 <select
                     value={(fontSize || 12).toString()}
-                    onChange={event => updateFontSize(Number(event.currentTarget.value))}
+                    onChange={event => onFontSizeChange(Number(event.currentTarget.value))}
                 >
                     {fontSizes.map(size => (
                         <option key={size} value={size}>{size}</option>
@@ -155,51 +131,20 @@ export const EditorSettingForm = ({}: EditorSettingFormProps) =>
                 </select>
             </label>
 
-            <OtherSettingsForm />
         </div>
     );
 }
 
-export type OtherSettingsFormProps =
+
+export const DefaultOtherSettingsForm = ({ settings, recentCodeLanguages, settingOptions, updateSettings }: OtherSettingTemplateProps) =>
 {
 
-}
-
-export const OtherSettingsForm = ({}: OtherSettingsFormProps) =>
-{
-    const [isOpen, setIsOpen] = useState(false);
-    const { settings, settingOptions } = useMarkdownCoreContext();
-    const {
-        frontTheme,
-        adminTheme,
-        monacoTheme,
-        prismTheme,
-        previewInterval,
-        configurations,
-        useSnippets,
-    } = settings;
-    const { frontThemes, adminThemes, monacoThemes, prismThemes } = settingOptions;
-    const { updateSettings } = useComponentViewModels().settingsViewModel;
-    const recentCodeLanguages = useMarkdownCoreInstance()
-        .getConfigurationHelper()
-        .getRecentCodeLanguages();
-    const extensionContexts = useExtensionContexts();
-    const extensionSettings = useMemo(
-        () => applyFilters("markdown_block_editor_settings", []) as ComponentType<{
-            configurations: typeof configurations;
-            extensionContexts: typeof extensionContexts;
-        }>[],
-        [],
-    );
+    const { frontTheme, adminTheme, monacoTheme, prismTheme, previewInterval, useSnippets } = settings;
+    const { frontThemes, adminThemes, prismThemes, monacoThemes } = settingOptions;
 
     return (
         <div className="editor-setting-form__other-settings">
-            <button type="button" onClick={() => setIsOpen(open => !open)}>
-                {isOpen
-                    ? __("Close Other Settings", "markdown-block-editor")
-                    : __("Open Other Settings", "markdown-block-editor")}
-            </button>
-            {isOpen && (
+
                 <section
                     className="editor-setting-form__other-settings-panel"
                     aria-label={__("Other Settings", "markdown-block-editor")}
@@ -280,19 +225,121 @@ export const OtherSettingsForm = ({}: OtherSettingsFormProps) =>
                         {__("This will update the options used globally, but you will need to reload the page for the changes to take effect.", "markdown-block-editor")}
                     </p>
 
-                    {extensionSettings.map((Control, index) => (
-                        <div
-                            className="editor-setting-form__extension-setting"
-                            key={Control.displayName || Control.name || index}
-                        >
-                            <Control
-                                configurations={configurations}
-                                extensionContexts={extensionContexts}
-                            />
-                        </div>
-                    ))}
                 </section>
-            )}
         </div>
     );
 }
+
+
+
+const splitOptions = [
+    { value: 'code', label: 'Code' },
+    { value: 'view', label: 'View' },
+    { value: 'both', label: 'Both' },
+] as const;
+
+export const DefaultControlPanel = ( {
+    maximized,
+    viewMode,
+    undo,
+    redo,
+    openFindDialog,
+    openReplaceDialog,
+    onMaximizeChanged,
+    onPanelChange,
+}: ControlPanelTemplateProps ) => {
+    return (
+        <>
+            <div className="markdown-block-editor-button-group markdown-block-editor-margin-vertical">
+                <button type="button" onClick={ undo }>
+                    Undo
+                </button>
+                <button type="button" onClick={ redo }>
+                    Redo
+                </button>
+            </div>
+
+            <div className="markdown-block-editor-button-group markdown-block-editor-margin-vertical">
+                <button
+                    type="button"
+                    className="markdown-block-editor-button-vertical"
+                    onClick={ openFindDialog }
+                >
+                    Find
+                </button>
+                <button
+                    type="button"
+                    className="markdown-block-editor-button-vertical"
+                    onClick={ openReplaceDialog }
+                >
+                    Replace
+                </button>
+            </div>
+
+            <button
+                type="button"
+                className="markdown-block-editor-button-vertical markdown-block-editor-margin-vertical"
+                onClick={ onMaximizeChanged }
+            >
+                { maximized
+                    ? 'Restore the editor to normal size.'
+                    : 'Maximize the editor.' }
+            </button>
+
+            <select
+                aria-label="Editor view mode"
+                className="markdown-block-editor-margin-vertical"
+                value={ viewMode }
+                onChange={ ( event ) => {
+                    const selectedMode = event.currentTarget.value;
+                    if (
+                        selectedMode === 'code' ||
+                        selectedMode === 'view' ||
+                        selectedMode === 'both'
+                    ) {
+                        onPanelChange( selectedMode );
+                    }
+                } }
+            >
+                { splitOptions.map( ( { value, label } ) => (
+                    <option key={ value } value={ value }>
+                        { label }
+                    </option>
+                ) ) }
+            </select>
+        </>
+    );
+};
+
+
+
+export const DefaultDialogComponent = ({ label, children }: DialogTemplateProps) =>
+{
+    const [isOpenState, setIsOpenState] = useState(false);
+
+    return (
+        <>
+            <button type="button" style={{ width: '100%' }} onClick={() => setIsOpenState(true)}>
+                {label}
+            </button>
+            {isOpenState && (
+                <div
+                    role="dialog"
+                    aria-modal="true"
+                    style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    onClick={() => { setIsOpenState(false); }}
+                >
+                    <div
+                        style={{ background: 'white', padding: '1.5rem', maxWidth: '90vw', maxHeight: '90vh', overflow: 'auto' }}
+                        onClick={event => event.stopPropagation()}
+                    >
+                        {children}
+                        <button type="button" onClick={() => { setIsOpenState(false); }}>Close</button>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+}
+
+

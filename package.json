@@ -10,7 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -b",
-    "build:editor": "pnpm --filter @kurage/markdown-block-editor build",
+    "build:editor": "pnpm --filter @kurage/markdown-core build && pnpm --filter @kurage/markdown-block-editor build",
     "build:editor-rspack": "pnpm --filter @kurage/markdown-block-editor rs:build",
     "build:editor-extensions": "pnpm --filter @kurage/markdown-block-editor-extensions build",
     "build:core": "pnpm --filter @kurage/markdown-core build",

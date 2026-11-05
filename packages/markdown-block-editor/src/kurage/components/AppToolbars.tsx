@@ -1,65 +1,98 @@
 // @ts-ignore
-import { BlockControls } from "@wordpress/block-editor";
-import { Modal, ToolbarButton, ToolbarGroup } from "@wordpress/components";
-import { useEffect, useMemo, useState } from "@wordpress/element";
-import ImageUploadEditor from "./ImageUploadEditor";
-import BlogCardGenerator from "./BlogCardGenerator";
-import { __ } from "@wordpress/i18n";
-import { CommandToolbarGroup } from "./edit-toolbar";
-import { useToolbarActiveCommands } from "./inspector-hooks";
-import { useExtensionContexts } from "./hooks";
-import { LinkEditor } from "./LinkEditor";
+import { BlockControls } from '@wordpress/block-editor';
+import {
+	Modal,
+	ToolbarButton,
+	ToolbarGroup,
+	type IconType,
+} from '@wordpress/components';
+import { useMemo, useState } from '@wordpress/element';
+import type { ReactNode } from 'react';
+import { __ } from '@wordpress/i18n';
+import BlogCardGenerator from './dialogs/BlogCardGenerator';
+import { CommandToolbarGroup } from './CommandToolbarGroup';
+import ImageUploadEditor from './dialogs/ImageUploadEditor';
+import { LinkEditor } from './dialogs/LinkEditor';
+import { useExtensionContexts } from '../markdown-react-editor/hooks';
+import { useMarkdownEditorComponentAdapter } from '../markdown-react-editor/context/markdown-editor-component-adapter';
+import { filterActiveCommands } from '../markdown-react-editor/IMarkdownEditorComponentAdapter';
 
-const AppToolbars = () =>
-{
-    const contexts = useExtensionContexts();
+const AppToolbars = () => {
+	const contexts = useExtensionContexts();
+	const componentAdapter = useMarkdownEditorComponentAdapter();
+	const activeCommandItems = useMemo(() => {
+		const commands = componentAdapter.getToolbarCommandItems(contexts);
+		return filterActiveCommands(commands);
+	}, [contexts, componentAdapter]);
 
-    const [imageOpen, setImageOpen] = useState(false);
-    const [cardOpen, setCardOpen] = useState(false);
-    const [linkOpen, setLinkOpen] = useState(false);
+	
 
-    const activeCommandItems = useToolbarActiveCommands(contexts);
+	return (
+		<>
+			<BlockControls>
+				<ToolbarGroup>
+					<ToolbarDialog
+						icon="media-default"
+						title={ __( 'Add Image', 'markdown-block-editor' ) }
+					>
+						{ close  => <ImageUploadEditor onExecuted={ close } />　}
+					</ToolbarDialog>
+					<ToolbarDialog
+						icon="archive"
+						title={ __( 'Add Blog Card', 'markdown-block-editor' ) }
+					>
+						{ ( close ) => <BlogCardGenerator onExecuted={ close } /> }
+					</ToolbarDialog>
+					<ToolbarDialog
+						icon="admin-links"
+						title={ __( 'Add Link', 'markdown-block-editor' ) }
+					>
+						{ ( close ) => <LinkEditor onExecuted={ close } /> }
+					</ToolbarDialog>
+				</ToolbarGroup>
+			</BlockControls>
 
-    return (
-        <>
-            <BlockControls>
-                <ToolbarGroup>
-                    <ToolbarButton icon="media-default" label={__('Add Image', 'markdown-block-editor')} onClick={() => setImageOpen(true)} />
-                    <ToolbarButton icon="archive" label={__('Add Blog Card', 'markdown-block-editor')} onClick={() => setCardOpen(true)} />
-                    <ToolbarButton icon="admin-links" label={__('Add Link', 'markdown-block-editor')} onClick={() => setLinkOpen(true)} />
-                </ToolbarGroup>
-            </BlockControls>
+			<BlockControls>
+				{ activeCommandItems.map( ( item ) => (
+					<CommandToolbarGroup key={ item.name } groupRoot={ item } />
+				) ) }
+			</BlockControls>
+		</>
+	);
+};
 
-            <ToolbarButtonModal title={__('Add Image', 'markdown-block-editor')} isOpen={imageOpen} openChanged={setImageOpen}>
-                <ImageUploadEditor onExecuted={() => setImageOpen(false)} />
-            </ToolbarButtonModal>
+type ToolbarDialogProps = {
+	icon: IconType;
+	title: string;
+	children: ( close: () => void ) => ReactNode;
+};
 
-            <ToolbarButtonModal title={__('Add Blog Card', 'markdown-block-editor')} isOpen={cardOpen} openChanged={setCardOpen}>
-                <BlogCardGenerator onExecuted={() => setCardOpen(false)} />
-            </ToolbarButtonModal>
+export const ToolbarDialog = ( {
+	icon,
+	title,
+	children,
+}: ToolbarDialogProps ) => {
+	const [ isOpen, setIsOpen ] = useState( false );
+	const close = () => setIsOpen( false );
 
-            <ToolbarButtonModal title={__('Add Link', 'markdown-block-editor')} isOpen={linkOpen} openChanged={setLinkOpen}>
-                <LinkEditor onExecuted={() => setLinkOpen(false)} />
-            </ToolbarButtonModal>
-
-            {
-                <BlockControls>{ activeCommandItems.map(ci => <CommandToolbarGroup groupRoot={ci} />) }</BlockControls>
-            }
-            
-
-        </>
-    );
-    
-}
-
-
-const ToolbarButtonModal = ({children, isOpen, title, openChanged}: any) =>
-{
-
-    return (
-        <>{ isOpen && <Modal style={{width: "60%"}} title={title} onRequestClose={e => openChanged(false)} children={children} /> }</>
-    )
-}
+	return (
+		<>
+			<ToolbarButton
+				icon={ icon }
+				label={ title }
+				onClick={ () => setIsOpen( true ) }
+			/>
+			{ isOpen && (
+				<Modal
+					style={ { width: '60%' } }
+					title={ title }
+					onRequestClose={ close }
+				>
+					{ children( close ) }
+				</Modal>
+			) }
+		</>
+	);
+};
 
 export default AppToolbars;
-

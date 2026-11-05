@@ -3,7 +3,7 @@ import { LinkControl } from "@wordpress/block-editor";
 import { Button } from "@wordpress/components";
 import { useState } from "@wordpress/element";
 import { __ } from "@wordpress/i18n";
-import { useMarkdownCoreInstance } from "../context/markdown-core-context";
+import { useMarkdownCoreInstance } from "../../markdown-react-editor/context/markdown-core-context";
 
 
 

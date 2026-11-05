@@ -2,13 +2,13 @@ import { IAppContext, IConfigurationStorage, IEditorModel, IEventsInitializer, I
 import { useCallback, useEffect, useMemo, useState } from "@wordpress/element";
 import { addFilter, applyFilters } from '@wordpress/hooks'
 import { useDispatch, useSelect } from "@wordpress/data";
-import { store } from "../store";
-import { ISettings } from "../store/ISettings";
-import { ISettingOptions } from "../store/ISettingOptions";
+import { store } from "./store";
+import { ISettings } from "./markdown-react-editor/ISettings";
+import { ISettingOptions } from "./markdown-react-editor/ISettingOptions";
 import { __ } from "@wordpress/i18n";
-import { ContextProviderData, IContextService, MarkdownContextServices } from "./context-service";
-import { parseSaveMarkdown } from "../components/parser";
-import { IComponentViewModels } from "../markdown-editor-components/component-view-models";
+import { ContextProviderData, IContextService, MarkdownContextServices } from "./markdown-react-editor/context/context-service";
+import { parseSaveMarkdown } from "./markdown-react-editor/parser";
+import { IComponentViewModels } from "./markdown-react-editor/component-view-models";
 
 
 const defaultAppContext: IAppContext =

@@ -1,7 +1,4 @@
 const defaultConfig = require('@wordpress/scripts/config/webpack.config')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-
-
 const path = require('path');
 
 
@@ -24,16 +21,18 @@ module.exports = {
             ...defaultConfig.module.rules.map((rule) => {
                 // デフォルトの babel-loader を swc-loader に差し替える
                 if (rule.test && rule.test.toString().includes('(j|t)sx')) {
-                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-                    console.log(rule)
-                    console.log(defaultConfig.module.rules)
                     return {
                         ...rule,
-                        exclude: /node_modules\/(?!(monaco-editor)\/).*/,
+                        exclude: /node_modules/,
                         use: {
                             loader: 'swc-loader',
                             options: {
-                                cacheDirectory: true
+                                jsc: {
+                                    parser: {
+                                        syntax: "typescript",
+                                        tsx: true
+                                    }
+                                }
                             }
                         },
                         //exclude: /node_modules\/(?!monaco-editor\/)/,
@@ -65,20 +64,15 @@ module.exports = {
 
     externals:
     {
-        //'monaco-editor': 'monaco'
+        'monaco-editor': 'undefined'
     },
     plugins:
     [
-        ...defaultConfig.plugins,
-/*
-        new CopyWebpackPlugin({
-            patterns: [
-                {
-                    from: 'node_modules/monaco-editor/min/vs/',
-                    to: 'vs'
-                }
-            ]
-        })
-        */
+        // 型チェックプラグインがデフォルトにいる場合、開発速度優先で一旦除去するアプローチ
+        ...defaultConfig.plugins
+            .filter(p => p.constructor.name !== 'ForkTsCheckerWebpackPlugin')
+            //.filter(p => !(p instanceof DependencyExtractionWebpackPlugin))
+        ,
+        
     ]
 };

@@ -1,13 +1,19 @@
+// CDNから非同期で読み込むため高速
 import { Monaco } from "@monaco-editor/react";
-import { editor as editorType, ISelection as IMonacoSelection, IRange } from "monaco-editor/esm/vs/editor/editor.api.d.js";
-import { editor as editorVar, Position, Selection, languages } from 'monaco-editor';
+
+// 型のみを取り出す。monaco-editorはdevDependenciesに取り込む。
+// webpackではexternalsで 'monaco-editor': 'undefied' を指定することで膨大なファイルの読み込みを阻止する
+import type { editor as editorType, ISelection as IMonacoSelection, IRange, languages } from 'monaco-editor';
+
 import { IAppContext, IDisposable, IDocumentPosition, IEditorDecorateSelection, IEditorModel, IEventsInitializer, IMarkdownEvents, IReplaceText, IScrollSynchronizer, ISelection as IMdeSelection, IStringCounter, ITextSource, IConfigurationStorage, ConfigurationHelper, IEditControl, ISnippet } from "@kurage/markdown-core"
-import { MonacoDecorator } from "./MonacoDecorator";
 import { sortedCodeLanguages } from "./CodeLanguages";
-import { __ } from "@wordpress/i18n";
 import * as eaw from "eastasianwidth";
 
+import type { editor as EditorType, IDisposable as IMonacoDisposable } from 'monaco-editor';
 
+// @ts-ignore
+import { Range } from 'monaco-editor';
+import { __ } from "./locale";
 
 
 class Utils
@@ -132,7 +138,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
         
                                     const doc = table.replace(/   /g, ' A ');
         
-                                    return <languages.CompletionItem>{
+                                    return < languages.CompletionItem>{
                                         label: `${nbr}x${len}`,
                                         kind: this.monaco.languages.CompletionItemKind.Snippet,
                                         detail: __('Create a new table.', 'markdown-block-editor') as string,
@@ -157,6 +163,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                     provideCompletionItems: (model: any, pos: any, context: any, token: any) =>
                     {
                         const line = model.getLineContent(pos.lineNumber).trim();
+
 
                         // pos.column === 4
                         if(line.length === 3 && ['```', '~~~'].includes(line))
@@ -424,7 +431,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                 if(lineNumber !== ln)
                 {
                     const pos = this.editor.getTopForPosition(lineNumber + 1, 1);
-                    this.editor.setScrollTop(pos, editorVar.ScrollType.Immediate);
+                    this.editor.setScrollTop(pos, this.monaco.editor.ScrollType.Immediate);
                 }
             },
             addScrollEventListener: (scrolled: (lineNumber: number) => void) =>
@@ -498,7 +505,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
                             const { range, text } = opt;
                             const newSelection = reselect(text, Utils.fromMonacoRange(range));
                             const ms = Utils.toMonaco(newSelection);
-                            return new Selection(ms.selectionStartLineNumber, ms.selectionStartColumn, ms.positionLineNumber, ms.positionColumn);
+                            return new this.monaco.Selection(ms.selectionStartLineNumber, ms.selectionStartColumn, ms.positionLineNumber, ms.positionColumn);
                         })
                     } : undefined;
                 
@@ -537,7 +544,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
             },
             positionToIndex: (position: IDocumentPosition): number =>
             {
-                return this.model.getOffsetAt(new Position(position.docIndex + 1, position.charIndex + 1));
+                return this.model.getOffsetAt(new this.monaco.Position(position.docIndex + 1, position.charIndex + 1));
             },
             indexToPosition: (docIndex: number): IDocumentPosition =>
             {
@@ -550,7 +557,7 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
             },
             scroll: (docIndex: number) =>
             {
-                this.editor.revealLine(docIndex + 1, editorVar.ScrollType.Smooth);
+                this.editor.revealLine(docIndex + 1, this.monaco.editor.ScrollType.Smooth);
             }
         }
     }
@@ -568,4 +575,45 @@ export class MonacoEditorContext implements IAppContext, IDisposable, IEventsIni
     }
 }
 
+
+export class MonacoDecorator implements IMonacoDisposable
+{
+    private decorations: EditorType.IEditorDecorationsCollection | undefined;
+
+    public constructor(private readonly editor: EditorType.IStandaloneCodeEditor)
+    {
+
+    }
+
+    private toRange(sPos: IDocumentPosition, ePos: IDocumentPosition)
+    {
+        return new Range(sPos.docIndex + 1, sPos.charIndex + 1, ePos.docIndex + 1, ePos.charIndex + 1)
+    }
+
+    public decorate(selections: IEditorDecorateSelection[])
+    {
+        this.decorations = this.editor.createDecorationsCollection(selections.map<EditorType.IModelDeltaDecoration>(r =>
+        {
+            const { sPos, ePos } = r.selection;
+            const cn = r.classes.join(' ')
+            return ({
+                range: this.toRange(sPos, ePos ?? sPos),
+                options: { inlineClassName: 'wp-kurage ' + cn }
+            })
+        }));
+
+    }
+
+    public clear()
+    {
+        this.decorations?.clear();
+        this.decorations = undefined;
+    }
+
+    public dispose()
+    {
+        this.clear();
+    }
+
+}
 

@@ -1,5 +1,5 @@
 
-export * from './context';
+export * from './markdown-react-editor/context';
 export * from './components';
 
 

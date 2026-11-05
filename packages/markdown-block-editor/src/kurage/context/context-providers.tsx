@@ -1,15 +1,13 @@
 import { ComponentType, createContext, ReactNode, useContext, useState } from "react";
-import { MarkdownEditorAttributeContextType, MarkdownEditorAttributeContextProvider, MarkdownEditorAttributeContextProviderProps } from "./markdown-editor-attribute-context";
+import { MarkdownEditorAttributeContextProvider, MarkdownEditorAttributeContextProviderProps } from "./markdown-editor-attribute-context";
 import { MarkdownCoreContextProvider } from "./markdown-core-context";
 import { MarkdownEditorStateContextProvider } from "./markdown-editor-state-context";
-import { MarkdownTokenContextProviderWrapper } from "./markdown-token-context";
-import { IMarkdownBlockEditorState } from "../store/type";
-import { ISettings } from "../store/ISettings";
-import { ISettingOptions } from "../store/ISettingOptions";
-import { IConfigurationStorage } from "@kurage/markdown-core";
+import { MarkdownTokenContextProvider } from "./markdown-token-context";
 import { ContextProviderData, IContextService, MarkdownDocumentAttributes } from "./context-service";
-import { IComponentViewModels } from "../markdown-editor-components/component-view-models";
-import { ComponentViewModelContextProvider } from "../markdown-editor-components/components/ComponentViewModelContext";
+import { IComponentViewModels } from "../markdown-react-editor/component-view-models";
+import { ComponentViewModelContextProvider } from "../markdown-react-editor/components/ComponentViewModelContext";
+import { IMarkdownEditorComponentAdapter } from "../markdown-react-editor/IMarkdownEditorComponentAdapter";
+import { MarkdownEditorComponentAdapterProvider } from "./markdown-editor-component-adapter";
 
 
 
@@ -22,6 +20,7 @@ export type ContextProvidersProps =
     viewModels: IComponentViewModels,
     clientId: string;
     blockEditorProps: any;
+    componentAdapter: IMarkdownEditorComponentAdapter;
     loadingComponent: ComponentType;
 };
 
@@ -33,6 +32,7 @@ export const ContextProviders = ({
     contextData,
     viewModels,
     loadingComponent: LoadingComponent,
+    componentAdapter,
     clientId,
     blockEditorProps,
 }: ContextProvidersProps) => {
@@ -55,9 +55,11 @@ export const ContextProviders = ({
                 <MarkdownCoreContextProvider contextData={contextData} contextService={contextService}>
                     <MarkdownEditorStateContextProvider contextData={contextData} contextService={contextService} clientId={clientId} blockEditorProps={blockEditorProps}>
                         <ComponentViewModelContextProvider value={viewModels}>
-                            <MarkdownTokenContextProviderWrapper>
-                                {children}
-                            </MarkdownTokenContextProviderWrapper>
+                            <MarkdownEditorComponentAdapterProvider value={componentAdapter}>
+                                <MarkdownTokenContextProvider>
+                                    {children}
+                                </MarkdownTokenContextProvider>
+                            </MarkdownEditorComponentAdapterProvider>
                         </ComponentViewModelContextProvider>
                     </MarkdownEditorStateContextProvider>
                 </MarkdownCoreContextProvider>

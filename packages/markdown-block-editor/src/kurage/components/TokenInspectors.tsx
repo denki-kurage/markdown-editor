@@ -1,20 +1,22 @@
 import { PanelBody } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useTokenEditorComponents } from "./inspector-hooks";
 import { InspectorControls } from "@wordpress/block-editor";
 import { useEffect, useMemo, useRef, useState } from "@wordpress/element";
-import { LoadingPanel } from './Loading'
-import { useExtensionContexts } from "./hooks";
+import { LoadingPanel } from '../markdown-react-editor/components/Loading'
+import { useExtensionContexts } from "../markdown-react-editor/hooks";
+import { useMarkdownEditorComponentAdapter } from "../markdown-react-editor/context/markdown-editor-component-adapter";
+import { filterTokenEditorComponents } from "../markdown-react-editor/IMarkdownEditorComponentAdapter";
 
 
 export const TokenInspectors = () =>
 {
-    const [renderCount, setRenderCount] = useState(0);
     const contexts = useExtensionContexts();
     const { editorStateContext, tokenContext } = contexts;
     const { singleToken } = tokenContext;
     const { isEditing } = editorStateContext;
+    const componentAdapter = useMarkdownEditorComponentAdapter();
 
+    
     /**
      * ＊重要。
      * 複合コンテキストをキャッシュしないと性能の低下を引き起こす。
@@ -32,44 +34,25 @@ export const TokenInspectors = () =>
 
     const ctx = contextsRef.current;
     const tokenType = singleToken?.getType() ?? '';
-    const { editorInfo, extensionInfos } = useTokenEditorComponents(tokenType);
 
-    useEffect(() => {
-        if(singleToken)
-        {
-            setRenderCount(renderCount + 1);
-        }
-    }, [singleToken]);
+    const tokenEditorComponents = useMemo(() => {
+         const tokenEditorComponents = componentAdapter.getTokenEditorComponents(contexts);
+         return filterTokenEditorComponents(tokenType, tokenEditorComponents);
+    }, [contexts, componentAdapter, tokenType]);
 
 
-    const editorComponet = useMemo(() => {
-        if(!editorInfo || !singleToken)
-        {
-            return null;
-        }
 
-        const TokenEditor = editorInfo.component;
-        return (
-            <PanelBody title={editorInfo.label}>
-                <LoadingPanel isLoading={isEditing}>
-                    { singleToken && <TokenEditor key={renderCount} token={singleToken} contexts={ctx} /> }
-                </LoadingPanel>
-            </PanelBody>
-        )
-    }, [ctx, isEditing, renderCount])
-
-    const extensionEditors = useMemo(() => extensionInfos.map(({ label, component: ExtensionEditor }) => (
+    const extensionEditors = useMemo(() => tokenEditorComponents.map(({ label, component: ExtensionEditor }) => (
         <PanelBody title={label}>
             <LoadingPanel isLoading={isEditing}>
-                { singleToken && <ExtensionEditor key={renderCount} token={singleToken} contexts={ctx} /> }
+                { singleToken && <ExtensionEditor key={singleToken.getType()} token={singleToken} contexts={ctx} /> }
             </LoadingPanel>
         </PanelBody>
-    )), [ctx, isEditing, renderCount])
+    )), [ctx, isEditing, singleToken, tokenEditorComponents, singleToken]);
 
     
     return (
         <InspectorControls>
-            { editorComponet }
             { extensionEditors }
         </InspectorControls>
     )

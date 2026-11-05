@@ -1,16 +1,25 @@
-import { Editor, Monaco, } from '@monaco-editor/react';
-import type { editor as editorType } from "monaco-editor/esm/vs/editor/editor.api.d.js";
-
+import { Editor, Monaco, loader } from '@monaco-editor/react';
 import root from 'react-shadow';
 
 import { IConfigurationStorage, ISnippet } from '@kurage/markdown-core';
 import monacoStyle from './editor.main.xcss';
 import { useEffect, useMemo, useState } from 'react';
-import { ISettingOptions } from '../../store/ISettingOptions';
-import { MonacoEditorContext } from '../../classes/MonacoEditorContext';
-import { MarkdownEditorComponentProps } from './Editor';
-import { useMarkdownCoreContext, useMarkdownEditorAttributeContext } from '../../context';
+import { ISettingOptions } from '../ISettingOptions';
+import { MonacoEditorContext } from '../MonacoEditorContext';
+import { MarkdownEditorComponentProps } from './EditorType';
+import { useMarkdownCoreContext, useMarkdownEditorAttributeContext } from '../context';
 
+//import type { editor as editorType } from "monaco-editor/esm/vs/editor/editor.api.d.js";
+type IStandaloneCodeEditor = Parameters<NonNullable<React.ComponentProps<typeof Editor>['onMount']>>[0];
+
+// @ts-ignore
+const localVs = window.MarkdownBlockEditor?.monacoUrl;
+
+loader.config({
+    paths: {
+        vs: localVs
+    }
+})
 
 
 export const useSnippets = (options: ISettingOptions, defaultSnippets: ISnippet[], useSnippets: boolean = true) =>
@@ -26,7 +35,7 @@ export const useSnippets = (options: ISettingOptions, defaultSnippets: ISnippet[
 
 export const createAppContext = (
         configurationStorage: IConfigurationStorage,
-        editor?: editorType.IStandaloneCodeEditor,
+        editor?: IStandaloneCodeEditor,
         monaco?: Monaco,
         snippets: ISnippet[] = []
     ) =>
@@ -48,7 +57,7 @@ export const createAppContext = (
 export const MonacoEditor = ({ initializedAppContext, snippets: defaultSnippets, editorStyles }: MarkdownEditorComponentProps) =>
 {
     const [monaco, setMonaco] = useState<Monaco|undefined>();
-    const [editor, setEditor] = useState<editorType.IStandaloneCodeEditor|undefined>();
+    const [editor, setEditor] = useState<IStandaloneCodeEditor|undefined>();
     const { configurationStorage } = useMarkdownCoreContext();
     
     const { markdown, onMarkdownChanged: onValueChanged } = useMarkdownEditorAttributeContext();

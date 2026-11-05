@@ -1,9 +1,9 @@
-import { useMemo } from "@wordpress/element";
-import { MarkdownTokenContextType, useMarkdownTokenContext } from "../context/markdown-token-context";
+import { MarkdownTokenContextType, useMarkdownTokenContext } from "./context/markdown-token-context";
 import { IAppContext, SelectCommand } from "@kurage/markdown-core";
-import { MarkdownCoreContextType, useMarkdownCoreContext } from "../context/markdown-core-context";
-import { MarkdownEditorStateContextType, useMarkdownEditorStateContext } from "../context/markdown-editor-state-context";
-import { MarkdownEditorAttributeContextType, useMarkdownEditorAttributeContext } from "../context/markdown-editor-attribute-context";
+import { MarkdownCoreContextType, useMarkdownCoreContext } from "./context/markdown-core-context";
+import { MarkdownEditorStateContextType, useMarkdownEditorStateContext } from "./context/markdown-editor-state-context";
+import { MarkdownEditorAttributeContextType, useMarkdownEditorAttributeContext } from "./context/markdown-editor-attribute-context";
+import { useMemo } from "react";
 
 export type ExtensionContexts =
 {

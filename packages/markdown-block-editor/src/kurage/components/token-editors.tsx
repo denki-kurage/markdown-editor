@@ -1,9 +1,32 @@
-import { Button, SelectControl, TextControl } from "@wordpress/components"
-import { sortedCodeLanguages } from "../../classes/CodeLanguages"
-import { TokenEditorProps } from "../inspector-hooks"
+import { Button, SelectControl, TextareaControl, TextControl } from "@wordpress/components"
+import { sortedCodeLanguages } from "../markdown-react-editor/CodeLanguages"
 import { useMemo, useState } from "@wordpress/element"
 import { IToken, MarkdownParser } from "@kurage/markdown-core"
 import { __ } from "@wordpress/i18n"
+import { TokenEditorProps } from "../markdown-react-editor/IMarkdownEditorComponentAdapter"
+
+
+export const TextTokenEditor = ({ token, contexts }: TokenEditorProps) =>
+{
+    const { tokenContext } = contexts;
+    const { start, end } = token.getPosition();
+    const [value, setValue] = useState(tokenContext.getSingleText() ?? '');
+
+    const edit = () => tokenContext.onEdits([[value, start, end]]);
+
+    return (
+        <div className="text-token-editor">
+
+            <TextareaControl
+                label={token.getType()}
+                value={value}
+                onChange={setValue}
+                rows={2}
+            />
+            <Button value={value} onClick={edit} variant="primary">{__('Text Update', 'markdown-block-editor')}</Button>
+        </div>
+    )
+};
 
 
 const getTable = (token?: IToken) =>
@@ -20,20 +43,24 @@ const getTable = (token?: IToken) =>
 }
 export const TableTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 {
-    const { tokenContext, coreContext: appContext } = contexts;
+    const { tokenContext, coreContext } = contexts;
     const { onEdits } = tokenContext;
+    const editorContext = coreContext.coreSession?.editorContext;
 
     const formatTable = () =>
     {
-        const table = getTable(tokenContext.singleToken);
-        if(table)
+        if(editorContext)
         {
-            const { start, end } = table.getPosition();
-            const tableText = appContext.editorContext.getEditorModel().getText(undefined).substring(start, end);
-            const fmt = MarkdownParser.formatTable(tableText, contexts.coreContext.editorContext.getStringCounter());
-            if(fmt)
+            const table = getTable(tokenContext.singleToken);
+            if(table)
             {
-                onEdits([[fmt, start, end]]);
+                const { start, end } = table.getPosition();
+                const tableText = editorContext.getEditorModel().getText(undefined).substring(start, end);
+                const fmt = MarkdownParser.formatTable(tableText, editorContext.getStringCounter());
+                if(fmt)
+                {
+                    onEdits([[fmt, start, end]]);
+                }
             }
         }
     }
@@ -74,17 +101,17 @@ export const HeadingTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 
 export const CodeTokenEditor = ({ token, contexts }: TokenEditorProps) =>
 {
-    const { tokenContext, coreContext: appContext } = contexts;
-    const { markdownCore } = appContext;
+    const { tokenContext, coreContext } = contexts;
+    const { markdownCore } = coreContext?.coreSession ?? {};
     const { onEdits } = tokenContext;
     const text = tokenContext.getSingleText() || '';
     const [lang, setLang] = useState(/^\s*\`\`\`(\S*)/.exec(text)?.[1] || '');
     const { start, end } = token.getPosition();
-    const languages = sortedCodeLanguages(markdownCore.getConfigurationHelper().getRecentCodeLanguages());
+    const languages = sortedCodeLanguages(markdownCore?.getConfigurationHelper().getRecentCodeLanguages() ?? []);
     
     const updateRecentCodeLanguage = (lang: string) =>
     {
-        markdownCore.getConfigurationHelper().updateRecentCodeLanguage(lang);
+        markdownCore?.getConfigurationHelper().updateRecentCodeLanguage(lang);
     }
 
     return (

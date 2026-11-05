@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { IReplaceText, IToken, MarkdownCore, MarkdownParser, Utils } from "@kurage/markdown-core";
 import { useMarkdownEditorAttributeContext } from "./markdown-editor-attribute-context";
 import { useMarkdownEditorStateContext } from "./markdown-editor-state-context";
-import { useMarkdownCoreContext, useMarkdownCoreSession, useMarkdownCoreSessionInternal } from "./markdown-core-context";
+import { useMarkdownCoreSessionInternal } from "./markdown-core-context";
 
 export type TokenStates =
 {
@@ -54,9 +54,8 @@ export type MarkdownTokenContextType =
 }
 
 
-const Context = createContext<MarkdownTokenContextType>({} as any);
-export const { Provider: MarkdownTokenContextProvider } = Context;
-export const useMarkdownTokenContext = () => useContext(Context);
+const MarkdownTokenContext = createContext<MarkdownTokenContextType>({} as any);
+export const useMarkdownTokenContext = () => useContext(MarkdownTokenContext);
 
 const findTokenByIndex = (token: IToken, index: number): IToken | undefined =>
 {
@@ -152,7 +151,7 @@ type ContextPropertyRef =
     tokenStates: TokenStates;
 }
 
-export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
+export const MarkdownTokenContextProvider = ({ children }: any) =>
 {
     const { markdown } = useMarkdownEditorAttributeContext();
     const { isEditing } = useMarkdownEditorStateContext();
@@ -251,7 +250,7 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
     
 
     return (
-        <MarkdownTokenContextProvider value={ctx}>
+        <MarkdownTokenContext.Provider value={ctx}>
             { children }
             <MarkdownCoreTokenEffects
                 isEditing={isEditing}
@@ -260,7 +259,7 @@ export const MarkdownTokenContextProviderWrapper = ({ children }: any) =>
                 markdownCore={markdownCore}
                 contextPropertyRef={contextPropertyRef}
             />
-        </MarkdownTokenContextProvider>
+        </MarkdownTokenContext.Provider>
     )
 }
 

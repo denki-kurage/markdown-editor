@@ -3,7 +3,7 @@ import { MediaPlaceholder } from '@wordpress/block-editor';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState } from "@wordpress/element";
-import { useMarkdownCoreInstance } from '../context/markdown-core-context';
+import { useMarkdownCoreInstance } from '../../markdown-react-editor/context/markdown-core-context';
 
 
 

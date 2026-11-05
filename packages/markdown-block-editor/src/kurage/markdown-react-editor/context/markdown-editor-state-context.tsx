@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { EventUpdateManager } from "@kurage/markdown-core";
-import { IMarkdownBlockEditorState } from "../store/type";
+import { IMarkdownBlockEditorState } from "../type";
 import { useMarkdownEditorAttributeContext } from "./markdown-editor-attribute-context";
 import { useMarkdownCoreContext } from "./markdown-core-context";
 import { ContextProviderData, IContextService } from "./context-service";
@@ -25,10 +25,9 @@ export type MarkdownEditorStateContextType =
 }
 
 
-const Context = createContext<MarkdownEditorStateContextType>({} as any);
+const MarkdownEditorStateContext = createContext<MarkdownEditorStateContextType>({} as any);
 
-export const { Provider: MarkdownEditorProvider } = Context;
-export const useMarkdownEditorStateContext = () => useContext(Context);
+export const useMarkdownEditorStateContext = () => useContext(MarkdownEditorStateContext);
 
 
 export type MarkdownEditorStateContextProviderProps =
@@ -88,6 +87,6 @@ export const MarkdownEditorStateContextProvider = ({
         return () => { deleteEditorState(clientId); }
     }, [clientId])
 
-    return <MarkdownEditorProvider value={ctx}>{children}</MarkdownEditorProvider>;
+    return <MarkdownEditorStateContext.Provider value={ctx}>{children}</MarkdownEditorStateContext.Provider>;
 }
 

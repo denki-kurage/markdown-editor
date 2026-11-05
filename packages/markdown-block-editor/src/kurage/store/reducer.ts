@@ -1,7 +1,7 @@
 import { combineReducers } from "@wordpress/data";
-import { EditorState, IMarkdownBlockEditorInfo, IStoreState } from "./type";
-import { ISettings } from "./ISettings";
-import { ISettingOptions } from "./ISettingOptions";
+import { EditorState, IMarkdownBlockEditorInfo, IStoreState } from "../markdown-react-editor/type";
+import { ISettings } from "../markdown-react-editor/ISettings";
+import { ISettingOptions } from "../markdown-react-editor/ISettingOptions";
 
 
 const info = (state: IMarkdownBlockEditorInfo = { version: '0.1' }, action: any) =>

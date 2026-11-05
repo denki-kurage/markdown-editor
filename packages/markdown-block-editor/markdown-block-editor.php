@@ -20,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action(
 	'init',
 	function () {
+
 		$pdir = plugin_dir_path( __FILE__ );
 
 		$x = register_block_type( __DIR__ . '/build/kurage' );
@@ -31,6 +32,11 @@ add_action(
 			'markdown-block-editor',
 			$pdir . 'languages'
 		);
+		
+
+		wp_localize_script($handle, 'MarkdownBlockEditor', [
+			'monacoUrl' => esc_url_raw( plugins_url( 'build/vs', __FILE__ ) )
+		]);
 	}
 );
 
@@ -40,9 +46,6 @@ add_action(
 		add_theme_support( 'align-wide' );
 	}
 );
-
-
-
 
 
 

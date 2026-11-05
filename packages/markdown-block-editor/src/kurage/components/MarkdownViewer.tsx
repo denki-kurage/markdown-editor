@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef } from "@wordpress/element";
-import { useMarkdownTokenContext } from "../context/markdown-token-context";
-import { parseEditMarkdown } from "./parser";
+import { useMarkdownTokenContext } from "../markdown-react-editor/context/markdown-token-context";
+import { parseEditMarkdown } from "../markdown-react-editor/parser";
 import { IToken } from "@kurage/markdown-core";
 import { applyFilters, doAction } from "@wordpress/hooks";
-import { Loading } from "./Loading";
-import { useThemes } from "./hooks";
-import { useMarkdownEditorStateContext } from "../context/markdown-editor-state-context";
+import { DefaultLoading } from "../markdown-react-editor/components/Loading";
+import { useThemes } from "../markdown-react-editor/hooks";
+import { useMarkdownEditorStateContext } from "../markdown-react-editor/context/markdown-editor-state-context";
 
 const getDoms = (iframe: HTMLIFrameElement|undefined|null) =>
 {
@@ -140,7 +140,7 @@ export const MarkdownViewer = ({markdown, setWindow}: { markdown: string, setWin
     return (
         <div>
             <iframe className='width-panel' ref={frameRef}></iframe>
-            <Loading isLoading={isEditing} />
+            <DefaultLoading isLoading={isEditing} />
         </div>
     )
 }

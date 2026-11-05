@@ -3,10 +3,11 @@
 
   "compilerOptions": {
     "jsx": "preserve",
-    "esModuleInterop": false,
+    "esModuleInterop": true,
 
+    "allowSyntheticDefaultImports": true,
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "target": "ESNext",
 
     "outDir": "dist",

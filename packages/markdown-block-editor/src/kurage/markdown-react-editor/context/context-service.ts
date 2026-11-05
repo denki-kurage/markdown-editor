@@ -1,7 +1,7 @@
 import { IAppContext, IConfigurationStorage, MarkdownCore } from "@kurage/markdown-core";
-import { ISettingOptions } from "../store/ISettingOptions";
-import { ISettings } from "../store/ISettings";
-import { IMarkdownBlockEditorState } from "../store/type";
+import { ISettingOptions } from "../ISettingOptions";
+import { ISettings } from "../ISettings";
+import { IMarkdownBlockEditorState } from "../type";
 
 
 export type ContextProviderData =

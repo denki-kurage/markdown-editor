@@ -1,4 +1,4 @@
-import { ISettings } from "../store/ISettings";
+import { ISettings } from "./ISettings";
 
 export interface ISettingsViewModel
 {
